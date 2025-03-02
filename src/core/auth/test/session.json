@@ -1,0 +1,15 @@
+{
+  "sessionId": 1,
+  "userId": 1,
+  "username": "testuser",
+  "token": "abc123",
+  "csrfToken": "def456",
+  "expires": "2100-12-31T23:59:59.000Z",
+  "language": "en",
+  "lastPage": "/admin",
+  "roles": ["user", "admin"],
+  "preferences": {
+    "theme": "dark",
+    "notifications": true
+  }
+}
