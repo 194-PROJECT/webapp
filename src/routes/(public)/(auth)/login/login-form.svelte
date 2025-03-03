@@ -31,7 +31,7 @@
 				name="email"
 				autocomplete="email"
 				bind:value={$form.email}
-				placeholder="m@example.com"
+				placeholder="email@example.com"
 				{...$constraints.email}
 			/>
       {#if $errors.email}

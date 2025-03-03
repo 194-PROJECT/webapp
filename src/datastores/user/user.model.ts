@@ -1,5 +1,5 @@
 export interface User {
-  id: Number;
+  id: number;
   firstName: string;
   lastName: string;
   username: string;
@@ -9,4 +9,5 @@ export interface User {
   profilePictureUrl: string;
   createdAt: string;
   updatedAt: string;
+  createdBy: string;
 }

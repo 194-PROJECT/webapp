@@ -14,8 +14,8 @@
             <Command class="size-4" />
           </div>
           <div class="grid flex-1 text-left text-sm leading-tight">
-            <span class="truncate font-semibold">DGE</span>
-            <span class="truncate text-xs">Enterprise</span>
+            <span class="truncate font-semibold">E-Bridge</span>
+            <span class="truncate text-xs">DGE</span>
           </div>
         </a>
       {/snippet}
