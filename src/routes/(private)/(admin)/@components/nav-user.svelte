@@ -8,7 +8,7 @@
 	import * as DropdownMenu from '$components/elements/dropdown-menu/index.js';
 	import * as Sidebar from '$components/elements/sidebar/index.js';
 	import { useSidebar } from '$components/elements/sidebar/index.js';
-	import type { User } from '$datastores/user/user.model';
+	import type { User } from '$datastores/user/user.type';
 
 	let {
 		user

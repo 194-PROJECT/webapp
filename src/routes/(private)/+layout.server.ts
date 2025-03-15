@@ -19,7 +19,6 @@ export const load: LayoutServerLoad = ({ locals, url, route }) => {
     redirect(307, '/login');
   }
 
-  console.log(route, roles, user.role)
   if (!roles.includes(user.role)) {
     redirect(307, '/');
   }

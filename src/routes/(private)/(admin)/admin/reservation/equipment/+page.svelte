@@ -1,4 +1,4 @@
 <script lang="ts">
 </script>
 
-PROGRAMS
+RESERVATION - EQUIPMENT
