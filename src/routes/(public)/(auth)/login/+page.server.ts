@@ -1,12 +1,19 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import { z as validation } from 'zod';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { zod } from 'sveltekit-superforms/adapters';
 
 import AuthService from '$core/auth/auth.service';
 import type { Actions, PageServerLoadEvent, RequestEvent } from './$types';
+import { UserTransformer } from '$datastores/user/user.transformer';
+import { SessionTransformer } from '$core/auth/auth.transformer';
+import { Roles } from '$core/auth/auth.type';
 
-const baseRedirect = '/admin';
+const defaultRedirect: Record<Roles, string> = {
+  [Roles.ADMIN]: '/admin',
+  [Roles.USER]: '/',
+  [Roles.GUEST]: '/',
+};
 
 /**
  * Schema for validating login form data.
@@ -18,14 +25,14 @@ const loginSchema = validation.object({
 
 /**
  * Load function to handle the initial page load.
- * Redirects to /admin if the user is already logged in.
+ * Redirects to default if the user is already logged in.
  *
  * @param event - The page server load event.
  * @returns An object containing the form data.
  */
 export const load = async (event: PageServerLoadEvent) => {
-	if (event.locals.session != null && event.locals.user != null) {
-		return redirect(302, baseRedirect);
+	if (event.locals.user != null) {
+		return redirect(302, defaultRedirect[event.locals.user.role]);
 	}
 
 	const loginForm = await superValidate(event, zod(loginSchema));
@@ -56,30 +63,52 @@ async function login(event: RequestEvent) {
 	}
 
 	const { email, password } = loginForm.data;
-  const loginData = await AuthService.login(email, password, undefined);
+  const loginResponse = await AuthService.login({
+    email: email,
+    password: password,
+    username: undefined,
+    cookies: event.cookies,
+    locals: event.locals
+  });
 
-  if (!loginData) {
+  if (!loginResponse) {
     throw new Error('not valid');
   }
 
-	const { user, session } = loginData;
+  if(loginResponse.errors) {
+    return {
+      success: false,
+      redirect: '/login',
+      ...message(loginForm, 'login failed'),
+      message: loginResponse.message,
+      errors: loginResponse.errors
+    };
+  }
 
-	event.cookies.set('session', JSON.stringify(session), {
-		secure: true,
-		httpOnly: true,
-		path: '/'
-	});
+  const { user: userResponse, session: sessionResponse } = loginResponse.data;
+  const user = UserTransformer.transform(userResponse);
+  const session = SessionTransformer.transform(sessionResponse);
+
 	event.cookies.set('user', JSON.stringify(user), {
 		secure: true,
 		httpOnly: true,
 		path: '/'
 	});
 
+	event.cookies.set('session', JSON.stringify(session), {
+		secure: true,
+		httpOnly: true,
+		path: '/'
+	});
+
+  event.locals.user = user;
+  event.locals.session = session;
+
 	return {
 		user,
 		session,
 		success: true,
-		redirect: baseRedirect,
+		redirect: defaultRedirect[user.role],
 		...message(loginForm, 'login successful')
 	};
 }

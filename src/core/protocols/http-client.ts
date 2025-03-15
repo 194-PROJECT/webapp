@@ -1,21 +1,27 @@
-import { Context } from '$core/context/context';
-import { ResponseType } from '$core/backend/response.type';
-import type { ResponseTypes } from '$core/backend/response.type';
+import type { Response } from '$core/backend/response.type';
 import { RequestType } from '$core/backend/request.type';
-import type { RequestTypes } from '$core/backend/request.type';
+import type { Requests } from '$core/backend/request.type';
 import type { RequestContentType, ResponseContentType } from '$core/backend/content.type';
-import { CookieManager } from '$core/helpers/cookies';
 import type { HttpHeader } from '$core/backend/header.type';
 
-export class HttpClient<T> {
-	public async request(
-		request: RequestTypes<T>[RequestType],
+import type { Cookies } from '@sveltejs/kit';
+
+import { HTTP_PROTOCOL, API_URL, API_PORT } from '$env/static/private';
+import { toast } from 'svelte-sonner';
+
+const API_BASE_URL = `${HTTP_PROTOCOL}://${API_URL}:${API_PORT}`;
+
+export class HttpClient {
+	public static async request<T>(
+		request: Requests<T>[RequestType],
 		type: RequestType,
+    cookies?: Cookies,
+    locals?: App.Locals,
+		header: Partial<HttpHeader> = {},
 		credentials: RequestCredentials = 'include',
-		header: Partial<HttpHeader> = {}
-	): Promise<ResponseTypes<T>[ResponseType]> {
-		let headers = this._header(header);
-		let url = request.url;
+	): Promise<Response<T>> {
+		let headers = HttpClient._header(header, cookies, locals);
+		let route = request.route;
 		let init: RequestInit = {
 			method: 'GET',
 			headers: headers,
@@ -49,18 +55,14 @@ export class HttpClient<T> {
 				throw new Error('Invalid request type');
 		}
 
-		return await fetch(url, init)
-			.then(async (response) => {
-				if (!response.ok)
-					throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
-				return (await Promise.resolve(response.json())) as ResponseTypes<T>[ResponseType];
-			})
-			.then((data) => {
-				return data;
-			})
-			.catch((error) => {
-				throw error;
-			});
+    const response = await fetch(`${API_BASE_URL}${route}`, init);
+    const data: Response<T> = await response.json();
+
+    if (!response.ok) {
+      console.error(`${response.status} ${response.statusText}: ${data.message}`);
+    }
+
+    return data;
 	}
 
 	/**
@@ -70,16 +72,19 @@ export class HttpClient<T> {
 	 * @param header
 	 * @returns
 	 */
-	private _header(header: Partial<HttpHeader>): Headers {
-		let UserContext = Context.getUserContext();
+	private static _header(
+    header: Partial<HttpHeader>,
+    cookie?: Cookies,
+    locals?: App.Locals
+  ): Headers {
 		let headers = new Headers();
+    const session = locals?.session;
 
 		const defaultHeaders: Partial<HttpHeader> = {
 			'Content-Type': 'application/json',
-			Authorization: `Bearer ${UserContext.session.token}`,
+			Authorization: `Bearer ${session?.token}`,
 			Accept: 'application/json',
 			'Access-Control-Allow-Origin': '*',
-			Cookie: CookieManager.cookie() || ''
 		};
 
 		Object.entries({ ...defaultHeaders, ...header }).forEach(([key, value]) => {

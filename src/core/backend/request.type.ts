@@ -9,31 +9,31 @@ export enum RequestType {
 }
 
 interface Request {
-	url: string;
+	route: string;
 	headers: Headers;
 }
 
 interface FetchRequest<T> extends Request {
-	parameters: Query;
+	parameters: T | Query;
 }
 
 interface PushRequest<T> extends Request {
-	body: Query;
+	body: T | Query;
 }
 
 interface SetRequest<T> extends Request {
-	body: Query;
+	body: T | Query;
 }
 
 interface UpdateRequest<T> extends Request {
-	body: Query;
+	body: T | Query;
 }
 
 interface RemoveRequest<T> extends Request {
-	parameters: Query;
+	parameters: T | Query;
 }
 
-export type RequestTypes<T> = {
+export type Requests<T> = {
 	[RequestType.FETCH]: FetchRequest<T>;
 	[RequestType.PUSH]: PushRequest<T>;
 	[RequestType.SET]: SetRequest<T>;

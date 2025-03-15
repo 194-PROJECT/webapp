@@ -1,4 +1,6 @@
-import type { User } from "$datastores/user/user.model";
+import type { UserGetResponseData } from "$datastores/user/user-backend.type";
+import type { User } from "$datastores/user/user.type";
+import type { SessionGetResponseData } from "./auth-backend.type";
 
 export enum Permissions {
   READ = "read",
@@ -28,16 +30,17 @@ export interface Preferences {
 }
 
 export interface Session {
-  sessionId: number;
+  id: number;
   userId: number;
-  username: string;
-  expires: Date;
   token: string;
-  csrfToken: string;
-  roles: Roles[];
-  lastPage?: string;
-  permissions?: Permissions[];
-  preferences?: Preferences;
+  ipAddress?: string;
+  userAgent?: string;
+  createdAt: Date;
+  expiresAt: Date;
+  lastActiveAt: Date;
+  isActive: boolean;
+  deviceId?: string;
+  location?: string;
 }
 
 /**
@@ -51,4 +54,9 @@ export type UserAuth = User;
 export type UserContext = {
   user: UserAuth;
   session: Session;
+};
+
+export type UserContextGetResponse = {
+  user: UserGetResponseData;
+  session: SessionGetResponseData;
 };

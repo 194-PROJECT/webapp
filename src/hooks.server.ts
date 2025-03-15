@@ -7,11 +7,10 @@ const protectedGroups = ['(private)'];
 const handleAuthentication: Handle = async ({ event, resolve }) => {
   const sessionCookie = event.cookies.get('session');
   const userCookie = event.cookies.get('user');
-  
+
   if (sessionCookie) event.locals.session = JSON.parse(sessionCookie);
   if (userCookie) event.locals.user = JSON.parse(userCookie);
 
-  console.log(event.route.id);
 	const isProtectedGroup = protectedGroups.some((group) => {
 		return event.route.id?.slice(1).startsWith(group);
 	});

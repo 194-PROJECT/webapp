@@ -5,8 +5,8 @@
     "lastName": "Doe",
     "username": "johndoe",
     "email": "johndoe@example.com",
-    "roles": ["admin"],
-    "active": true,
+    "type": "admin",
+    "role": "admin",
     "profilePictureUrl": "https://www.everydogsday.net/wp-content/uploads/2017/12/image-dog-square-2.jpg",
     "createdAt": "2023-01-01T00:00:00Z",
     "updatedAt": "2023-01-01T00:00:00Z"
@@ -17,8 +17,8 @@
     "lastName": "Grace",
     "username": "marygrace",
     "email": "marygrace@example.com",
-    "roles": ["user"],
-    "active": true,
+    "type": "user",
+    "role": "user",
     "profilePictureUrl": "https://i.pinimg.com/736x/2b/47/18/2b4718827a37b6f11dc82e939984c571.jpg",
     "createdAt": "2023-01-01T00:00:00Z",
     "updatedAt": "2023-01-01T00:00:00Z"

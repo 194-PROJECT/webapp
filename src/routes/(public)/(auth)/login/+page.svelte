@@ -3,8 +3,25 @@
   import LoginForm from './login-form.svelte';
 
 import type { PageProps } from './$types';
+import { toast } from 'svelte-sonner';
 
 let props: PageProps = $props();
+let { form } = $derived(props);
+
+$effect(() => {
+  const errors = form?.errors;
+  const message = form?.message;
+
+  if (message && errors) {
+    for (let error of errors) {
+      toast.error(
+        message, {
+          description: error,
+        }
+      );
+    }
+  }
+});
 </script>
 
 <div class="flex h-screen w-full items-center justify-center px-4">

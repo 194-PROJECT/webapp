@@ -32,7 +32,7 @@
 	import * as Sidebar from '$components/elements/sidebar/index.js';
 	import { ScrollArea } from '$components/elements/scroll-area/index.js';
 	import type { ComponentProps } from 'svelte';
-	import type { User } from '$datastores/user/user.model';
+	import type { User } from '$datastores/user/user.type';
 
 	let { ref = $bindable(null), user, ...restProps }: ComponentProps<typeof Sidebar.Root> & {
     user: User
