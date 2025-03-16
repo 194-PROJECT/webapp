@@ -168,7 +168,7 @@
     }
 </style>
 
-<div class="mx-auto h-auto w-full max-w-6xl rounded-xl bg-muted/50">
+<div class="p-8 mx-auto h-auto w-full max-w-6xl rounded-xl bg-muted/50">
     <div class="header">Asset Information</div>
     <div class="filter-container">
         <input type="text" placeholder="Search by ID or Name" on:input={(e) => searchText.set(e.target.value)} />
@@ -182,7 +182,7 @@
     <div class="card-container">
         {#each $filteredData as asset}
             <div class="card">
-                <img src={asset.assetPictureUrl} alt="Asset Picture" />
+                <img src={asset.assetPictureUrl} alt="asset-image-{asset.id}" />
                 <h2>{asset.name}</h2>
                 <p><strong>ID:</strong> {asset.id}</p>
                 <p><strong>Type:</strong> {asset.type}</p>

@@ -201,7 +201,7 @@
     }
 </style>
 
-<div class="mx-auto h-auto w-full max-w-6xl rounded-xl bg-muted/50">
+<div class="p-8 mx-auto h-auto w-full max-w-6xl rounded-xl bg-muted/50">
     <div class="header">Asset Reservation</div>
     <div class="filter-container">
         <input type="text" placeholder="Search by ID or Name" on:input={(e) => searchText.set((e.target as HTMLInputElement).value)} />

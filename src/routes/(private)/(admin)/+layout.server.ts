@@ -28,8 +28,11 @@ const getBreadcrumbs = (pathname: string) => {
   return pathname
     .split('/')
     .slice(1)
-    .map((part, i, parts) => ({
-      name: part,
-      href: '/' + parts.slice(0, i + 1).join('/')
-    }));
+    .map((part, i, parts) => {
+      return {
+        name: part,
+        href: '/' + parts.slice(0, i + 1).join('/')
+      }
+    })
+    .filter(part => isNaN(Number(part.name)));
 }

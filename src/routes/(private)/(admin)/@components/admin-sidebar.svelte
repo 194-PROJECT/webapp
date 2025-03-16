@@ -1,26 +1,4 @@
 <script lang="ts" module>
-	import AudioWaveform from 'lucide-svelte/icons/audio-waveform';
-	import Command from 'lucide-svelte/icons/command';
-	// This is sample data.
-	const data = {
-		teams: [
-			{
-				name: 'Acme Inc',
-				logo: Command,
-				plan: 'Enterprise'
-			},
-			{
-				name: 'Acme Corp.',
-				logo: AudioWaveform,
-				plan: 'Startup'
-			},
-			{
-				name: 'Evil Corp.',
-				logo: Command,
-				plan: 'Free'
-			}
-		]
-	};
 </script>
 
 <script lang="ts">
