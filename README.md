@@ -1,22 +1,43 @@
-# sv
+# Item Scheduling - Webapp
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+This is a webapp for item scheduling for DGE. It is built using SvelteKit.
 
 ## Creating a project
 
-If you're seeing this, you've probably already done this step. Congrats!
+Clone this repository and install the dependencies:
+
+> Make sure to have Node.js installed on your machine. You can use a different package manager like `pnpm` or `yarn` if you prefer.
 
 ```bash
-# create a new project in the current directory
-npx sv create
+cd path-to-project/webapp
 
-# create a new project in my-app
-npx sv create my-app
+# install dependencies
+npm install
+```
+
+#### Environment variables
+
+Create a `.env` file with the following content:
+
+> Make sure to replace the values with the actual values for your database
+
+```
+# For google oauth
+GOOGLE_CLIENT_ID=""
+GOOGLE_CLIENT_SECRET=""
+
+# For API
+HTTP_PROTOCOL="http"
+API_URL="127.0.0.1"
+API_PORT="5000"
+
+ENCRYPTION_KEY="gwbI7/iLikatYxm+cvYwfpC35dvdCUeSYJA0/sB7dxQ=" # THIS IS JUST A DUMMY VALUE
+ALGORITHM="aes-256-cbc"
 ```
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Once you've cloned the project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
 ```bash
 npm run dev

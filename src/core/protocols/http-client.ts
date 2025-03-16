@@ -1,6 +1,6 @@
 import type { Response } from '$core/backend/response.type';
 import { RequestType } from '$core/backend/request.type';
-import type { Requests } from '$core/backend/request.type';
+import type { Query, Requests } from '$core/backend/request.type';
 import type { RequestContentType, ResponseContentType } from '$core/backend/content.type';
 import type { HttpHeader } from '$core/backend/header.type';
 
@@ -25,12 +25,14 @@ export class HttpClient {
 		let init: RequestInit = {
 			method: 'GET',
 			headers: headers,
-			body: '',
+			body: undefined,
 			credentials
 		};
 
 		if ('parameters' in request) {
-			init.body = JSON.stringify(request.parameters);
+      const isQuery = request.parameters instanceof Object;
+      const params = isQuery ? request.parameters as Query : undefined;
+      route = `${route}?${new URLSearchParams(params).toString()}`;
 		} else if ('body' in request) {
 			init.body = JSON.stringify(request.body);
 		}

@@ -8,7 +8,7 @@ export interface User {
   lastName: string;
   type: string;
   role: Roles;
-  profilePictureUrl: string;
+  profilePictureUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 }

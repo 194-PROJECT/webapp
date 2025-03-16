@@ -12,6 +12,15 @@ export enum Permissions {
   DOWNLOAD = "download",
 }
 
+export enum UserType {
+  MANAGEMENT = "management",
+  STUDENT = "student",
+  FACULTY = "faculty",
+  STAFF = "staff",
+  ALUMNI = "alumni",
+  GUEST = "guest",
+}
+
 export enum Roles {
   ADMIN = "admin",
   USER = "user",
@@ -24,7 +33,6 @@ export interface Preferences {
   timezone?: string;
   dateFormat?: string;
   timeFormat?: string;
-  currency?: string;
   locale?: string;
   notifications?: boolean;
 }

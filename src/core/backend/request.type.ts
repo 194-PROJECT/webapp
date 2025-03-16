@@ -1,5 +1,42 @@
 export type Query = Record<string, any>;
 
+export type GetQuery = {
+  id: number;
+}
+
+export type GetManyQuery = {
+  order_by?: string;
+  order_direction?: 'ASC' | 'DESC';
+  limit?: number;
+  offset?: number;
+  page?: number;
+  page_size?: number;
+  field?: string;
+  operator?: Operator;
+  value?: any;
+};
+
+export type DeleteQuery = {
+  id: number;
+}
+
+export type DeleteManyQuery = {
+  ids: number[];
+}
+
+export enum Operator {
+  EQUALS = '=',
+  NOT_EQUALS = '<>',
+  GREATER_THAN = '>',
+  LESS_THAN = '<',
+  GREATER_THAN_OR_EQUAL = '>=',
+  LESS_THAN_OR_EQUAL = '<=',
+  LIKE = 'LIKE',
+  NOT_LIKE = 'NOT LIKE',
+  IS_NULL = 'IS NULL',
+  IS_NOT_NULL = 'IS NOT NULL'
+};
+
 export enum RequestType {
 	FETCH = 1,
 	PUSH,

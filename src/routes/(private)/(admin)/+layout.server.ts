@@ -4,7 +4,7 @@ import { Roles } from '$core/auth/auth.type';
 
 const adminRolesAllowed = [Roles.ADMIN];
 
-export const load: LayoutServerLoad = ({ cookies, locals, params, request, route, url }) => {
+export const load: LayoutServerLoad = ({ locals, url }) => {
 	const breadcrumbs = getBreadcrumbs(url.pathname);
   const user = locals.user;
   const session = locals.session;
@@ -20,7 +20,7 @@ export const load: LayoutServerLoad = ({ cookies, locals, params, request, route
 	return {
 		breadcrumbs: breadcrumbs,
     url: url.pathname,
-    user: user
+    user: user,
 	};
 };
 

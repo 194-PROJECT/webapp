@@ -1,7 +1,10 @@
 export class Collection<T> {
   loading: boolean = false;
+  public value = $state<T[]>();
 
   constructor(
-    public value = $state<T[]>(),
-  ) {}
+    value: T[],
+  ) {
+    this.value = value;
+  }
 }

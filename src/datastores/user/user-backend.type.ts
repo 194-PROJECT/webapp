@@ -7,6 +7,7 @@ export interface UserGetResponseData {
   password?: string;
   type: string;
   role: string;
+  profile_picture_url?: string;
   created_at: string;
   updated_at: string;
 }

@@ -1,7 +1,10 @@
 export class Document<T> {
-  loading: boolean = false;
+  public loading: boolean = false;
+  public value = $state<T>();
 
   constructor(
-    public value = $state<T>(),
-  ) {}
+    value: T,
+  ) {
+    this.value = value;
+  }
 }
