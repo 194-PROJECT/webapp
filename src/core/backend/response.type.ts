@@ -2,7 +2,7 @@ type Payload = Record<string, string>;
 
 export interface Response<T> {
 	message: string;
-	data: T;
+	data?: T;
   errors?: Array<string>;
   page?: number;
   total_rows?: number;

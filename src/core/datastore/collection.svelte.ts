@@ -9,7 +9,7 @@ export class Collection<T> {
     page = undefined,
     totalRows = undefined,
   }: {
-    value: T[],
+    value?: T[],
     page?: number,
     totalRows?: number
   }) {

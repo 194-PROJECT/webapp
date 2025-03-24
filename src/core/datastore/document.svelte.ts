@@ -3,7 +3,7 @@ export class Document<T> {
   public value = $state<T>();
 
   constructor(
-    value: T,
+    value?: T,
   ) {
     this.value = value;
   }

@@ -24,7 +24,7 @@ export class UserTransformer {
   ): Response<User> {
     return {
       ...response,
-      data: UserTransformer.transform(response.data),
+      data: response.data ? UserTransformer.transform(response.data) : undefined,
     };
   }
 
@@ -33,7 +33,7 @@ export class UserTransformer {
   ): Response<User[]> {
     return {
       ...response,
-      data: response.data.map((data) => UserTransformer.transform(data)),
+      data: response.data?.map((data) => UserTransformer.transform(data)),
     };
   }
 }
