@@ -6,7 +6,7 @@ const privateRoute = '(private)'
 
 const routeRoleAccess = {
   [`/${privateRoute}/(admin)`]: [Roles.ADMIN],
-  [`/${privateRoute}/(app)`]: [Roles.ADMIN, Roles.GUEST, Roles.GUEST]
+  [`/${privateRoute}/(app)`]: [Roles.ADMIN, Roles.USER, Roles.GUEST]
 }
 
 export const load: LayoutServerLoad = ({ locals, url, route }) => {

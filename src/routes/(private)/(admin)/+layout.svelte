@@ -9,7 +9,7 @@
     import SearchForm from './@components/search-form.svelte';
 
     let { children, data }: LayoutProps = $props();
-    const { user } = data;
+    const { user, url, breadcrumbs } = data;
 </script>
 
 <Sidebar.Provider>
@@ -22,13 +22,13 @@
                 <SearchForm />
                 <Breadcrumb.Root class='hidden lg:block'>
                     <Breadcrumb.List>
-                        {#each data.breadcrumbs as { href, name }, index}
+                        {#each breadcrumbs as { href, name }, index}
                             <Breadcrumb.Item>
                                 <Breadcrumb.Link class="line-clamp-1" {href}>
                                     {name}
                                 </Breadcrumb.Link>
                             </Breadcrumb.Item>
-                            {#if index !== data.breadcrumbs.length - 1}
+                            {#if index !== breadcrumbs.length - 1}
                                 <Breadcrumb.Separator>/</Breadcrumb.Separator>
                             {/if}
                         {/each}
@@ -40,7 +40,7 @@
             </div>
         </header>
 
-        <PageTransition key={data.url}>
+        <PageTransition key={url}>
             <div class="flex flex-1 flex-col gap-4 px-4 py-10">
                 {@render children()}
             </div>

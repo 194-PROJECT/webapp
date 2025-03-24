@@ -40,6 +40,10 @@ export const userDataTableColumns: ColumnDef<User>[] = [
     header: 'email'
   },
   {
+    accessorKey: 'type',
+    header: 'type'
+  },
+  {
     accessorKey: 'role',
     header: 'roles',
   },
@@ -51,7 +55,7 @@ export const userDataTableColumns: ColumnDef<User>[] = [
       const createdAtCellSnippet = createRawSnippet<[string]>((getCreatedAt) => {
         const createdAt = getCreatedAt();
         return {
-          render: () => `${createdAt}`
+          render: () => `<span>${createdAt}</span>`
         };
       });
 
@@ -66,7 +70,7 @@ export const userDataTableColumns: ColumnDef<User>[] = [
       const updatedAtCellSnippet = createRawSnippet<[string]>((getUpdatedAt) => {
         const updatedAt = getUpdatedAt();
         return {
-          render: () => `${updatedAt}`
+          render: () => `<span>${updatedAt}</span>`
         };
       });
 

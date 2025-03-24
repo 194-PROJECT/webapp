@@ -111,7 +111,7 @@
     items: item[];
   }[] = [
     {
-      title: 'Repors',
+      title: 'Reports',
       items: [
         {
           title: 'Asset Reports',

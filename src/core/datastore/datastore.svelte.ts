@@ -16,7 +16,11 @@ export class Datastore<T> {
       return new Document<T>(response.data);
     } else {
       const response = await this.backend.fetch_many(param);
-      return new Collection<T>(response.data);
+      return new Collection<T>({
+        value: response.data,
+        page: response.page,
+        totalRows: response.total_rows
+      });
     }
   }
 
