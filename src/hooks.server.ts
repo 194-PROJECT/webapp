@@ -5,7 +5,7 @@ import { i18n } from '$lib/i18n';
 const protectedGroups = ['(private)'];
 
 const handleAuthentication: Handle = async ({ event, resolve }) => {
-  console.log('ROUTE:', event.url);
+  // console.log('ROUTE:', event.url);
   const sessionCookie = event.cookies.get('session');
   const userCookie = event.cookies.get('user');
 

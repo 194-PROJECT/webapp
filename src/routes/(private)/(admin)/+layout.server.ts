@@ -1,8 +1,8 @@
 import { redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
-import { Roles } from '$core/auth/auth.type';
+import { UserRole } from '$core/auth/auth.type';
 
-const adminRolesAllowed = [Roles.ADMIN];
+const adminUserRoleAllowed = [UserRole.ADMIN];
 
 export const load: LayoutServerLoad = ({ locals, url }) => {
   const user = locals.user;
@@ -12,7 +12,9 @@ export const load: LayoutServerLoad = ({ locals, url }) => {
     redirect(307, '/login');
   }
 
-  if (!adminRolesAllowed.includes(user.role)) {
+  if (!adminUserRoleAllowed.includes(user.role)) {
     redirect(307, '/');
   }
+
+  return {};
 };

@@ -49,6 +49,7 @@
 				name="password"
 				autocomplete="current-password"
 				bind:value={$form.password}
+        {...$constraints.password}
 			/>
 			{#if $errors.password}
         <p class="text-muted-foreground text-sm">{ $errors.password }</p>

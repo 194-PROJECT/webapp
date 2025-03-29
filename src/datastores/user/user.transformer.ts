@@ -1,18 +1,18 @@
-import { Roles } from "$core/auth/auth.type";
+import { UserType, UserRole } from "$core/auth/auth.type";
 import type { Response } from "$core/backend/response.type";
-import type { UserGetResponseData } from "./user-backend.type";
+import type { UserGetResponse } from "./user-backend.type";
 import type { User } from "./user.type";
 
 export class UserTransformer {
-  static transform(data: UserGetResponseData): User {
+  static transform(data: UserGetResponse): User {
     return {
       id: data.id,
       firstName: data.first_name,
       lastName: data.last_name,
       username: data.username,
       email: data.email,
-      type: data.type,
-      role: data.role as Roles,
+      type: data.type as UserType,
+      role: data.role as UserRole,
       profilePictureUrl: data.profile_picture_url,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
@@ -20,7 +20,7 @@ export class UserTransformer {
   }
 
   static transformGetResponse(
-    response: Response<UserGetResponseData>
+    response: Response<UserGetResponse>
   ): Response<User> {
     return {
       ...response,
@@ -29,7 +29,7 @@ export class UserTransformer {
   }
 
   static transformGetManyResponse(
-    response: Response<UserGetResponseData[]>
+    response: Response<UserGetResponse[]>
   ): Response<User[]> {
     return {
       ...response,

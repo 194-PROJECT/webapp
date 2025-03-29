@@ -10,7 +10,7 @@ import { RequestType } from '$core/backend/request.type';
 import { HttpClient } from '$core/protocols/http-client';
 import type { User } from './user.type';
 import type { Response } from '$core/backend/response.type';
-import type { UserGetResponseData } from './user-backend.type';
+import type { UserGetResponse } from './user-backend.type';
 import { UserTransformer } from './user.transformer';
 
 export class UserBackend implements Backend<User> {
@@ -21,7 +21,7 @@ export class UserBackend implements Backend<User> {
 			parameters: { id }
 		};
 
-    let response = await HttpClient.request<UserGetResponseData>(request, RequestType.FETCH);
+    let response = await HttpClient.request<GetQuery, UserGetResponse>(request, RequestType.FETCH);
     return Promise.resolve(UserTransformer.transformGetResponse(response));
 	}
 
@@ -32,7 +32,7 @@ export class UserBackend implements Backend<User> {
 			parameters: query
 		};
 
-    let response = await HttpClient.request<UserGetResponseData[]>(request, RequestType.FETCH);
+    let response = await HttpClient.request<GetManyQuery, UserGetResponse[]>(request, RequestType.FETCH);
     return Promise.resolve(UserTransformer.transformGetManyResponse(response));
 	}
 
@@ -43,7 +43,7 @@ export class UserBackend implements Backend<User> {
 			body: item
 		};
 
-    let response = await HttpClient.request<UserGetResponseData>(request, RequestType.PUSH);
+    let response = await HttpClient.request<User, UserGetResponse>(request, RequestType.PUSH);
     return Promise.resolve(UserTransformer.transformGetResponse(response));
 	}
 
@@ -54,7 +54,7 @@ export class UserBackend implements Backend<User> {
 			body: item
 		};
 
-    let response = await HttpClient.request<UserGetResponseData>(request, RequestType.UPDATE);
+    let response = await HttpClient.request<Partial<User>, UserGetResponse>(request, RequestType.UPDATE);
     return Promise.resolve(UserTransformer.transformGetResponse(response));
 	}
 
@@ -65,16 +65,16 @@ export class UserBackend implements Backend<User> {
 			parameters: { id }
 		};
 
-		return HttpClient.request<any>(request, RequestType.REMOVE);
+		return HttpClient.request<DeleteQuery, undefined>(request, RequestType.REMOVE);
 	}
 
-	public async remove_many(ids: number[]): Promise<Response<any>> {
+	public async remove_many(ids: number[]): Promise<Response<undefined>> {
 		const request: Requests<DeleteManyQuery>[RequestType.REMOVE] = {
 			route: `/user`,
 			headers: new Headers(),
-			parameters: { id: ids }
+			parameters: { ids: ids }
 		};
 
-		return HttpClient.request<any>(request, RequestType.REMOVE);
+		return HttpClient.request<DeleteManyQuery, undefined>(request, RequestType.REMOVE);
 	}
 }

@@ -2,27 +2,27 @@
   import Ellipsis from "lucide-svelte/icons/ellipsis";
   import { Button } from "$components/elements/button/index.js";
   import * as DropdownMenu from "$components/elements/dropdown-menu/index.js";
-	import type { User } from "$datastores/user/user.type";
+	import type { StudentUser } from "$datastores/student/student.type";
 	import { toast } from "svelte-sonner";
 	import { goto } from "$app/navigation";
 	import type { ActionResult } from "@sveltejs/kit";
 	import { deserialize } from "$app/forms";
-	import UserDialogEdit from "./user-dialog-edit.svelte";
+	import StudentDialogEdit from "./student-dialog-edit.svelte";
 
-  let { user = $bindable() }: { user: User } = $props();
+  let { student = $bindable() }: { student: StudentUser } = $props();
   let isEditDialogOpen = $state(false);
 
-  async function deleteUser() {
-    const response = await fetch(`?/deleteUser`, {
+  async function deleteStudent() {
+    const response = await fetch(`?/deleteStudent`, {
       method: "POST",
-      body: JSON.stringify({ id: user.id }),
+      body: JSON.stringify({ id: student.id }),
     });
 
     const result: ActionResult = deserialize(await response.text());
 
     switch (result.type) {
       case "success": {
-        toast.success(result.data?.message ?? "User deleted successfully.");
+        toast.success(result.data?.message ?? "Student deleted successfully.");
         goto(location.href, {
           replaceState: true,
           noScroll: true,
@@ -59,14 +59,14 @@
   <DropdownMenu.Content>
     <DropdownMenu.Group>
       <DropdownMenu.GroupHeading>Actions</DropdownMenu.GroupHeading>
-      <DropdownMenu.Item onclick={() => navigator.clipboard.writeText(user.email)}>
+      <DropdownMenu.Item onclick={() => navigator.clipboard.writeText(student.email)}>
         Copy email
       </DropdownMenu.Item>
     </DropdownMenu.Group>
     <DropdownMenu.Separator />
-    <DropdownMenu.Item onclick={toggleEditDialog}>Edit user</DropdownMenu.Item>
-    <DropdownMenu.Item onclick={deleteUser}>Delete user</DropdownMenu.Item>
+    <DropdownMenu.Item onclick={toggleEditDialog}>Edit student</DropdownMenu.Item>
+    <DropdownMenu.Item onclick={deleteStudent}>Delete student</DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>
 
-<UserDialogEdit bind:isOpen={isEditDialogOpen} user={user} />
+<StudentDialogEdit bind:isOpen={isEditDialogOpen} student={student} />

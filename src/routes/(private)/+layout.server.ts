@@ -1,25 +1,25 @@
 import { redirect } from '@sveltejs/kit';
 import type { LayoutRouteId, LayoutServerLoad } from './$types';
-import { Roles } from '$core/auth/auth.type';
+import { UserRole } from '$core/auth/auth.type';
 
 const privateRoute = '(private)'
 
 const routeRoleAccess = {
-  [`/${privateRoute}/(admin)`]: [Roles.ADMIN],
-  [`/${privateRoute}/(app)`]: [Roles.ADMIN, Roles.USER, Roles.GUEST]
+  [`/${privateRoute}/(admin)`]: [UserRole.ADMIN],
+  [`/${privateRoute}/(app)`]: [UserRole.ADMIN, UserRole.USER, UserRole.GUEST]
 }
 
 export const load: LayoutServerLoad = ({ locals, url, route }) => {
   const breadcrumbs = getBreadcrumbs(url.pathname);
   const user = locals.user;
   const session = locals.session;
-  const roles = getRouteRoleAccess(route);
+  const UserRole = getRouteRoleAccess(route);
 
   if(!user || !session) {
     redirect(307, '/login');
   }
 
-  if (!roles.includes(user.role)) {
+  if (!UserRole.includes(user.role)) {
     redirect(307, '/');
   }
 
@@ -40,7 +40,7 @@ const getBreadcrumbs = (pathname: string) => {
     }));
 }
 
-const getRouteRoleAccess = (currentRoute: {id: LayoutRouteId}): Roles[] => {
+const getRouteRoleAccess = (currentRoute: {id: LayoutRouteId}): UserRole[] => {
   for (const route of Object.keys(routeRoleAccess) as Array<keyof typeof routeRoleAccess>) {
     if (currentRoute.id.startsWith(route)) {
       return routeRoleAccess[route];

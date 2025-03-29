@@ -1,11 +1,11 @@
-<script lang="ts" generics="TData, TValue">
+<script lang="ts" generics="TData, TValue, TAdditionalData">
 	import { type ColumnDef, getCoreRowModel, type PaginationState } from '@tanstack/table-core';
 	import { createSvelteTable, FlexRender } from '$components/elements/data-table/index.js';
 	import { deserialize } from '$app/forms';
 	import * as Table from '$components/elements/table/index.js';
 	import Button from '$components/elements/button/button.svelte';
 	import * as Select from '$components/elements/select';
-  import type { User } from "$datastores/user/user.type";
+  import type { Student, StudentUser } from "$datastores/student/student.type";
 	import type { ActionResult } from '@sveltejs/kit';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { z } from 'zod';
@@ -17,7 +17,7 @@
 	import { Operator } from '$core/backend/request.type';
 	import Input from '$components/elements/input/input.svelte';
 	import { toast } from 'svelte-sonner';
-	import UserDialogCreate from './user-dialog-create.svelte';
+	import StudentDialogCreate from './student-dialog-create.svelte';
 
 	type DataTableProps<TData, TValue> = {
 		columns: ColumnDef<TData, TValue>[];
@@ -74,16 +74,16 @@
 		manualPagination: true
 	});
 
-  let searchBy: keyof User = $state('email');
+  let searchBy: keyof Student = $state('programId');
   let searchValue: string = $state('');
-  const searchOptions: { value: keyof User, label: string }[] = [
-    { value: 'email', label: 'Email' },
-    { value: 'username', label: 'Username' },
-    { value: 'firstName', label: 'First Name' },
-    { value: 'lastName', label: 'Last Name' },
-    { value: 'type', label: 'Type' },
-    { value: 'role', label: 'Role' },
+  const searchOptions: { value: keyof Student, label: string }[] = [
+    { value: 'programId', label: 'Program ID' },
+    { value: 'studentId', label: 'Student ID' },
   ];
+  const searchOptionToOperator: { [key in keyof Partial<Student>]: Operator } = {
+    programId: Operator.EQUALS,
+    studentId: Operator.LIKE,
+  };
 
   let searchByTriggerContent = $derived(searchOptions.find((f) => f.value === searchBy)?.label ?? 'Search by');
 
@@ -96,8 +96,8 @@
 			method: 'POST',
 			body: JSON.stringify({
         field: camelToSnakeCase(searchBy),
-        operator: Operator.LIKE.toString(),
-        value: searchValue.toString(),
+        operator: searchOptionToOperator[searchBy]?.toString(),
+        value: searchValue,
         pageSize: pageSize.toString(),
         pageIndex: (selectedPageIndex + 1).toString(),
       }),
@@ -121,7 +121,7 @@
 	}
 </script>
 
-<UserDialogCreate bind:isOpen={isCreateDialogOpen} />
+<StudentDialogCreate bind:isOpen={isCreateDialogOpen} />
 
 <div class="flex items-center space-x-2 py-4">
   <Button
@@ -130,7 +130,7 @@
       isCreateDialogOpen = true;
     }}
   >
-    <Plus color='green' />
+    <Plus />
   </Button>
   <Select.Root
 		type="single"

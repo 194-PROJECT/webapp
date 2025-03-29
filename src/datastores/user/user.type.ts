@@ -1,4 +1,4 @@
-import type { Roles } from "$core/auth/auth.type";
+import type { UserRole, UserType } from "$core/auth/auth.type";
 
 export interface User {
   id: number;
@@ -6,8 +6,9 @@ export interface User {
   username: string;
   firstName: string;
   lastName: string;
-  type: string;
-  role: Roles;
+  password?: string;
+  type: UserType;
+  role: UserRole;
   profilePictureUrl?: string;
   createdAt: Date;
   updatedAt: Date;

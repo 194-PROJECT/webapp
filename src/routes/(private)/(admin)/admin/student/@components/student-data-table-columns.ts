@@ -1,11 +1,15 @@
 import { renderComponent, renderSnippet } from "$components/elements/data-table";
-import type { User } from "$datastores/user/user.type";
+import type { Student, StudentUser } from "$datastores/student/student.type";
 import type { ColumnDef } from "@tanstack/table-core";
 import { createRawSnippet } from "svelte";
-import UserDataTableAction from "./user-data-table-action.svelte";
-import UserDataTableProfilePicture from "./user-data-table-profile-picture.svelte";
+import StudentDataTableAction from "./student-data-table-action.svelte";
+import StudentDataTableProfilePicture from "./student-data-table-profile-picture.svelte";
 
-export const userDataTableColumns: ColumnDef<User>[] = [
+// export const buildStudentDataTableColumns = (programs) => {
+
+// }
+
+export const studentDataTableColumns: ColumnDef<StudentUser>[] = [
   {
     accessorKey: 'id',
     header: 'id'
@@ -15,16 +19,16 @@ export const userDataTableColumns: ColumnDef<User>[] = [
     header: '',
     id: 'profilePictureUrl',
     cell: ({ row }) => {
-      return renderComponent(UserDataTableProfilePicture, { user: row.original });
+      return renderComponent(StudentDataTableProfilePicture, { student: row.original });
     },
   },
   {
-    accessorKey: 'firstName',
-    header: 'first name'
+    accessorKey: 'studentId',
+    header: 'student id'
   },
   {
-    accessorKey: 'lastName',
-    header: 'last name'
+    accessorKey: 'programId',
+    header: 'program id'
   },
   {
     accessorKey: 'username',
@@ -33,14 +37,6 @@ export const userDataTableColumns: ColumnDef<User>[] = [
   {
     accessorKey: 'email',
     header: 'email'
-  },
-  {
-    accessorKey: 'type',
-    header: 'type'
-  },
-  {
-    accessorKey: 'role',
-    header: 'role',
   },
   {
     accessorKey: 'createdAt',
@@ -76,7 +72,7 @@ export const userDataTableColumns: ColumnDef<User>[] = [
     id: 'actions',
     cell: ({ row }) => {
       // You can pass whatever you need from `row.original` to the component
-      return renderComponent(UserDataTableAction, { user: row.original });
+      return renderComponent(StudentDataTableAction, { student: row.original });
     },
   },
 ];

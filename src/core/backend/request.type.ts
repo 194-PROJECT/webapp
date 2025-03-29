@@ -11,9 +11,13 @@ export type GetManyQuery = {
   offset?: number;
   page?: number;
   page_size?: number;
+  /**
+   * we'll support filtering by a single field for now. Support for multiple fields will be added later.
+   * we need to create field[], operator[], and value[] arrays to support multiple fields.
+   */
   field?: string;
   operator?: Operator;
-  value?: any;
+  value?: string | number | string[] | number[];
 };
 
 export type DeleteQuery = {
@@ -34,7 +38,9 @@ export enum Operator {
   LIKE = 'LIKE',
   NOT_LIKE = 'NOT LIKE',
   IS_NULL = 'IS NULL',
-  IS_NOT_NULL = 'IS NOT NULL'
+  IS_NOT_NULL = 'IS NOT NULL',
+  IN = 'IN',
+  NOT_IN = 'NOT IN',
 };
 
 export enum RequestType {
@@ -51,23 +57,23 @@ interface Request {
 }
 
 interface FetchRequest<T> extends Request {
-	parameters: T | Query;
+	parameters: T;
 }
 
 interface PushRequest<T> extends Request {
-	body: T | Query;
+	body: T;
 }
 
 interface SetRequest<T> extends Request {
-	body: T | Query;
+	body: T;
 }
 
 interface UpdateRequest<T> extends Request {
-	body: T | Query;
+	body: T;
 }
 
 interface RemoveRequest<T> extends Request {
-	parameters: T | Query;
+	parameters: T;
 }
 
 export type Requests<T> = {

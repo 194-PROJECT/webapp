@@ -1,4 +1,4 @@
-import { type UserAuth, Roles, type Session, type UserContext, type UserContextGetResponse } from '$core/auth/auth.type';
+import { type UserAuth, UserRole, type Session, type UserContext, type UserContextGetResponse } from '$core/auth/auth.type';
 import { ENCRYPTION_KEY, ALGORITHM } from '$env/static/private';
 
 import * as crypto from 'crypto';
@@ -14,6 +14,16 @@ type LoginRequest = {
   email?: string;
   username?: string;
   password: string;
+}
+
+type SignupRequest = {
+  email: string;
+  username: string;
+  password: string;
+  first_name: string;
+  last_name: string;
+  program_id: number;
+  student_id: string;
 }
 
 /**
@@ -56,7 +66,7 @@ export default class AuthService {
 			}
 		};
 
-		const response = await HttpClient.request<UserContextGetResponse>(
+		const response = await HttpClient.request<LoginRequest, UserContextGetResponse>(
 			request,
 			RequestType.PUSH,
 			cookies,
@@ -94,12 +104,14 @@ export default class AuthService {
 		password: string,
 		firstName: string,
 		lastName: string,
+    programId: number,
+    studentId: string,
     cookies: Cookies,
     locals: App.Locals
-	): Promise<UserContext> {
+	): Promise<Response<UserContextGetResponse> | void> {
     const encryptedPassword = AuthService.encrypt(password);
 
-    const request: Requests<LoginRequest>[RequestType.PUSH] = {
+    const request: Requests<SignupRequest>[RequestType.PUSH] = {
       route: '/signup',
       headers: new Headers(),
       body: {
@@ -107,11 +119,13 @@ export default class AuthService {
         username: username,
         password: encryptedPassword,
         first_name: firstName,
-        last_name: lastName
+        last_name: lastName,
+        program_id: programId,
+        student_id: studentId,
       }
     };
 
-    const response = await HttpClient.request<UserContext>(
+    const response = await HttpClient.request<SignupRequest, UserContextGetResponse>(
 			request,
 			RequestType.PUSH,
 			cookies,
@@ -120,7 +134,7 @@ export default class AuthService {
 
     if (!response) throw new Error('Invalid response');
 
-    return response.data;
+    return Promise.resolve(response);
 	}
 
 	/**

@@ -6,6 +6,6 @@
   const { form, users, rowCount } = $derived(data);
 </script>
 
-<div class="mx-auto h-auto w-full max-w-6xl rounded-xl bg-muted/50">
+<div class="">
   <DataTable data={users ?? []} columns={userDataTableColumns} form={form} rowCount={rowCount}/>
 </div>

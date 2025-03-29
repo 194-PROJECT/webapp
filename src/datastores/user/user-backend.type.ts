@@ -1,4 +1,4 @@
-export interface UserGetResponseData {
+export interface UserGetResponse {
   id: number;
   email: string;
   username: string;

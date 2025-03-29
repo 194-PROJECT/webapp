@@ -12,3 +12,7 @@ export const getModelSchema = validation.object({
   limit: validation.string().regex(/^\d+$/).default('10'),
   offset: validation.string().regex(/^\d+$/).default('0'),
 });
+
+export const deleteModelSchema = validation.object({
+  id: validation.coerce.number().int().positive(),
+});

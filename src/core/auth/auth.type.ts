@@ -1,4 +1,4 @@
-import type { UserGetResponseData } from "$datastores/user/user-backend.type";
+import type { UserGetResponse } from "$datastores/user/user-backend.type";
 import type { User } from "$datastores/user/user.type";
 import type { SessionGetResponseData } from "./auth-backend.type";
 
@@ -21,7 +21,7 @@ export enum UserType {
   GUEST = "guest",
 }
 
-export enum Roles {
+export enum UserRole {
   ADMIN = "admin",
   USER = "user",
   GUEST = "guest",
@@ -65,6 +65,12 @@ export type UserContext = {
 };
 
 export type UserContextGetResponse = {
-  user: UserGetResponseData;
+  user: UserGetResponse;
   session: SessionGetResponseData;
+};
+
+export const defaultRedirect: Record<UserRole, string> = {
+  [UserRole.ADMIN]: '/admin',
+  [UserRole.USER]: '/',
+  [UserRole.GUEST]: '/',
 };

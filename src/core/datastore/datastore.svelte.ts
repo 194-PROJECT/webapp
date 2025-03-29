@@ -12,33 +12,75 @@ export class Datastore<T> {
   public async get(query: Partial<GetManyQuery>): Promise<Collection<T>>;
   public async get(param: number | Partial<GetManyQuery>): Promise<Document<T> | Collection<T>> {
     if (typeof param === 'number') {
-      const response = await this.backend.fetch(param).then((response) => response);
-      return new Document<T>(response.data);
+      if (!this.backend.fetch) {
+        throw new Error("Fetch method not implemented");
+      }
+
+      const response = await this.backend.fetch(param);
+      return new Document<T>({
+        value: response.data,
+        response: response,
+      });
     } else {
+      if (!this.backend.fetch_many) {
+        throw new Error("Fetch many method not implemented");
+      }
+
       const response = await this.backend.fetch_many(param);
       return new Collection<T>({
         value: response.data,
         page: response.page,
-        totalRows: response.total_rows
+        totalRows: response.total_rows,
+        response: response,
       });
     }
   }
 
-  public async push(item: T): Promise<Document<T>> {
+  public async push(item: Partial<Omit<T, 'id'>>): Promise<Document<Partial<Omit<T, 'id'>>>> {
+    if (!this.backend.push) {
+      throw new Error("Push method not implemented");
+    }
+
     const response = await this.backend.push(item);
-    return new Document<T>(response.data);
+    return new Document<Partial<Omit<T, 'id'>>>({
+      value: response.data,
+      response: response,
+    });
   }
 
   public async update(id: number, item: Partial<T>): Promise<Document<T>> {
+    if (!this.backend.update) {
+      throw new Error("Update method not implemented");
+    }
+
     const response = await this.backend.update(id, item);
-    return new Document<T>(response.data);
+    return new Document<T>({
+      value: response.data,
+      response: response,
+    });
   }
 
-  public remove(id: number): void {
-    this.backend.remove(id);
+  public async remove(id: number): Promise<Document<undefined>> {
+    if (!this.backend.remove) {
+      throw new Error("Remove method not implemented");
+    }
+
+    const response = await this.backend.remove(id);
+    return new Document<undefined>({
+      value: response.data,
+      response: response,
+    });
   }
 
-  public removeMany(ids: number[]): void {
-    this.backend.remove_many(ids);
+  public async removeMany(ids: number[]): Promise<Document<undefined>> {
+    if (!this.backend.remove_many) {
+      throw new Error("Remove many method not implemented");
+    }
+
+    const response = await this.backend.remove_many(ids);
+    return new Document<undefined>({
+      value: response.data,
+      response: response,
+    });
   }
 }

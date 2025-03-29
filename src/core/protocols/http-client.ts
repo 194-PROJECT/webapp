@@ -1,25 +1,24 @@
 import type { Response } from '$core/backend/response.type';
 import { RequestType } from '$core/backend/request.type';
 import type { Query, Requests } from '$core/backend/request.type';
-import type { RequestContentType, ResponseContentType } from '$core/backend/content.type';
 import type { HttpHeader } from '$core/backend/header.type';
 
 import type { Cookies } from '@sveltejs/kit';
 
 import { HTTP_PROTOCOL, API_URL, API_PORT } from '$env/static/private';
-import { toast } from 'svelte-sonner';
+import { transformCamelKeysToSnakeCase } from '$lib/utils';
 
 const API_BASE_URL = `${HTTP_PROTOCOL}://${API_URL}:${API_PORT}`;
 
 export class HttpClient {
-	public static async request<T>(
-		request: Requests<T>[RequestType],
+	public static async request<RQ extends Query, RP>(
+		request: Requests<RQ>[RequestType],
 		type: RequestType,
     cookies?: Cookies,
     locals?: App.Locals,
 		header: Partial<HttpHeader> = {},
 		credentials: RequestCredentials = 'include',
-	): Promise<Response<T>> {
+	): Promise<Response<RP>> {
 		let headers = HttpClient._header(header, cookies, locals);
 		let route = request.route;
 		let init: RequestInit = {
@@ -29,12 +28,22 @@ export class HttpClient {
 			credentials
 		};
 
-		if ('parameters' in request) {
-      const isQuery = request.parameters instanceof Object;
-      const params = isQuery ? request.parameters as Query : undefined;
-      route = `${route}?${new URLSearchParams(params).toString()}`;
-		} else if ('body' in request) {
+    /**
+     * If the request has a body, we need to transform the keys from camelCase to snake_case
+     * This is because the backend expects snake_case keys in the request body and we want to
+     * keep the frontend code in camelCase for consistency
+     */
+    if ('body' in request) {
+      request.body = transformCamelKeysToSnakeCase<RQ>(request.body);
 			init.body = JSON.stringify(request.body);
+    }
+
+    /**
+     * If the request has parameters, we need to add them to the URL as query parameters
+     */
+		if ('parameters' in request) {
+      const params = request.parameters as Query;
+      route = `${route}?${HttpClient._getSearchParams(params)}`;
 		}
 
 		switch (type) {
@@ -58,7 +67,8 @@ export class HttpClient {
 		}
 
     const response = await fetch(`${API_BASE_URL}${route}`, init);
-    const data: Response<T> = await response.json();
+    const data: Response<RP> = await response.json();
+    data.status = response.status;
 
     if (!response.ok) {
       console.error(`${response.status} ${response.statusText}: ${data.message}`);
@@ -95,4 +105,18 @@ export class HttpClient {
 
 		return headers;
 	}
+
+  private static _getSearchParams(params: Query): string {
+    const searchParams = new URLSearchParams();
+
+    for (const key in params) {
+      if (Array.isArray(params[key])) {
+        params[key].forEach(val => searchParams.append(key, val));
+      } else {
+        searchParams.set(key, params[key]);
+      }
+    }
+
+    return searchParams.toString();
+  }
 }
