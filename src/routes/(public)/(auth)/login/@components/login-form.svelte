@@ -4,7 +4,7 @@
 	import { Label } from '$components/elements/label/index.js';
 	import { setContext } from 'svelte';
 
-	import type { PageProps } from './$types';
+	import type { PageProps } from '../$types';
 	import { superForm } from 'sveltekit-superforms';
 	import { goto } from '$app/navigation';
 

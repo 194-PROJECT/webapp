@@ -74,3 +74,12 @@ export const defaultRedirect: Record<UserRole, string> = {
   [UserRole.USER]: '/',
   [UserRole.GUEST]: '/',
 };
+
+export const userTypeToRoleMap: Record<UserType, UserRole> = {
+  [UserType.MANAGEMENT]: UserRole.ADMIN,
+  [UserType.FACULTY]: UserRole.ADMIN,
+  [UserType.STAFF]: UserRole.ADMIN,
+  [UserType.GUEST]: UserRole.GUEST,
+  [UserType.STUDENT]: UserRole.USER,
+  [UserType.ALUMNI]: UserRole.USER,
+};

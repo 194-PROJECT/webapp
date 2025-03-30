@@ -25,8 +25,10 @@
   } as Partial<Student>;
 
   let student = $state(structuredClone(initialStudent));
+  let formLoading = $state(false);
 
   const submitCreateStudent: SubmitFunction = () => {
+    formLoading = true;
     return async ({ result, update }) => {
       if (result.type === 'success') {
         toast.success('Student created successfully');
@@ -49,6 +51,8 @@
           toast.error('An unexpected error occurred.');
         }
       }
+
+      formLoading = false;
     }
   }
 </script>
@@ -80,7 +84,7 @@
       </div>
 
       <Dialog.Footer>
-        <Button type="submit">Create student</Button>
+        <Button type="submit" disabled={formLoading}>Create student</Button>
       </Dialog.Footer>
     </form>
   </Dialog.Content>

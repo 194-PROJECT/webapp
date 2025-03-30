@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { deserialize, enhance } from '$app/forms';
+	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { Button } from '$components/elements/button/index.js';
 	import * as Dialog from '$components/elements/dialog/index.js';
 	import { Input } from '$components/elements/input/index.js';
 	import { Label } from '$components/elements/label/index.js';
 	import * as Select from '$components/elements/select';
-	import { UserRole, UserType } from '$core/auth/auth.type';
+	import { UserRole, UserType, userTypeToRoleMap } from '$core/auth/auth.type';
 	import type { User } from '$datastores/user/user.type';
-	import type { ActionResult, SubmitFunction } from '@sveltejs/kit';
+	import type { SubmitFunction } from '@sveltejs/kit';
 	import { toast } from 'svelte-sonner';
 
 	let {
@@ -20,8 +20,14 @@
 	} = $props();
 
   let updatedUser = $state(structuredClone(user));
+  let formLoading = $state(false);
+
+  $effect(() => {
+    updatedUser.role = userTypeToRoleMap[updatedUser.type];
+  });
 
   const submitUpdateUser: SubmitFunction = () => {
+    formLoading = true;
     return async ({ result }) => {
       if (result.type === 'success') {
         toast.success('User updated successfully');
@@ -45,6 +51,8 @@
           toast.error('An unexpected error occurred.');
         }
       }
+
+      formLoading = false;
     }
   }
 </script>
@@ -88,7 +96,7 @@
             <Select.Content>
               <Select.Group>
                 {#each Object.values(UserType) as type}
-                  <Select.Item value={String(type)} label={type} />
+                  <Select.Item value={String(type)} label={type} disabled={type === UserType.STUDENT} />
                 {/each}
               </Select.Group>
             </Select.Content>
@@ -96,7 +104,7 @@
 
           <div class="col-span-2 flex">
             <Label for="role" class="mr-4 self-center">Role</Label>
-            <Select.Root type="single" name="role" bind:value={updatedUser.role}>
+            <Select.Root type="single" name="role" bind:value={updatedUser.role} disabled>
               <Select.Trigger>{updatedUser.role}</Select.Trigger>
               <Select.Content>
                 <Select.Group>
@@ -116,7 +124,7 @@
       </div>
 
       <Dialog.Footer>
-        <Button type="submit">Save changes</Button>
+        <Button type="submit" disabled={formLoading}>Save changes</Button>
       </Dialog.Footer>
     </form>
   </Dialog.Content>

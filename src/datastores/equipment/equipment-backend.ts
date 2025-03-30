@@ -11,7 +11,7 @@ import { HttpClient } from '$core/protocols/http-client';
 import type { Equipment } from './equipment.type';
 import type { Response } from '$core/backend/response.type';
 import type { EquipmentGetResponse } from './equipment-backend.type';
-import { EquipmentTransformer } from './equipment.transformer';
+import { EquipmentTransformer } from './equipment-transformer';
 
 export class EquipmentBackend implements Backend<Equipment> {
 	public async fetch(id: number): Promise<Response<Equipment>> {
@@ -21,8 +21,8 @@ export class EquipmentBackend implements Backend<Equipment> {
 			parameters: { id }
 		};
 
-    let response = await HttpClient.request<GetQuery, EquipmentGetResponse>(request, RequestType.FETCH);
-    return Promise.resolve(EquipmentTransformer.transformGetResponse(response));
+		let response = await HttpClient.request<GetQuery, EquipmentGetResponse>(request, RequestType.FETCH);
+		return Promise.resolve(EquipmentTransformer.transformGetResponse(response));
 	}
 
 	public async fetch_many(query: GetManyQuery): Promise<Response<Equipment[]>> {
@@ -32,8 +32,8 @@ export class EquipmentBackend implements Backend<Equipment> {
 			parameters: query
 		};
 
-    let response = await HttpClient.request<GetManyQuery, EquipmentGetResponse[]>(request, RequestType.FETCH);
-    return Promise.resolve(EquipmentTransformer.transformGetManyResponse(response));
+		let response = await HttpClient.request<GetManyQuery, EquipmentGetResponse[]>(request, RequestType.FETCH);
+		return Promise.resolve(EquipmentTransformer.transformGetManyResponse(response));
 	}
 
 	public async push(item: Equipment): Promise<Response<Equipment>> {
@@ -43,8 +43,8 @@ export class EquipmentBackend implements Backend<Equipment> {
 			body: item
 		};
 
-    let response = await HttpClient.request<Equipment, EquipmentGetResponse>(request, RequestType.PUSH);
-    return Promise.resolve(EquipmentTransformer.transformGetResponse(response));
+		let response = await HttpClient.request<Equipment, EquipmentGetResponse>(request, RequestType.PUSH);
+		return Promise.resolve(EquipmentTransformer.transformGetResponse(response));
 	}
 
 	public async update(id: number, item: Partial<Equipment>): Promise<Response<Equipment>> {
@@ -54,8 +54,8 @@ export class EquipmentBackend implements Backend<Equipment> {
 			body: item
 		};
 
-    let response = await HttpClient.request<Partial<Equipment>, EquipmentGetResponse>(request, RequestType.UPDATE);
-    return Promise.resolve(EquipmentTransformer.transformGetResponse(response));
+		let response = await HttpClient.request<Partial<Equipment>, EquipmentGetResponse>(request, RequestType.UPDATE);
+		return Promise.resolve(EquipmentTransformer.transformGetResponse(response));
 	}
 
 	public async remove(id: number): Promise<Response<any>> {

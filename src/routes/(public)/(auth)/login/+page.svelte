@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import * as Card from '$components/elements/card/index.js';
-  import LoginForm from './login-form.svelte';
+  import LoginForm from './@components/login-form.svelte';
 
 import type { PageProps } from './$types';
 import { toast } from 'svelte-sonner';

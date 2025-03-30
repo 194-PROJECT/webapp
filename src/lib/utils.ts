@@ -28,3 +28,7 @@ export function transformCamelKeysToParagraph<T extends Record<string, any>>(obj
     return acc;
   }, {} as Record<string, any>) as T;
 }
+
+export function getDateInput(date: Date): string {
+  return date.toISOString().split("T")[0];
+}

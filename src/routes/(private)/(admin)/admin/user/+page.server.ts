@@ -21,6 +21,7 @@ const userCreateSchema = validation.object({
 
 const userUpdateSchema = validation.object({
   id: validation.number(),
+  email: validation.string().email(),
   username: validation.string().min(3).max(20),
   firstName: validation.string().min(2).max(30),
   lastName: validation.string().min(2).max(30),

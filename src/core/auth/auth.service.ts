@@ -98,8 +98,18 @@ export default class AuthService {
 	 * @param lastName - The last name of the user.
 	 * @returns A promise that resolves to the newly created user.
 	 */
-	public static async signup(
-		email: string,
+	public static async signup({
+    email,
+    username,
+    password,
+    firstName,
+    lastName,
+    programId,
+    studentId,
+    cookies,
+    locals,
+  }: {
+    email: string,
 		username: string,
 		password: string,
 		firstName: string,
@@ -108,7 +118,7 @@ export default class AuthService {
     studentId: string,
     cookies: Cookies,
     locals: App.Locals
-	): Promise<Response<UserContextGetResponse> | void> {
+  }): Promise<Response<UserContextGetResponse> | void> {
     const encryptedPassword = AuthService.encrypt(password);
 
     const request: Requests<SignupRequest>[RequestType.PUSH] = {

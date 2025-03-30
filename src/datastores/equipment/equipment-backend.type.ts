@@ -1,10 +1,10 @@
 export interface EquipmentGetResponse {
-  id?: number;
+  id: number;
   name: string;
   description?: string;
   category?: string;
-  purchase_date: Date;
+  purchase_date: string;
   price: number;
-  created_at?: Date;
-  updated_at?: Date;
+  created_at: string;
+  updated_at: string;
 }

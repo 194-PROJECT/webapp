@@ -1,6 +1,6 @@
-import type { Response } from "$core/backend/response.type";
 import type { EquipmentGetResponse } from "./equipment-backend.type";
 import type { Equipment } from "./equipment.type";
+import type { Response } from "$core/backend/response.type";
 
 export class EquipmentTransformer {
   static transform(data: EquipmentGetResponse): Equipment {
@@ -9,10 +9,10 @@ export class EquipmentTransformer {
       name: data.name,
       description: data.description,
       category: data.category,
-      purchaseDate: data.purchase_date,
+      purchaseDate: new Date(data.purchase_date),
       price: data.price,
-      createdAt: data.created_at,
-      updatedAt: data.updated_at,
+      createdAt: new Date(data.created_at),
+      updatedAt: new Date(data.updated_at),
     };
   }
 

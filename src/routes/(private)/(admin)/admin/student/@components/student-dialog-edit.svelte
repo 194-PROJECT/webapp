@@ -18,8 +18,11 @@
 	} = $props();
 
   let updatedStudent = $derived(structuredClone(student));
+  let formLoading = $state(false);
 
   const submitUpdateStudent: SubmitFunction = () => {
+    formLoading = true;
+
     return async ({ result }) => {
       if (result.type === 'success') {
         toast.success('Student updated successfully');
@@ -42,6 +45,8 @@
           toast.error('An unexpected error occurred.');
         }
       }
+
+      formLoading = false;
     }
   }
 </script>
@@ -70,7 +75,7 @@
       </div>
 
       <Dialog.Footer>
-        <Button type="submit">Save changes</Button>
+        <Button type="submit" disabled={formLoading}>Save changes</Button>
       </Dialog.Footer>
     </form>
   </Dialog.Content>

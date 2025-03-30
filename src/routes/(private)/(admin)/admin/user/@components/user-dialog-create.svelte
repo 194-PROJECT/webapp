@@ -6,7 +6,7 @@
 	import { Input } from '$components/elements/input/index.js';
 	import { Label } from '$components/elements/label/index.js';
 	import * as Select from '$components/elements/select';
-	import { UserRole, UserType } from '$core/auth/auth.type';
+	import { UserRole, UserType, userTypeToRoleMap } from '$core/auth/auth.type';
 	import type { User } from '$datastores/user/user.type';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { toast } from 'svelte-sonner';
@@ -23,14 +23,22 @@
     firstName: '',
     lastName: '',
     password: '',
-    type: undefined,
-    role: undefined,
-  } as Partial<User>;
+    type: UserType.GUEST,
+    role: UserRole.GUEST,
+  } as Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>;
 
   let user = $state(structuredClone(initialUser));
+  let formLoading = $state(false);
+
+  $effect(() => {
+    user.role = userTypeToRoleMap[user.type];
+  });
 
   const submitCreateUser: SubmitFunction = () => {
+    formLoading = true;
     return async ({ result, update }) => {
+      await update();
+
       if (result.type === 'success') {
         toast.success('User created successfully');
         goto(location.href, {
@@ -52,6 +60,8 @@
           toast.error('An unexpected error occurred.');
         }
       }
+
+      formLoading = false;
     }
   }
 </script>
@@ -66,8 +76,6 @@
     </Dialog.Header>
     <form method="POST" action="?/createUser" use:enhance={submitCreateUser}>
       <div class="grid gap-4 py-4">
-        <Input id="id" name="id" value={user.id} class="hidden" />
-
         <div class="grid grid-cols-4 items-center gap-4">
           <Label for="firstName" class="text-right">First name</Label>
           <Input id="firstName" name="firstName" value={user.firstName} class="col-span-3" />
@@ -95,7 +103,7 @@
             <Select.Content>
               <Select.Group>
                 {#each Object.values(UserType) as type}
-                  <Select.Item value={String(type)} label={type} />
+                  <Select.Item value={String(type)} label={type} disabled={type === UserType.STUDENT} />
                 {/each}
               </Select.Group>
             </Select.Content>
@@ -103,7 +111,7 @@
 
           <div class="col-span-2 flex">
             <Label for="role" class="mr-4 self-center">Role</Label>
-            <Select.Root type="single" name="role" bind:value={user.role}>
+            <Select.Root type="single" name="role" bind:value={user.role} disabled>
               <Select.Trigger>{user.role}</Select.Trigger>
               <Select.Content>
                 <Select.Group>
@@ -123,7 +131,7 @@
       </div>
 
       <Dialog.Footer>
-        <Button type="submit">Create user</Button>
+        <Button type="submit" disabled={formLoading}>Create user</Button>
       </Dialog.Footer>
     </form>
   </Dialog.Content>

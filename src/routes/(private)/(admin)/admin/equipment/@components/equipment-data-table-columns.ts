@@ -1,57 +1,79 @@
-import type { ColumnDef } from "@tanstack/table-core";
+import { renderComponent, renderSnippet } from "$components/elements/data-table";
 import type { Equipment } from "$datastores/equipment/equipment.type";
+import type { ColumnDef } from "@tanstack/table-core";
+import { createRawSnippet } from "svelte";
 import EquipmentDataTableAction from "./equipment-data-table-action.svelte";
 
-export const equipmentColumns: ColumnDef<Equipment>[] = [
+export const equipmentDataTableColumns: ColumnDef<Equipment>[] = [
   {
-    accessorKey: "id",
-    header: "ID",
+    accessorKey: 'id',
+    header: 'ID'
   },
   {
-    accessorKey: "name",
-    header: "Name",
+    accessorKey: 'name',
+    header: 'Name'
   },
   {
-    accessorKey: "description",
-    header: "Description",
+    accessorKey: 'description',
+    header: 'Description'
+  },
+  {
+    accessorKey: 'category',
+    header: 'Category'
+  },
+  {
+    accessorKey: 'purchaseDate',
+    header: 'Purchase Date',
     cell: ({ row }) => {
-      const description = row.original.description;
-      return description || "N/A";
+      const formatter = (date: Date) => date.toDateString();
+      const purchaseDateCellSnippet = createRawSnippet<[string]>((getPurchaseDate) => {
+        const purchaseDate = getPurchaseDate();
+        return {
+          render: () => `<span>${purchaseDate}</span>`
+        };
+      });
+
+      return renderSnippet(purchaseDateCellSnippet, formatter(row.getValue('purchaseDate')));
     }
   },
   {
-    accessorKey: "category",
-    header: "Category",
+    accessorKey: 'price',
+    header: 'Price',
+  },
+  {
+    accessorKey: 'createdAt',
+    header: 'Created At',
     cell: ({ row }) => {
-      const category = row.original.category;
-      return category || "N/A";
+      const formatter = (date: Date) => date.toDateString();
+      const createdAtCellSnippet = createRawSnippet<[string]>((getCreatedAt) => {
+        const createdAt = getCreatedAt();
+        return {
+          render: () => `<span>${createdAt}</span>`
+        };
+      });
+
+      return renderSnippet(createdAtCellSnippet, formatter(row.getValue('createdAt')));
     }
   },
   {
-    accessorKey: "purchaseDate",
-    header: "Purchase Date",
+    accessorKey: 'updatedAt',
+    header: 'Updated At',
     cell: ({ row }) => {
-      const purchaseDate = row.original.purchaseDate;
-      return purchaseDate instanceof Date
-        ? purchaseDate.toLocaleDateString()
-        : new Date(purchaseDate).toLocaleDateString();
+      const formatter = (date: string) => new Date(date).toDateString();
+      const updatedAtCellSnippet = createRawSnippet<[string]>((getUpdatedAt) => {
+        const updatedAt = getUpdatedAt();
+        return {
+          render: () => `<span>${updatedAt}</span>`
+        };
+      });
+
+      return renderSnippet(updatedAtCellSnippet, formatter(row.getValue('updatedAt')));
     }
   },
   {
-    accessorKey: "price",
-    header: "Price",
+    id: 'actions',
     cell: ({ row }) => {
-      return `$${row.original.price.toFixed(2)}`;
+      return renderComponent(EquipmentDataTableAction, { equipment: row.original });
     }
-  },
-  {
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => ({
-      component: EquipmentDataTableAction,
-      props: {
-        row: row.original,
-      },
-    }),
-  },
+  }
 ];
