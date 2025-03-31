@@ -18,6 +18,11 @@ export type GetManyQuery = {
   field?: string;
   operator?: Operator;
   value?: string | number | string[] | number[];
+  /**
+   * query parameter ids is used to fetch multiple records by their ids.
+   * this is a special case and should be handled separately in the backend.
+   */
+  ids?: number[];
 };
 
 export type DeleteQuery = {

@@ -12,6 +12,7 @@ const equipmentCreateSchema = validation.object({
   description: validation.string().max(255).optional(),
   category: validation.string().max(50).optional(),
   quantity: validation.number().positive(),
+  purchasedBy: validation.string().max(50).optional(),
   purchaseDate: validation.date(),
   price: validation.number().positive(),
 });
@@ -22,6 +23,7 @@ const equipmentUpdateSchema = validation.object({
   description: validation.string().max(255).optional(),
   category: validation.string().max(50).optional(),
   quantity: validation.number().positive(),
+  purchasedBy: validation.string().max(50).optional(),
   purchaseDate: validation.date(),
   price: validation.number().positive(),
 });

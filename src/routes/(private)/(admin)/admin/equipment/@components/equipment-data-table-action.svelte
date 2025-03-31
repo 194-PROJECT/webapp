@@ -40,6 +40,10 @@
   function toggleEditDialog() {
     isEditDialogOpen = true;
   }
+
+  function viewEquipment() {
+    goto(`/admin/equipment/${equipment.id}`);
+  }
 </script>
 
 <DropdownMenu.Root>
@@ -61,7 +65,7 @@
       <DropdownMenu.GroupHeading>Actions</DropdownMenu.GroupHeading>
     </DropdownMenu.Group>
     <DropdownMenu.Separator />
-    <DropdownMenu.Item>Edit images</DropdownMenu.Item>
+    <DropdownMenu.Item onclick={viewEquipment}>View Equipment</DropdownMenu.Item>
     <DropdownMenu.Item onclick={toggleEditDialog}>Edit equipment</DropdownMenu.Item>
     <DropdownMenu.Item onclick={deleteEquipment}>Delete equipment</DropdownMenu.Item>
   </DropdownMenu.Content>

@@ -24,6 +24,8 @@
 		name: '',
 		description: '',
 		category: '',
+    quantity: 0,
+    purchasedBy: '',
 		purchaseDate: new Date(),
 		price: 0,
 	} as Omit<Equipment, 'id' | 'createdAt' | 'updatedAt'>;
@@ -92,6 +94,16 @@
 				<div class="grid grid-cols-4 items-center gap-4">
 					<Label for="category" class="text-right">Category</Label>
 					<Input id="category" name="category" value={equipment.category} class="col-span-3" />
+				</div>
+
+        <div class="grid grid-cols-4 items-center gap-4">
+					<Label for="quantity" class="text-right">Quantity</Label>
+					<Input id="quantity" name="quantity" type="number" value={equipment.quantity} class="col-span-3" />
+				</div>
+
+        <div class="grid grid-cols-4 items-center gap-4">
+					<Label for="purchasedBy" class="text-right">Purchased By</Label>
+					<Input id="purchasedBy" name="purchasedBy" value={equipment.purchasedBy} class="col-span-3" />
 				</div>
 
 				<div class="grid grid-cols-4 items-center gap-4">

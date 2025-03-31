@@ -41,6 +41,10 @@ export const equipmentDataTableColumns: ColumnDef<Equipment>[] = [
     }
   },
   {
+    accessorKey: 'purchasedBy',
+    header: 'Purchased By',
+  },
+  {
     accessorKey: 'price',
     header: 'Price',
   },

@@ -1,7 +1,7 @@
 import type { UserRole, UserType } from "$core/auth/auth.type";
 
 export interface User {
-  id: number;
+  id?: number;
   email: string;
   username: string;
   firstName: string;
@@ -10,6 +10,6 @@ export interface User {
   type: UserType;
   role: UserRole;
   profilePictureUrl?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

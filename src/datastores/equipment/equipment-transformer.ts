@@ -11,6 +11,7 @@ export class EquipmentTransformer {
       category: data.category,
       quantity: data.quantity,
       purchaseDate: new Date(data.purchase_date),
+      purchasedBy: data.purchased_by,
       price: data.price,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),

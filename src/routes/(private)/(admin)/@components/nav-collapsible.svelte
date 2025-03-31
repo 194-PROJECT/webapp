@@ -80,25 +80,20 @@
 			title: 'Resource Management',
 			items: [
 				{
-					title: 'Assets',
-					url: '/admin/asset',
-					icon: CircleUser
-				},
-				{
 					title: 'Equipment',
 					url: '/admin/equipment',
-					icon: BookOpenCheck
-				},
-				{
-					title: 'Room',
-					url: '/admin/room',
 					icon: BookOpenCheck
 				},
 				{
 					title: 'Maintenance',
 					url: '/admin/maintenance',
 					icon: BookOpenCheck
-				}
+				},
+				{
+					title: 'Mishandles',
+					url: '/admin/mishandle',
+					icon: BookOpenCheck
+				},
 			]
 		},
 	];
@@ -113,11 +108,6 @@
     {
       title: 'Reports',
       items: [
-        {
-          title: 'Asset Reports',
-          url: '/admin/asset/report',
-          icon: GraduationCap
-        },
         {
           title: 'Equipment Reports',
           url: '/admin/equipment/report',
