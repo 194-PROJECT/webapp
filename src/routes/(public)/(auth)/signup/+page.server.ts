@@ -92,9 +92,6 @@ async function signup(event: RequestEvent) {
     });
   }
 
-  console.log('signupResponse', signupResponse.data);
-  console.log('signupResponse.errors', signupResponse.errors);
-
   const { user: userResponse, session: sessionResponse } = signupResponse.data;
   const user = UserTransformer.transform(userResponse);
   const session = SessionTransformer.transform(sessionResponse);

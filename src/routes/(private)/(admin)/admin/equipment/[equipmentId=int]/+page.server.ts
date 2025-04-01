@@ -5,7 +5,6 @@ import type { PageServerLoad } from "./$types";
 import { EquipmentReservationDatastore } from "$datastores/equipment-reservation/equipment-reservation.svelte";
 import { EquipmentImageDatastore } from "$datastores/equipment-image/equipment-image.svelte";
 import { UserDatastore } from "$datastores/user/user.svelte";
-import { ReservationTransformer } from "$datastores/reservation/reservation-transformer";
 import { Operator } from "$core/backend/request.type";
 
 export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
@@ -25,6 +24,8 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 
   const reservationCollection = await EquipmentReservationDatastore.get({
     ids: [equipmentId],
+    order_by: 'start_date',
+    order_direction: 'DESC',
   });
 
   const equipmentImageCollection = await EquipmentImageDatastore.get({
@@ -32,9 +33,9 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
   });
 
   const userCollection = await UserDatastore.get({
-      field: 'id',
-      operator: Operator.IN,
-      value: reservationCollection.value?.map((reservation) => reservation.userId),
+    field: 'id',
+    operator: Operator.IN,
+    value: reservationCollection.value?.map((reservation) => reservation.userId),
   });
 
   return {

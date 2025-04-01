@@ -223,7 +223,7 @@
 </div>
 
 <div class="flex items-center justify-end space-x-2 py-4">
-	<div class="flex flex-grow flex-row">
+	<div class="flex items-center flex-grow flex-row">
 		{#if pageIndex > pageDivider}
 			<Button variant="outline" size="sm" onclick={() => getPageData(0)}>1</Button>
 		{/if}

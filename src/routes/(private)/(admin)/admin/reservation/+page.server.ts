@@ -127,13 +127,12 @@ async function approveReservation(event: RequestEvent) {
   return {
     success: true,
     form: reservationApproveForm,
-    ...message(reservationApproveForm, 'student update successful')
+    ...message(reservationApproveForm, 'Reservation approved')
   };
 }
 
 async function updateReservation(event: RequestEvent) {
-  const request = await event.request.json();
-  const reservationEditForm = await superValidate(request, zod(editReservationSchema));
+  const reservationEditForm = await superValidate(event, zod(editReservationSchema));
 
   if (!reservationEditForm.valid) {
     return fail(401, {
@@ -159,6 +158,6 @@ async function updateReservation(event: RequestEvent) {
   return {
     success: true,
     form: reservationEditForm,
-    ...message(reservationEditForm, 'student update successful')
+    ...message(reservationEditForm, 'Reservation update successful')
   };
 }

@@ -22,7 +22,7 @@
 		equipment: Equipment;
 	} = $props();
 
-	let updatedEquipment = $state(structuredClone(equipment));
+	let updatedEquipment = $derived(structuredClone(equipment));
 	let formLoading = $state(false);
   let purchaseDate = $state(parseDate(getDateInput(equipment.purchaseDate)));
   let purchaseDateString = $derived(purchaseDate.toString());
@@ -37,7 +37,6 @@
 		return async ({ result }) => {
 			if (result.type === 'success') {
 				toast.success('Equipment updated successfully');
-				updatedEquipment = result.data?.equipment;
 				goto(location.href, {
 					replaceState: true,
 					noScroll: true,

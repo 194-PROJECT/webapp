@@ -1,14 +1,14 @@
 import type { User } from "$datastores/user/user.type";
 
 export interface Reservation {
-  id?: number;
+  id: number;
   userId: number;
   adminId?: number;
   groupId?: number;
   startDate: Date;
   endDate: Date;
-  accepted: boolean;
-  returned: boolean;
+  accepted?: boolean;
+  returned?: boolean;
   reason: string;
   adminNote?: string;
   returnNote?: string;

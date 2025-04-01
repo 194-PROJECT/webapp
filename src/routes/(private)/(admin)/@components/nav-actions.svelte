@@ -12,66 +12,24 @@
 	import Settings2 from "lucide-svelte/icons/settings-2";
 	import Trash from "lucide-svelte/icons/trash";
 	import Trash2 from "lucide-svelte/icons/trash-2";
+  import Sun from "lucide-svelte/icons/sun";
 
 	const data = [
 		[
 			{
-				label: "Customize Page",
-				icon: Settings2,
-			},
-			{
-				label: "Turn into wiki",
-				icon: FileText,
-			},
-		],
-		[
-			{
-				label: "Copy Link",
-				icon: Link,
-			},
-			{
-				label: "Duplicate",
-				icon: Copy,
-			},
-			{
-				label: "Move to",
-				icon: CornerUpRight,
-			},
-			{
-				label: "Move to Trash",
-				icon: Trash2,
-			},
-		],
-		[
-			{
-				label: "Undo",
-				icon: CornerUpLeft,
-			},
-			{
-				label: "View analytics",
-				icon: ChartLine,
-			},
-			{
-				label: "Version History",
-				icon: GalleryVerticalEnd,
-			},
-			{
-				label: "Show delete pages",
-				icon: Trash,
-			},
-			{
-				label: "Notifications",
-				icon: Bell,
-			},
-		],
-		[
-			{
-				label: "Import",
-				icon: ArrowUp,
-			},
-			{
-				label: "Export",
-				icon: ArrowDown,
+				label: "Toggle Theme",
+				icon: Sun,
+        action: () => {
+          const htmlElement = document.querySelector('html');
+          if (htmlElement) {
+            const darkMode = htmlElement.classList.contains('dark');
+            if (darkMode) {
+              htmlElement.classList.remove('dark');
+            } else {
+              htmlElement.classList.add('dark');
+            }
+          }
+        },
 			},
 		],
 	];
@@ -119,7 +77,7 @@
 								<Sidebar.Menu>
 									{#each group as item, index (index)}
 										<Sidebar.MenuItem>
-											<Sidebar.MenuButton>
+											<Sidebar.MenuButton onclick={item.action}>
 												<item.icon /> <span>{item.label}</span>
 											</Sidebar.MenuButton>
 										</Sidebar.MenuItem>

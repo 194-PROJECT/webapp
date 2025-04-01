@@ -42,7 +42,7 @@ export class EquipmentImageBackend implements Backend<EquipmentImage> {
 
 	public async push(item: EquipmentImage): Promise<Response<EquipmentImage>> {
 		const request: Requests<EquipmentImage>[RequestType.PUSH] = {
-			route: '/equipment-image',
+			route: `/equipment/${item.equipmentId}/image`,
 			headers: new Headers(),
 			body: item
 		};
@@ -53,7 +53,7 @@ export class EquipmentImageBackend implements Backend<EquipmentImage> {
 
 	public async update(id: number, item: Partial<EquipmentImage>): Promise<Response<EquipmentImage>> {
 		const request: Requests<Partial<EquipmentImage>>[RequestType.UPDATE] = {
-			route: `/equipment-image/${id}`,
+			route: `/equipment/image/${id}`,
 			headers: new Headers(),
 			body: item
 		};
@@ -64,7 +64,7 @@ export class EquipmentImageBackend implements Backend<EquipmentImage> {
 
 	public async remove(id: number): Promise<Response<any>> {
 		const request: Requests<DeleteQuery>[RequestType.REMOVE] = {
-			route: `/equipment-image/${id}`,
+			route: `/equipment/image/${id}`,
 			headers: new Headers(),
 			parameters: { id }
 		};
@@ -74,7 +74,7 @@ export class EquipmentImageBackend implements Backend<EquipmentImage> {
 
 	public async remove_many(ids: number[]): Promise<Response<undefined>> {
 		const request: Requests<DeleteManyQuery>[RequestType.REMOVE] = {
-			route: `/equipment-image`,
+			route: `/equipment/image`,
 			headers: new Headers(),
 			parameters: { ids: ids }
 		};

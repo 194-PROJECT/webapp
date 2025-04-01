@@ -1,20 +1,24 @@
 <script lang="ts">
-	import * as Card from '$components/elements/card';
+	import Button from '$components/elements/button/button.svelte';
+import * as Card from '$components/elements/card';
 	import * as Carousel from '$components/elements/carousel';
 	import type { CarouselAPI } from '$components/elements/carousel/context.js';
-	import EquipmentReservationTable from './@components/equipment-reservation-data.svelte';
+	import Separator from '$components/elements/separator/separator.svelte';
+	import EquipmentReservationTable from './@components/equipment-reservation-table.svelte';
 
 	let { data } = $props();
 	let { equipment, reservations, images, users } = data;
-
-  console.log('Equipment data:', equipment);
-  console.log('Reservations data:', reservations);
-  console.log('Images data:', images);
 
 	let api = $state<CarouselAPI>();
 
 	const imageCount = $derived(api ? api.scrollSnapList().length : 0);
 	let currentImageIndex = $state(0);
+
+  let latestReservationId = $derived.by(() => {
+    return reservations
+      .slice()
+      .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())[0].id;
+  });
 
 	$effect(() => {
 		if (api) {
@@ -26,18 +30,22 @@
 	});
 </script>
 
-<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">
+<div class="grid gap-4 md:grid-cols-1 lg:grid-cols-4 mb-4">
 	<Card.Root>
 		<Card.Content>
 			<Card.Title class="text-2xl font-bold">{equipment.name}</Card.Title>
-			<p class="text-1xl pb-4">{equipment.category}</p>
+			<p class="text-1xl">{equipment.category}</p>
+      <Separator class="my-4" />
 			<p class="text-muted-foreground">{equipment.description}</p>
+      <Separator class="my-4" />
+      <p class="text-muted-foreground text-right">Equipment no. {equipment.id}</p>
 		</Card.Content>
 	</Card.Root>
 	<Card.Root>
 		<Card.Content>
 			<Card.Title class="text-2xl font-medium">Purchase Details</Card.Title>
-			<p class="text-1xl pb-4">{equipment.purchaseDate.toLocaleString()}</p>
+			<p class="text-1xl">{equipment.purchaseDate.toLocaleString()}</p>
+      <Separator class="my-4" />
 			<div class="grid grid-cols-2">
 				<p class="text-1xl">Purchased by:</p>
 				<p class="text-1xl">{equipment.purchasedBy ?? 'Not assigned'}</p>
@@ -50,19 +58,20 @@
 				<p class="text-1xl">Quantity:</p>
 				<p class="text-1xl">{equipment.quantity}</p>
 			</div>
+      <Separator class="my-4" />
+      <Button variant="link" class="text-sm p-0 h-auto" href={`/admin/reservation/${latestReservationId}`}>View Latest Reservation</Button>
 		</Card.Content>
 	</Card.Root>
-	<Card.Root class="col-span-2">
+	<Card.Root class="md:col-span-1 lg:col-span-2">
 		<Card.Content>
-			<Card.Title class="pb-4 text-2xl font-medium">Images</Card.Title>
-			<div class="px-24">
+			<Card.Title class="pb-8 text-2xl font-medium">Images</Card.Title>
+			<div class="px-12">
 				<Carousel.Root
 					opts={{
 						align: 'center',
             loop: true,
 					}}
 					setApi={(emblaApi) => (api = emblaApi)}
-					class="w-full px-4"
 				>
 					<Carousel.Content class="h-full w-full">
 						{#each images as image, i (i)}

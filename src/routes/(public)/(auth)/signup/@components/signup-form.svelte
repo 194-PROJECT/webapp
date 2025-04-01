@@ -30,8 +30,6 @@
     return async ({ result, update }) => {
       await update();
 
-      console.log(result);
-
       if (result.type === "success") {
         toast.success("Signup successful");
         goto('/');

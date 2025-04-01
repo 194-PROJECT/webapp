@@ -19,7 +19,7 @@
 		user: User;
 	} = $props();
 
-  let updatedUser = $state(structuredClone(user));
+  let updatedUser = $derived(structuredClone(user));
   let formLoading = $state(false);
 
   $effect(() => {
@@ -31,7 +31,6 @@
     return async ({ result }) => {
       if (result.type === 'success') {
         toast.success('User updated successfully');
-        updatedUser = result.data?.user; 
         goto(location.href, {
           replaceState: true,
           noScroll: true,

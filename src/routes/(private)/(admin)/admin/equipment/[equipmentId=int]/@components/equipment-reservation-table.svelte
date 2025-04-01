@@ -19,10 +19,6 @@ import Button from '$components/elements/button/button.svelte';
 		ReservationTransformer.transformReservationUsers(reservations, users)
 	);
 
-  $effect(() => {
-    console.log('Reservations:', reservationUsers);
-  });
-
   const viewReservation = (reservationId?: number) => {
     if (reservationId) {
       goto(`/admin/reservation/${reservationId}`);
@@ -40,6 +36,7 @@ import Button from '$components/elements/button/button.svelte';
 	<Table.Header>
 		<Table.Row>
 			<Table.Head class="text-left">ID</Table.Head>
+			<Table.Head></Table.Head>
 			<Table.Head>Accepted</Table.Head>
 			<Table.Head>Returned</Table.Head>
 			<Table.Head>End Date</Table.Head>
@@ -50,11 +47,13 @@ import Button from '$components/elements/button/button.svelte';
 		{#each reservationUsers as reservation (reservation)}
 			<Table.Row>
 				<Table.Cell class="font-medium">{reservation.id}</Table.Cell>
+				<Table.Cell>
+          {reservation.userId ? `${reservation.firstName} ${reservation.lastName}` : "No user"}
+        </Table.Cell>
 				<Table.Cell>{reservation.accepted}</Table.Cell>
 				<Table.Cell>{reservation.returned}</Table.Cell>
 				<Table.Cell>{reservation.endDate.toLocaleString()}</Table.Cell>
 				<Table.Cell>{reservation.startDate.toLocaleString()}</Table.Cell>
-				<Table.Cell>{reservation.userId ? `${reservation.firstName} ${reservation.lastName}` : "No user"}</Table.Cell>
 				<Table.Cell>
           <Button onclick={() => viewReservation(reservation.id)}>
             <span>View Reservation</span>

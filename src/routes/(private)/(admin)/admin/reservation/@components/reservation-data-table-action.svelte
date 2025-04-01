@@ -4,16 +4,21 @@
   import * as DropdownMenu from "$components/elements/dropdown-menu/index.js";
   import type { ReservationUser } from "$datastores/reservation/reservation.type";
   import ReservationDialogEdit from "./reservation-dialog-edit.svelte";
+	import { goto } from "$app/navigation";
 
   let { reservationUser = $bindable() }: { reservationUser: ReservationUser } = $props();
   let isEditDialogOpen = $state(false);
   let approveDialogOpen = $state(false);
 
-  function toggleEditDialog() {
+  const viewReservation = () => {
+    goto(`/admin/reservation/${reservationUser.id}`);
+  }
+
+  const toggleEditDialog = () => {
     isEditDialogOpen = true;
   }
 
-  function toggleApproveDialog() {
+  const toggleApproveDialog = () => {
     approveDialogOpen = true;
   }
 </script>
@@ -37,6 +42,7 @@
       <DropdownMenu.GroupHeading>Actions</DropdownMenu.GroupHeading>
     </DropdownMenu.Group>
     <DropdownMenu.Separator />
+    <DropdownMenu.Item onclick={viewReservation}>View reservation</DropdownMenu.Item>
     <DropdownMenu.Item onclick={toggleEditDialog}>Edit reservation</DropdownMenu.Item>
     <DropdownMenu.Item onclick={toggleApproveDialog}>Approve reservation</DropdownMenu.Item>
   </DropdownMenu.Content>

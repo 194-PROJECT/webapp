@@ -6,11 +6,12 @@ import { EquipmentDatastore } from '$datastores/equipment/equipment.svelte';
 import type { RequestEvent } from './$types';
 import { deleteModelSchema, getModelSchema } from '$core/helpers/request';
 import { fail } from '@sveltejs/kit';
+import { EquipmentCategory } from '$datastores/equipment/equipment.type';
 
 const equipmentCreateSchema = validation.object({
   name: validation.string().min(2).max(50),
   description: validation.string().max(255).optional(),
-  category: validation.string().max(50).optional(),
+  category: validation.string().max(50),
   quantity: validation.number().positive(),
   purchasedBy: validation.string().max(50).optional(),
   purchaseDate: validation.date(),
@@ -21,7 +22,7 @@ const equipmentUpdateSchema = validation.object({
   id: validation.number(),
   name: validation.string().min(2).max(50),
   description: validation.string().max(255).optional(),
-  category: validation.string().max(50).optional(),
+  category: validation.nativeEnum(EquipmentCategory),
   quantity: validation.number().positive(),
   purchasedBy: validation.string().max(50).optional(),
   purchaseDate: validation.date(),
@@ -141,8 +142,6 @@ async function createEquipment(event: RequestEvent) {
 
 async function updateEquipment(event: RequestEvent) {
   const equipmentUpdateForm = await superValidate(event, zod(equipmentUpdateSchema));
-
-  console.log(equipmentUpdateForm.data);
 
   if (!equipmentUpdateForm.valid) {
     return fail(401, {

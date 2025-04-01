@@ -50,6 +50,14 @@ export const reservationDataTableColumns: ColumnDef<ReservationUser>[] = [
     cell: ({ row }) => (row.getValue('returned') ? 'Yes' : 'No')
   },
   {
+    accessorKey: 'returnDate',
+    header: 'Return Date',
+    cell: ({ row }) => {
+      const formatter = (date: string) => new Date(date).toLocaleString();
+      return formatter(row.getValue('returnDate'));
+    },
+  },
+  {
     accessorKey: 'reason',
     header: 'Reason'
   },

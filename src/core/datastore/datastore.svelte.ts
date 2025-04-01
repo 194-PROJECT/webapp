@@ -8,9 +8,9 @@ export class Datastore<T> {
     private backend: Backend<T>,
   ){}
 
-  public async get(id: number): Promise<Document<T>>;
+  public async get(id?: number): Promise<Document<T>>;
   public async get(query: Partial<GetManyQuery>): Promise<Collection<T>>;
-  public async get(param: number | Partial<GetManyQuery>): Promise<Document<T> | Collection<T>> {
+  public async get(param: number | Partial<GetManyQuery> | undefined): Promise<Document<T> | Collection<T>> {
     if (typeof param === 'number') {
       if (!this.backend.fetch) {
         throw new Error("Fetch method not implemented");
@@ -21,7 +21,9 @@ export class Datastore<T> {
         value: response.data,
         response: response,
       });
-    } else {
+    }
+
+    if(typeof param === 'object') {
       if (!this.backend.fetch_many) {
         throw new Error("Fetch many method not implemented");
       }
@@ -34,6 +36,12 @@ export class Datastore<T> {
         response: response,
       });
     }
+
+    return new Document<T>({
+      value: undefined,
+      response: undefined,
+    });
+
   }
 
   public async push(item: Partial<Omit<T, 'id'>>): Promise<Document<Partial<Omit<T, 'id'>>>> {

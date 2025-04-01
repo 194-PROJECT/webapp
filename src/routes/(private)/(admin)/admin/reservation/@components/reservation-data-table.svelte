@@ -16,7 +16,6 @@
 	import Input from '$components/elements/input/input.svelte';
 	import { toast } from 'svelte-sonner';
 	import type { Reservation } from '$datastores/reservation/reservation.type';
-	import Toggle from '$components/elements/toggle/toggle.svelte';
 
 	type DataTableProps<TData, TValue> = {
 		columns: ColumnDef<TData, TValue>[];
@@ -168,7 +167,7 @@
         bind:value={searchValue}
         onValueChange={(v) => getPageData(pageIndex)}
       >
-        <Select.Trigger class="max-w-xs">
+        <Select.Trigger class="max-w-xs"> 
           {searchValueTriggerContent}
         </Select.Trigger>
         <Select.Content>
@@ -244,7 +243,7 @@
 </div>
 
 <div class="flex items-center justify-end space-x-2 py-4">
-	<div class="flex flex-grow flex-row">
+	<div class="flex items-center flex-grow flex-row">
 		{#if pageIndex > pageDivider}
 			<Button variant="outline" size="sm" onclick={() => getPageData(0)}>1</Button>
 		{/if}

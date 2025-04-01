@@ -12,6 +12,10 @@
   let { equipment = $bindable() }: { equipment: Equipment } = $props();
   let isEditDialogOpen = $state(false);
 
+  $effect(()=>{
+    console.log(equipment);
+  })
+
   async function deleteEquipment() {
     const response = await fetch(`?/deleteEquipment`, {
       method: "POST",
@@ -37,11 +41,11 @@
     }
   };
 
-  function toggleEditDialog() {
+  const toggleEditDialog = () => {
     isEditDialogOpen = true;
   }
 
-  function viewEquipment() {
+  const viewEquipment = () => {
     goto(`/admin/equipment/${equipment.id}`);
   }
 </script>
@@ -71,4 +75,4 @@
   </DropdownMenu.Content>
 </DropdownMenu.Root>
 
-<EquipmentDialogEdit bind:isOpen={isEditDialogOpen} equipment={equipment} />
+<EquipmentDialogEdit bind:isOpen={isEditDialogOpen} bind:equipment={equipment} />
