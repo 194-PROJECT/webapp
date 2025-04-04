@@ -7,7 +7,7 @@ import { getModelSchema } from '$core/helpers/request';
 import { fail } from '@sveltejs/kit';
 import { UserDatastore } from '$datastores/user/user.svelte';
 import { Operator } from '$core/backend/request.type';
-import { ReservationTransformer } from '$datastores/reservation/reservation-transformer';
+import { ReservationTransformer } from '$datastores/reservation/reservation.transformer';
 import { z as validation } from 'zod';
 
 const acceptReservationSchema = validation.object({

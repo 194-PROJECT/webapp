@@ -3,7 +3,7 @@
 	import { Header } from '$components/elements/alert-dialog';
 import Button from '$components/elements/button/button.svelte';
 	import * as Table from '$components/elements/table';
-	import { ReservationTransformer } from '$datastores/reservation/reservation-transformer';
+	import { ReservationTransformer } from '$datastores/reservation/reservation.transformer';
 	import type { Reservation } from '$datastores/reservation/reservation.type';
 	import type { User } from '$datastores/user/user.type';
 

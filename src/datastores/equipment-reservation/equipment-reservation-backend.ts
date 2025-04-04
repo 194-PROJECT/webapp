@@ -9,7 +9,7 @@ import { HttpClient } from '$core/protocols/http-client';
 import type { Response } from '$core/backend/response.type';
 import type { Reservation } from '$datastores/reservation/reservation.type';
 import type { ReservationGetResponse } from '$datastores/reservation/reservation-backend.type';
-import { ReservationTransformer } from '$datastores/reservation/reservation-transformer';
+import { ReservationTransformer } from '$datastores/reservation/reservation.transformer';
 
 export class EquipmentReservationBackend implements Backend<Reservation> {
   public async fetch_many(query: GetManyQuery): Promise<Response<Reservation[]>> {

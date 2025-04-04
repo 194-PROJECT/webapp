@@ -11,7 +11,7 @@ import { HttpClient } from '$core/protocols/http-client';
 import type { Equipment } from './equipment.type';
 import type { Response } from '$core/backend/response.type';
 import type { EquipmentGetResponse } from './equipment-backend.type';
-import { EquipmentTransformer } from './equipment-transformer';
+import { EquipmentTransformer } from './equipment.transformer';
 
 export class EquipmentBackend implements Backend<Equipment> {
 	public async fetch(id: number): Promise<Response<Equipment>> {

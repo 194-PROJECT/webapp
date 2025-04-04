@@ -1,12 +1,11 @@
 export interface Asset {
     id: number;
     name: string;
-    assetPictureUrl: string;
+    description: string;
     category: string;
-    type: string;
-    value: number;
     purchaseDate: string;
+    price: number;
+    purchasedBy: string;
     createdAt: string;
     updatedAt: string;
-    availability: string;
 }

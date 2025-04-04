@@ -11,7 +11,7 @@ import { HttpClient } from '$core/protocols/http-client';
 import type { EquipmentImage } from './equipment-image.type';
 import type { Response } from '$core/backend/response.type';
 import type { EquipmentImageGetResponse } from './equipment-image-backend.type';
-import { EquipmentImageTransformer } from './equipment-image-transformer';
+import { EquipmentImageTransformer } from './equipment-image.transformer';
 
 export class EquipmentImageBackend implements Backend<EquipmentImage> {
 	public async fetch(id: number): Promise<Response<EquipmentImage>> {

@@ -11,7 +11,7 @@ import { HttpClient } from '$core/protocols/http-client';
 import type { ReservationEquipment } from './reservation-equipment.type';
 import type { Response } from '$core/backend/response.type';
 import type { ReservationEquipmentGetResponse } from './reservation-equipment-backend.type';
-import { ReservationEquipmentTransformer } from './reservation-equipment-transformer';
+import { ReservationEquipmentTransformer } from './reservation-equipment.transformer';
 
 export class ReservationBackend implements Backend<ReservationEquipment> {
   public async fetch(id: number): Promise<Response<ReservationEquipment>> {
