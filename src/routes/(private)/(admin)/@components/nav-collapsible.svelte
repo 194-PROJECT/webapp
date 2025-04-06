@@ -30,6 +30,11 @@
 			title: 'Academic Management',
 			items: [
 				{
+					title: 'Semester',
+          url: '/admin/semester',
+					icon: BookOpenCheck
+				},
+				{
 					title: 'Department',
           url: '/admin/department',
 					icon: BookOpenCheck

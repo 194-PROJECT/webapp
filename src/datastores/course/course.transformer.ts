@@ -7,7 +7,6 @@ export class CourseTransformer {
     return {
       id: data.id,
       programId: data.program_id,
-      prerequisiteId: data.prerequisite_id,
       name: data.name,
       description: data.description,
       credits: data.credits,

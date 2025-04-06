@@ -5,10 +5,10 @@ import type { HttpHeader } from '$core/backend/header.type';
 
 import type { Cookies } from '@sveltejs/kit';
 
-import { HTTP_PROTOCOL, API_URL, API_PORT } from '$env/static/private';
+import { PUBLIC_HTTP_PROTOCOL, PUBLIC_API_URL, PUBLIC_API_PORT } from '$env/static/public';
 import { transformCamelKeysToSnakeCase } from '$lib/utils';
 
-const API_BASE_URL = `${HTTP_PROTOCOL}://${API_URL}:${API_PORT}`;
+const API_BASE_URL = `${PUBLIC_HTTP_PROTOCOL}://${PUBLIC_API_URL}:${PUBLIC_API_PORT}`;
 
 export class HttpClient {
 	public static async request<RQ extends Query, RP>(
@@ -96,7 +96,6 @@ export class HttpClient {
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${session?.token}`,
 			Accept: 'application/json',
-			'Access-Control-Allow-Origin': '*',
 		};
 
 		Object.entries({ ...defaultHeaders, ...header }).forEach(([key, value]) => {

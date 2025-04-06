@@ -9,13 +9,13 @@
 		children,
 		inParams = {
 			type: 'fade',
-			duration: 300,
-			delay: 300,
+			duration: 125,
+			delay: 125,
 			y: 100
 		},
 		outParams = {
 			type: 'fade',
-			duration: 300,
+			duration: 125,
 			y: 100
 		}
 	}: {

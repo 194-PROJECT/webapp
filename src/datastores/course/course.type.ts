@@ -1,7 +1,6 @@
 export interface Course {
   id: number;
   programId: number;
-  prerequisiteId?: number;
   name: string;
   description?: string;
   credits: number;

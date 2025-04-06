@@ -1,18 +1,28 @@
 import type { Actions, PageServerLoad, PageServerLoadEvent } from './$types';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { ReservationDatastore } from '$datastores/reservation/reservation.svelte';
+import { z as validation } from 'zod';
 import type { RequestEvent } from './$types';
-import { getModelSchema } from '$core/helpers/request';
-import { error, fail } from '@sveltejs/kit';
+import { deleteModelSchema, getModelSchema } from '$core/helpers/request';
+import { fail } from '@sveltejs/kit';
 import { UserDatastore } from '$datastores/user/user.svelte';
 import { Operator } from '$core/backend/request.type';
-import { ReservationTransformer } from '$datastores/reservation/reservation.transformer';
-import { z as validation } from 'zod';
 import { ClassDatastore } from '$datastores/class/class.svelte';
 import { GroupDatastore } from '$datastores/group/group.svelte';
-import { GroupTransformer } from '$datastores/group/group.transformer';
 import { SemesterDatastore } from '$datastores/semester/semester.svelte';
+
+const groupCreateSchema = validation.object({
+  name: validation.string().min(1).max(50),
+  description: validation.string().optional(),
+  classId: validation.number(),
+});
+
+const groupUpdateSchema = validation.object({
+  id: validation.number(),
+  name: validation.string().min(1).max(50),
+  description: validation.string().optional(),
+  classId: validation.number(),
+});
 
 export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 	const groupGetPageForm = await superValidate(event.url.searchParams, zod(getModelSchema));
@@ -80,6 +90,9 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
  */
 export const actions: Actions = {
   getPageData,
+  deleteGroup,
+  updateGroup,
+  createGroup,
 };
 
 /**
@@ -104,5 +117,109 @@ async function getPageData(event: RequestEvent) {
     success: true,
     redirect: url,
     ...message(groupGetPageForm, 'Group page data fetch successful'),
+  };
+}
+
+/**
+ * Deletes a group from the database.
+ * @param event
+ * @returns
+ */
+async function deleteGroup(event: RequestEvent) {
+  const request = await event.request.json();
+  const groupDeleteForm = await superValidate(request, zod(deleteModelSchema));
+
+  if (!groupDeleteForm.valid) {
+    return fail(401, {
+      form: groupDeleteForm,
+      message: 'Invalid form data',
+      error: 'Invalid form data',
+    });
+  }
+
+  const document = await GroupDatastore.remove(groupDeleteForm.data.id);
+
+  if (document.response?.status && document.response.status >= 400) {
+    return fail(document.response.status, {
+      form: groupDeleteForm,
+      message: 'Group delete failed',
+      error: document.response.message,
+    });
+  }
+
+  return {
+    success: true,
+    form: groupDeleteForm,
+    ...message(groupDeleteForm, 'Group delete successful'),
+  };
+}
+
+/**
+ * Creates a new group in the database.
+ * @param event
+ * @returns
+ */
+async function createGroup(event: RequestEvent) {
+  const groupCreateForm = await superValidate(event, zod(groupCreateSchema));
+
+  if (!groupCreateForm.valid) {
+    return fail(401, {
+      form: groupCreateForm,
+      message: 'Invalid form data',
+      error: Object.entries(groupCreateForm.errors).flatMap(([key, value]) => {
+        return value.map((error) => `${key}: ${error}`);
+      }),
+    });
+  }
+
+  const document = await GroupDatastore.push(groupCreateForm.data);
+
+  if (document.response?.status && document.response.status >= 400) {
+    return fail(document.response.status, {
+      form: groupCreateForm,
+      message: 'Group create failed',
+      error: document.response.errors,
+    });
+  }
+
+  return {
+    success: true,
+    form: groupCreateForm,
+    ...message(groupCreateForm, 'Group create successful'),
+  };
+}
+
+/**
+ * Updates a group in the database.
+ * @param event
+ * @returns
+ */
+async function updateGroup(event: RequestEvent) {
+  const groupUpdateForm = await superValidate(event, zod(groupUpdateSchema));
+
+  if (!groupUpdateForm.valid) {
+    return fail(401, {
+      form: groupUpdateForm,
+      message: 'Invalid form data',
+      error: Object.entries(groupUpdateForm.errors).flatMap(([key, value]) => {
+        return value.map((error) => `${key}: ${error}`);
+      }),
+    });
+  }
+
+  const document = await GroupDatastore.update(groupUpdateForm.data.id, groupUpdateForm.data);
+
+  if (document.response?.status && document.response.status >= 400) {
+    return fail(document.response.status, {
+      form: groupUpdateForm,
+      message: document.response.message,
+      errors: document.response.errors,
+    });
+  }
+
+  return {
+    success: true,
+    form: groupUpdateForm,
+    ...message(groupUpdateForm, 'Group update successful'),
   };
 }

@@ -5,7 +5,7 @@
 	import * as Table from '$components/elements/table/index.js';
 	import Button from '$components/elements/button/button.svelte';
 	import * as Select from '$components/elements/select';
-  import type { Group } from "$datastores/group/group.type";
+  import type { Class } from "$datastores/class/class.type";
 	import type { ActionResult } from '@sveltejs/kit';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { z } from 'zod';
@@ -17,10 +17,8 @@
 	import { Operator } from '$core/backend/request.type';
 	import Input from '$components/elements/input/input.svelte';
 	import { toast } from 'svelte-sonner';
-	import GroupDialogCreate from './group-dialog-create.svelte';
-	import type { Semester } from '$datastores/semester/semester.type';
-	import type { Course } from '$datastores/course/course.type';
-	import type { Class } from '$datastores/class/class.type';
+	import CourseDialogCreate from './course-dialog-create.svelte';
+	import type { Program } from '$datastores/program/program.type';
 
 	type DataTableProps<TData, TValue> = {
 		columns: ColumnDef<TData, TValue>[];
@@ -37,9 +35,7 @@
 		form: SuperValidated<z.infer<typeof getModelSchema>>;
 		rowCount: number;
     additionalData: {
-      semesters: Semester[];
-      courses: Course[];
-      classes: Class[];
+      programs: Program[];
     };
 	} = $props();
 
@@ -83,13 +79,13 @@
 		manualPagination: true
 	});
 
-  let searchBy: keyof Group = $state('name');
+  let searchBy: keyof Class = $state('name');
   let searchValue: string = $state('');
-  const searchOptions: { value: keyof Group, label: string }[] = [
+  const searchOptions: { value: keyof Class, label: string }[] = [
     { value: 'name', label: 'Name' },
     { value: 'description', label: 'Description' },
   ];
-  const searchOptionToOperator: { [key in keyof Partial<Group>]: Operator } = {
+  const searchOptionToOperator: { [key in keyof Partial<Class>]: Operator } = {
     name: Operator.LIKE,
     description: Operator.LIKE,
   };
@@ -130,7 +126,7 @@
 	}
 </script>
 
-<GroupDialogCreate bind:isOpen={isCreateDialogOpen} bind:additionalData={additionalData} />
+<CourseDialogCreate bind:isOpen={isCreateDialogOpen} bind:additionalData={additionalData} />
 
 <div class="flex items-center space-x-2 py-4">
   <Button

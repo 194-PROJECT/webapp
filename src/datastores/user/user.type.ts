@@ -1,7 +1,7 @@
 import type { UserRole, UserType } from "$core/auth/auth.type";
 
 export interface User {
-  id?: number;
+  id: number;
   email: string;
   username: string;
   firstName: string;

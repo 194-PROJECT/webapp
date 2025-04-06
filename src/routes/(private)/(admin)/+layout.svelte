@@ -10,7 +10,7 @@
 	import { Toaster } from '$components/elements/sonner';
 
 	let { children, data }: LayoutProps = $props();
-	const { user, url, breadcrumbs } = data;
+	const { user, url, breadcrumbs } = $derived(data);
 </script>
 
 <Toaster />
@@ -24,18 +24,20 @@
 				<Separator orientation="vertical" class="mr-2 h-4" />
 				<SearchForm />
 				<Breadcrumb.Root class="hidden lg:block">
-					<Breadcrumb.List>
-						{#each breadcrumbs as { href, name }, index}
-							<Breadcrumb.Item>
-								<Breadcrumb.Link class="line-clamp-1" {href}>
-									{name}
-								</Breadcrumb.Link>
-							</Breadcrumb.Item>
-							{#if index !== breadcrumbs.length - 1}
-								<Breadcrumb.Separator>/</Breadcrumb.Separator>
-							{/if}
-						{/each}
-					</Breadcrumb.List>
+          {#key [breadcrumbs]}
+            <Breadcrumb.List>
+              {#each breadcrumbs as { href, name }, index}
+                <Breadcrumb.Item>
+                  <Breadcrumb.Link class="line-clamp-1" {href}>
+                    {name}
+                  </Breadcrumb.Link>
+                </Breadcrumb.Item>
+                {#if index !== breadcrumbs.length - 1}
+                  <Breadcrumb.Separator>/</Breadcrumb.Separator>
+                {/if}
+              {/each}
+            </Breadcrumb.List>
+          {/key}
 				</Breadcrumb.Root>
 			</div>
 			<div class="ml-auto px-3">

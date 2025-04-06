@@ -2,13 +2,12 @@
 	import Ellipsis from "lucide-svelte/icons/ellipsis";
 	import { Button } from "$components/elements/button/index.js";
 	import * as DropdownMenu from "$components/elements/dropdown-menu/index.js";
-	import type { Group } from "$datastores/group/group.type";
 	import type { Class } from "$datastores/class/class.type";
 	import { toast } from "svelte-sonner";
 	import { goto } from "$app/navigation";
 	import type { ActionResult } from "@sveltejs/kit";
 	import { deserialize } from "$app/forms";
-	import GroupDialogEdit from "./group-dialog-edit.svelte";
+	import ClassDialogEdit from "./class-dialog-edit.svelte";
 	import type { Semester } from "$datastores/semester/semester.type";
 	import type { User } from "$datastores/user/user.type";
 	import type { Course } from "$datastores/course/course.type";
@@ -18,30 +17,29 @@
     additionalData = $bindable()
   }: {
     data: {
-      group: Group;
-      class: Class | undefined;
+      class: Class;
       semester: Semester | undefined;
       instructor: User | undefined;
     },
     additionalData: {
       semesters: Semester[];
+      instructors: User[];
       courses: Course[];
-      classes: Class[];
     };
   } = $props();
 	let isEditDialogOpen = $state(false);
 
-	async function deleteGroup() {
-		const response = await fetch(`?/deleteGroup`, {
+	async function deleteClass() {
+		const response = await fetch(`?/deleteClass`, {
 			method: "POST",
-			body: JSON.stringify({ id: data.group.id }),
+			body: JSON.stringify({ id: data.class.id }),
 		});
 
 		const result: ActionResult = deserialize(await response.text());
 
 		switch (result.type) {
 			case "success": {
-				toast.success(result.data?.message ?? "Group deleted successfully.");
+				toast.success(result.data?.message ?? "Class deleted successfully.");
 				goto(location.href, {
 					replaceState: true,
 					noScroll: true,
@@ -78,14 +76,14 @@
 	<DropdownMenu.Content>
 		<DropdownMenu.Group>
 			<DropdownMenu.GroupHeading>Actions</DropdownMenu.GroupHeading>
-			<DropdownMenu.Item onclick={() => navigator.clipboard.writeText(data.group.name)}>
+			<DropdownMenu.Item onclick={() => navigator.clipboard.writeText(data.class.name)}>
 				Copy name
 			</DropdownMenu.Item>
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
-		<DropdownMenu.Item onclick={toggleEditDialog}>Edit group</DropdownMenu.Item>
-		<DropdownMenu.Item onclick={deleteGroup}>Delete group</DropdownMenu.Item>
+		<DropdownMenu.Item onclick={toggleEditDialog}>Edit class</DropdownMenu.Item>
+		<DropdownMenu.Item onclick={deleteClass}>Delete class</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
 
-<GroupDialogEdit bind:isOpen={isEditDialogOpen} group={data.group} additionalData={additionalData} />
+<ClassDialogEdit bind:isOpen={isEditDialogOpen} classItem={data.class} additionalData={additionalData} />
