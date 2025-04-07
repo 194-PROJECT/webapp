@@ -5,7 +5,6 @@
 	import * as Table from '$components/elements/table/index.js';
 	import Button from '$components/elements/button/button.svelte';
 	import * as Select from '$components/elements/select';
-  import type { Class } from "$datastores/class/class.type";
 	import type { ActionResult } from '@sveltejs/kit';
 	import type { SuperValidated } from 'sveltekit-superforms';
 	import type { z } from 'zod';
@@ -17,10 +16,9 @@
 	import { Operator } from '$core/backend/request.type';
 	import Input from '$components/elements/input/input.svelte';
 	import { toast } from 'svelte-sonner';
-	import ClassDialogCreate from './program-dialog-create.svelte';
-	import type { Semester } from '$datastores/semester/semester.type';
-	import type { Course } from '$datastores/course/course.type';
-	import type { User } from '$datastores/user/user.type';
+	import ProgramDialogCreate from './program-dialog-create.svelte';
+	import type { Department } from '$datastores/department/department.type';
+	import type { Program } from '$datastores/program/program.type';
 
 	type DataTableProps<TData, TValue> = {
 		columns: ColumnDef<TData, TValue>[];
@@ -37,9 +35,7 @@
 		form: SuperValidated<z.infer<typeof getModelSchema>>;
 		rowCount: number;
     additionalData: {
-      semesters: Semester[];
-      instructors: User[];
-      courses: Course[];
+      departments: Department[];
     };
 	} = $props();
 
@@ -83,14 +79,14 @@
 		manualPagination: true
 	});
 
-  let searchBy: keyof Class = $state('name');
+  let searchBy: keyof Program = $state('title');
   let searchValue: string = $state('');
-  const searchOptions: { value: keyof Class, label: string }[] = [
-    { value: 'name', label: 'Name' },
+  const searchOptions: { value: keyof Program, label: string }[] = [
+    { value: 'title', label: 'Title' },
     { value: 'description', label: 'Description' },
   ];
-  const searchOptionToOperator: { [key in keyof Partial<Class>]: Operator } = {
-    name: Operator.LIKE,
+  const searchOptionToOperator: { [key in keyof Partial<Program>]: Operator } = {
+    title: Operator.LIKE,
     description: Operator.LIKE,
   };
 
@@ -117,7 +113,7 @@
 		// Reload the page if redirect is set
 		if (result.type === 'success' && result.data?.redirect) {
 			goto(result.data.redirect, {
-        replaceState: true,
+        replaceState: false,
         noScroll: true,
         keepFocus: true,
         invalidateAll: true,
@@ -130,7 +126,7 @@
 	}
 </script>
 
-<ClassDialogCreate bind:isOpen={isCreateDialogOpen} bind:additionalData={additionalData} />
+<ProgramDialogCreate bind:isOpen={isCreateDialogOpen} bind:additionalData={additionalData} />
 
 <div class="flex items-center space-x-2 py-4">
   <Button

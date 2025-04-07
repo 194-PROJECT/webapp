@@ -4,7 +4,7 @@ export interface ProgramGetResponse {
   title: string;
   description?: string;
   credits_required: number;
-  program_duration: number;
+  duration: number;
   created_at: string;
   updated_at: string;
 }

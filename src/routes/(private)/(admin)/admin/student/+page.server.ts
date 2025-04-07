@@ -182,7 +182,7 @@ async function updateStudent(event: RequestEvent) {
     return fail(document.response.status, {
       form: studentUpdateForm,
       message: document.response.message,
-      errors: document.response.errors,
+      error: document.response.errors,
     });
   }
 

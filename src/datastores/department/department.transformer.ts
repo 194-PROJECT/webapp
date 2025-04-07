@@ -8,8 +8,8 @@ export class DepartmentTransformer {
       id: data.id,
       name: data.name,
       description: data.description,
-      created_at: data.created_at,
-      updated_at: data.updated_at,
+      createdAt: data.created_at,
+      updatedAt: data.updated_at,
     };
   }
 

@@ -213,7 +213,7 @@ async function updateGroup(event: RequestEvent) {
     return fail(document.response.status, {
       form: groupUpdateForm,
       message: document.response.message,
-      errors: document.response.errors,
+      error: document.response.errors,
     });
   }
 

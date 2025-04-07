@@ -9,7 +9,7 @@ export class ProgramTransformer {
       title: data.title,
       description: data.description,
       creditsRequired: data.credits_required,
-      programDuration: data.program_duration,
+      duration: data.duration,
       departmentId: data.department_id,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),

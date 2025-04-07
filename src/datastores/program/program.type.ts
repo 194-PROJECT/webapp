@@ -4,7 +4,7 @@ export interface Program {
   title: string;
   description?: string;
   creditsRequired: number;
-  programDuration: number;
+  duration: number;
   createdAt?: Date;
   updatedAt?: Date;
 }

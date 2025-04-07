@@ -6,35 +6,31 @@
   import { goto } from "$app/navigation";
   import type { ActionResult } from "@sveltejs/kit";
   import { deserialize } from "$app/forms";
-  import ProgramDialogEdit from "./program-dialog-edit.svelte";
+  import DepartmentDialogEdit from "./department-dialog-edit.svelte";
   import type { Department } from "$datastores/department/department.type";
-  import type { Program } from "$datastores/program/program.type";
 
   let {
     data = $bindable(),
     additionalData = $bindable()
   }: {
     data: {
-      program: Program;
-      department: Department | undefined;
+      department: Department;
     },
-    additionalData: {
-      departments: Department[];
-    };
+    additionalData: {};
   } = $props();
   let isEditDialogOpen = $state(false);
 
-  async function deleteProgram() {
-    const response = await fetch(`?/deleteProgram`, {
+  async function deleteDepartment() {
+    const response = await fetch(`?/deleteDepartment`, {
       method: "POST",
-      body: JSON.stringify({ id: data.program.id }),
+      body: JSON.stringify({ id: data.department.id }),
     });
 
     const result: ActionResult = deserialize(await response.text());
 
     switch (result.type) {
       case "success": {
-        toast.success(result.data?.message ?? "Program deleted successfully.");
+        toast.success(result.data?.message ?? "Department deleted successfully.");
         goto(location.href, {
           replaceState: true,
           noScroll: true,
@@ -71,14 +67,14 @@
   <DropdownMenu.Content>
     <DropdownMenu.Group>
       <DropdownMenu.GroupHeading>Actions</DropdownMenu.GroupHeading>
-      <DropdownMenu.Item onclick={() => navigator.clipboard.writeText(data.program.title)}>
-        Copy title
+      <DropdownMenu.Item onclick={() => navigator.clipboard.writeText(data.department.name)}>
+        Copy name
       </DropdownMenu.Item>
     </DropdownMenu.Group>
     <DropdownMenu.Separator />
-    <DropdownMenu.Item onclick={toggleEditDialog}>Edit program</DropdownMenu.Item>
-    <DropdownMenu.Item onclick={deleteProgram}>Delete program</DropdownMenu.Item>
+    <DropdownMenu.Item onclick={toggleEditDialog}>Edit department</DropdownMenu.Item>
+    <DropdownMenu.Item onclick={deleteDepartment}>Delete department</DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>
 
-<ProgramDialogEdit bind:isOpen={isEditDialogOpen} program={data.program} additionalData={additionalData} />
+<DepartmentDialogEdit bind:isOpen={isEditDialogOpen} department={data.department} additionalData={additionalData} />

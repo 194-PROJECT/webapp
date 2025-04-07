@@ -6,43 +6,42 @@ import type { RequestEvent } from './$types';
 import { deleteModelSchema, getModelSchema } from '$core/helpers/request';
 import { fail } from '@sveltejs/kit';
 import { Operator } from '$core/backend/request.type';
-import { ClassDatastore } from '$datastores/class/class.svelte';
 import { ProgramDatastore } from '$datastores/program/program.svelte';
 import { DepartmentDatastore } from '$datastores/department/department.svelte';
 
-const classCreateSchema = validation.object({
-  name: validation.string().min(1).max(50),
+const programCreateSchema = validation.object({
+  title: validation.string().min(1).max(100),
   description: validation.string().optional(),
-  courseId: validation.number(),
-  semesterId: validation.number(),
-  instructorId: validation.number(),
+  departmentId: validation.number(),
+  creditsRequired: validation.number().min(1),
+  duration: validation.number().min(1),
 });
 
-const classUpdateSchema = validation.object({
+const programUpdateSchema = validation.object({
   id: validation.number(),
-  name: validation.string().min(1).max(50),
+  title: validation.string().min(1).max(100),
   description: validation.string().optional(),
-  courseId: validation.number(),
-  semesterId: validation.number(),
-  instructorId: validation.number(),
+  departmentId: validation.number(),
+  creditsRequired: validation.number().min(1),
+  duration: validation.number().min(1),
 });
 
 export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
-  const classGetPageForm = await superValidate(event.url.searchParams, zod(getModelSchema));
+  const programGetPageForm = await superValidate(event.url.searchParams, zod(getModelSchema));
 
-  if (!classGetPageForm.valid) {
+  if (!programGetPageForm.valid) {
     return {
-      form: classGetPageForm,
+      form: programGetPageForm,
       error: 'Invalid form data'
     };
   }
 
   const programCollection = await ProgramDatastore.get({
-    field: classGetPageForm.data.field,
-    operator: classGetPageForm.data.operator,
-    value: classGetPageForm.data.value,
-    page: Number(classGetPageForm.data.pageIndex),
-    page_size: Number(classGetPageForm.data.pageSize)
+    field: programGetPageForm.data.field,
+    operator: programGetPageForm.data.operator,
+    value: programGetPageForm.data.value,
+    page: Number(programGetPageForm.data.pageIndex),
+    page_size: Number(programGetPageForm.data.pageSize)
   });
 
   const departmentCollection = await DepartmentDatastore.get({
@@ -61,7 +60,7 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
   });
 
   return {
-    form: classGetPageForm,
+    form: programGetPageForm,
     programData: data ?? [],
     rowCount: programCollection.totalRows ?? 0,
   };
@@ -72,136 +71,136 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
  */
 export const actions: Actions = {
   getPageData,
-  deleteClass,
-  updateClass,
-  createClass,
+  deleteProgram,
+  updateProgram,
+  createProgram,
 };
 
 /**
- * Fetches the data for the class page.
+ * Fetches the data for the program page.
  * @param event The request event.
- * @returns The class page data.
+ * @returns The program page data.
  */
 async function getPageData(event: RequestEvent) {
   const request = await event.request.json();
-  const classGetPageForm = await superValidate(request, zod(getModelSchema));
+  const programGetPageForm = await superValidate(request, zod(getModelSchema));
 
-  if (!classGetPageForm.valid) {
+  if (!programGetPageForm.valid) {
     return fail(401, {
-      form: classGetPageForm,
+      form: programGetPageForm,
       error: 'Invalid form data',
     });
   }
 
-  const url = `${event.url.pathname}?${new URLSearchParams(classGetPageForm.data).toString()}`;
+  const url = `${event.url.pathname}?${new URLSearchParams(programGetPageForm.data).toString()}`;
 
   return {
     success: true,
     redirect: url,
-    ...message(classGetPageForm, 'Class page data fetch successful'),
+    ...message(programGetPageForm, 'Program page data fetch successful'),
   };
 }
 
 /**
- * Deletes a class from the database.
+ * Deletes a program from the database.
  * @param event
  * @returns
  */
-async function deleteClass(event: RequestEvent) {
+async function deleteProgram(event: RequestEvent) {
   const request = await event.request.json();
-  const classDeleteForm = await superValidate(request, zod(deleteModelSchema));
+  const programDeleteForm = await superValidate(request, zod(deleteModelSchema));
 
-  if (!classDeleteForm.valid) {
+  if (!programDeleteForm.valid) {
     return fail(401, {
-      form: classDeleteForm,
+      form: programDeleteForm,
       message: 'Invalid form data',
       error: 'Invalid form data',
     });
   }
 
-  const document = await ClassDatastore.remove(classDeleteForm.data.id);
+  const document = await ProgramDatastore.remove(programDeleteForm.data.id);
 
   if (document.response?.status && document.response.status >= 400) {
     return fail(document.response.status, {
-      form: classDeleteForm,
-      message: 'Class delete failed',
+      form: programDeleteForm,
+      message: 'Program delete failed',
       error: document.response.message,
     });
   }
 
   return {
     success: true,
-    form: classDeleteForm,
-    ...message(classDeleteForm, 'Class delete successful'),
+    form: programDeleteForm,
+    ...message(programDeleteForm, 'Program delete successful'),
   };
 }
 
 /**
- * Creates a new class in the database.
+ * Creates a new program in the database.
  * @param event
  * @returns
  */
-async function createClass(event: RequestEvent) {
-  const classCreateForm = await superValidate(event, zod(classCreateSchema));
+async function createProgram(event: RequestEvent) {
+  const programCreateForm = await superValidate(event, zod(programCreateSchema));
 
-  if (!classCreateForm.valid) {
+  if (!programCreateForm.valid) {
     return fail(401, {
-      form: classCreateForm,
+      form: programCreateForm,
       message: 'Invalid form data',
-      error: Object.entries(classCreateForm.errors).flatMap(([key, value]) => {
+      error: Object.entries(programCreateForm.errors).flatMap(([key, value]) => {
         return value.map((error) => `${key}: ${error}`);
       }),
     });
   }
 
-  const document = await ClassDatastore.push(classCreateForm.data);
+  const document = await ProgramDatastore.push(programCreateForm.data);
 
   if (document.response?.status && document.response.status >= 400) {
     return fail(document.response.status, {
-      form: classCreateForm,
-      message: 'Class create failed',
+      form: programCreateForm,
+      message: 'Program create failed',
       error: document.response.errors,
     });
   }
 
   return {
     success: true,
-    form: classCreateForm,
-    ...message(classCreateForm, 'Class create successful'),
+    form: programCreateForm,
+    ...message(programCreateForm, 'Program create successful'),
   };
 }
 
 /**
- * Updates a class in the database.
+ * Updates a program in the database.
  * @param event
  * @returns
  */
-async function updateClass(event: RequestEvent) {
-  const classUpdateForm = await superValidate(event, zod(classUpdateSchema));
+async function updateProgram(event: RequestEvent) {
+  const programUpdateForm = await superValidate(event, zod(programUpdateSchema));
 
-  if (!classUpdateForm.valid) {
+  if (!programUpdateForm.valid) {
     return fail(401, {
-      form: classUpdateForm,
+      form: programUpdateForm,
       message: 'Invalid form data',
-      error: Object.entries(classUpdateForm.errors).flatMap(([key, value]) => {
+      error: Object.entries(programUpdateForm.errors).flatMap(([key, value]) => {
         return value.map((error) => `${key}: ${error}`);
       }),
     });
   }
 
-  const document = await ClassDatastore.update(classUpdateForm.data.id, classUpdateForm.data);
+  const document = await ProgramDatastore.update(programUpdateForm.data.id, programUpdateForm.data);
 
   if (document.response?.status && document.response.status >= 400) {
     return fail(document.response.status, {
-      form: classUpdateForm,
+      form: programUpdateForm,
       message: document.response.message,
-      errors: document.response.errors,
+      error: document.response.errors,
     });
   }
 
   return {
     success: true,
-    form: classUpdateForm,
-    ...message(classUpdateForm, 'Class update successful'),
+    form: programUpdateForm,
+    ...message(programUpdateForm, 'Program update successful'),
   };
 }

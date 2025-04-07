@@ -22,8 +22,11 @@
   let updatedUser = $derived(structuredClone(user));
   let formLoading = $state(false);
 
+  let userType = $state(user.type);
+  let userRole = $state(user.role);
+
   $effect(() => {
-    updatedUser.role = userTypeToRoleMap[updatedUser.type];
+    userRole = userTypeToRoleMap[userType];
   });
 
   const submitUpdateUser: SubmitFunction = () => {
@@ -90,8 +93,8 @@
 
         <div class="grid grid-cols-4 items-center gap-4">
           <Label for="type" class="text-right">Type</Label>
-          <Select.Root type="single" name="type" bind:value={updatedUser.type}>
-            <Select.Trigger class="col-span-1">{updatedUser.type}</Select.Trigger>
+          <Select.Root type="single" name="type" bind:value={userType}>
+            <Select.Trigger class="col-span-1">{userType}</Select.Trigger>
             <Select.Content>
               <Select.Group>
                 {#each Object.values(UserType) as type}
@@ -103,8 +106,8 @@
 
           <div class="col-span-2 flex">
             <Label for="role" class="mr-4 self-center">Role</Label>
-            <Select.Root type="single" name="role" bind:value={updatedUser.role} disabled>
-              <Select.Trigger>{updatedUser.role}</Select.Trigger>
+            <Select.Root type="single" name="role" bind:value={userRole} disabled>
+              <Select.Trigger>{userRole}</Select.Trigger>
               <Select.Content>
                 <Select.Group>
                   {#each Object.values(UserRole) as role}

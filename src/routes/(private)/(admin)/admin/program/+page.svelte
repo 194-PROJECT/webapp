@@ -4,6 +4,8 @@
 	import { onMount } from 'svelte';
 	import { ProgramDatastore } from '$datastores/program/program.svelte';
 	import type { Program } from '$datastores/program/program.type';
+	import type { Department } from '$datastores/department/department.type';
+	import { DepartmentDatastore } from '$datastores/department/department.svelte';
 
 	const { data } = $props();
 	const {
@@ -13,16 +15,16 @@
 	} = $derived(data);
 
 	const additionalData: {
-		programs: Program[];
+		departments: Department[];
 	} = $state({
-		programs: [],
+		departments: [],
 	});
 
 	const programDataTableColumns = $derived(buildProgramDataTableColumns(additionalData));
 
 	onMount(async () => {
-		const programCollection = await ProgramDatastore.get({ order_by: 'id', order_direction: 'DESC' });
-		additionalData.programs = programCollection.value ?? [];
+		const departmentCollection = await DepartmentDatastore.get({ order_by: 'id', order_direction: 'DESC' });
+		additionalData.departments = departmentCollection.value ?? [];
 	});
 </script>
 

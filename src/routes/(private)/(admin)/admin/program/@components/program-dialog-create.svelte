@@ -5,14 +5,11 @@
   import * as Dialog from '$components/elements/dialog/index.js';
   import { Input } from '$components/elements/input/index.js';
   import { Label } from '$components/elements/label/index.js';
-  import type { Class } from '$datastores/class/class.type';
   import type { SubmitFunction } from '@sveltejs/kit';
   import { toast } from 'svelte-sonner';
-	import type { Semester } from '$datastores/semester/semester.type';
-	import type { Course } from '$datastores/course/course.type';
 	import * as Select from '$components/elements/select';
-	import Separator from '$components/elements/separator/separator.svelte';
-	import type { User } from '$datastores/user/user.type';
+	import type { Department } from '$datastores/department/department.type';
+	import type { Program } from '$datastores/program/program.type';
 
   let {
     isOpen = $bindable(false),
@@ -20,54 +17,34 @@
   }: {
     isOpen: boolean;
     additionalData: {
-      semesters: Semester[];
-      instructors: User[];
-      courses: Course[];
+      departments: Department[];
     };
   } = $props();
 
-  let initialClass = {
-    name: '',
+  let initialProgram = {
+    title: '',
     description: '',
-  } as Partial<Class>;
+  } as Partial<Program>;
 
-  let classItem = $state(structuredClone(initialClass));
+  let program = $state(structuredClone(initialProgram));
   let formLoading = $state(false);
 
-  let semesterId = $state((classItem.semesterId ?? 1).toString());
-  let courseId = $state((classItem.courseId ?? 1).toString());
-  let instructorId = $state((classItem.instructorId ?? 1).toString());
+  let departmentId = $state((program.departmentId ?? 1).toString());
 
-  let courseOptions = $derived.by(() => {
-    return additionalData.courses.map((course) => ({
-      value: course.id.toString(),
-      label: course.name,
+  let departmentOptions = $derived.by(() => {
+    return additionalData.departments.map((department) => ({
+      value: department.id.toString(),
+      label: department.name,
     }));
   });
 
-  let semesterOptions = $derived.by(() => {
-    return additionalData.semesters.map((semester) => ({
-      value: semester.id.toString(),
-      label: semester.name,
-    }));
-  });
+  let departmentTriggerContent = $derived(departmentOptions.find((f) => f.value === departmentId)?.label ?? 'Department name');
 
-  let instructorOptions = $derived.by(() => {
-    return additionalData.instructors.map((instructor) => ({
-      value: instructor.id.toString(),
-      label: `${instructor.firstName} ${instructor.lastName}`,
-    }));
-  });
-
-  let courseTriggerContent = $derived(courseOptions.find((f) => f.value === courseId)?.label ?? 'Course name');
-  let semesterTriggerContent = $derived(semesterOptions.find((f) => f.value === semesterId)?.label ?? 'Semester');
-  let instructorTriggerContent = $derived(instructorOptions.find((f) => f.value === instructorId)?.label ?? 'Instructor name');
-
-  const submitCreateClass: SubmitFunction = () => {
+  const submitCreateProgram: SubmitFunction = () => {
     formLoading = true;
     return async ({ result }) => {
       if (result.type === 'success') {
-        toast.success('Class created successfully');
+        toast.success('Program created successfully');
         goto(location.href, {
           replaceState: true,
           noScroll: true,
@@ -96,51 +73,29 @@
 <Dialog.Root bind:open={isOpen}>
   <Dialog.Content class="sm:max-w-[50vw]">
     <Dialog.Header>
-      <Dialog.Title class="sm:text-3xl">Create Class</Dialog.Title>
+      <Dialog.Title class="sm:text-3xl">Create Program</Dialog.Title>
       <Dialog.Description>
-        Fill out the form below to create a new class. Ensure all required fields are completed accurately.
+        Fill out the form below to create a new program. Ensure all required fields are completed accurately.
       </Dialog.Description>
     </Dialog.Header>
-    <form method="POST" action="?/createClass" use:enhance={submitCreateClass}>
+    <form method="POST" action="?/createProgram" use:enhance={submitCreateProgram}>
       <div class="grid gap-4 py-4">
         <div class="grid grid-cols-4 items-center gap-4">
-					<Label for="semesterId" class="text-right">Semester</Label>
-					<Input id="semesterId" name="semesterId" bind:value={semesterId} class="hidden" />
+          <Label for="departmentId" class="text-right">Department</Label>
+          <Input id="departmentId" name="departmentId" bind:value={departmentId} class="hidden" />
           <Select.Root
             type="single"
-            name="pageSize"
-            bind:value={semesterId}
+            name="departmentId"
+            bind:value={departmentId}
           >
             <Select.Trigger class="col-span-3">
-              {semesterTriggerContent}
+              {departmentTriggerContent}
             </Select.Trigger>
             <Select.Content>
               <Select.Group>
-                <Select.GroupHeading>Class</Select.GroupHeading>
-                {#each semesterOptions as semesterOption (semesterOption.value)}
-                  <Select.Item value={semesterOption.value} label={semesterOption.label} />
-                {/each}
-              </Select.Group>
-            </Select.Content>
-          </Select.Root>
-				</div>
-
-        <div class="grid grid-cols-4 items-center gap-4">
-          <Label for="courseId" class="text-right">Course</Label>
-          <Input id="courseId" name="courseId" bind:value={courseId} class="hidden" />
-          <Select.Root
-            type="single"
-            name="courseId"
-            bind:value={courseId}
-          >
-            <Select.Trigger class="col-span-3">
-              {courseTriggerContent}
-            </Select.Trigger>
-            <Select.Content>
-              <Select.Group>
-                <Select.GroupHeading>Courses</Select.GroupHeading>
-                {#each courseOptions as courseOption (courseOption.value)}
-                  <Select.Item value={courseOption.value} label={courseOption.label} />
+                <Select.GroupHeading>Departments</Select.GroupHeading>
+                {#each departmentOptions as departmentOption (departmentOption.value)}
+                  <Select.Item value={departmentOption.value} label={departmentOption.label} />
                 {/each}
               </Select.Group>
             </Select.Content>
@@ -148,40 +103,28 @@
         </div>
 
         <div class="grid grid-cols-4 items-center gap-4">
-          <Label for="instructorId" class="text-right">Instructor</Label>
-          <Input id="instructorId" name="instructorId" bind:value={instructorId} class="hidden" />
-          <Select.Root
-            type="single"
-            name="instructorId"
-            bind:value={instructorId}
-          >
-            <Select.Trigger class="col-span-3">
-              {instructorTriggerContent}
-            </Select.Trigger>
-            <Select.Content>
-              <Select.Group>
-                <Select.GroupHeading>Instructors</Select.GroupHeading>
-                {#each instructorOptions as instructorOption (instructorOption.value)}
-                  <Select.Item value={instructorOption.value} label={instructorOption.label} />
-                {/each}
-              </Select.Group>
-            </Select.Content>
-          </Select.Root>
-        </div>
-
-        <div class="grid grid-cols-4 items-center gap-4">
-          <Label for="name" class="text-right">Name</Label>
-          <Input id="name" name="name" value={classItem.name} class="col-span-3" />
+          <Label for="title" class="text-right">Title</Label>
+          <Input id="title" name="title" bind:value={program.title} class="col-span-3" />
         </div>
 
         <div class="grid grid-cols-4 items-center gap-4">
           <Label for="description" class="text-right">Description</Label>
-          <Input id="description" name="description" value={classItem.description} class="col-span-3" />
+          <Input id="description" name="description" bind:value={program.description} class="col-span-3" />
+        </div>
+
+        <div class="grid grid-cols-4 items-center gap-4">
+          <Label for="creditsRequired" class="text-right">Credits Required</Label>
+          <Input id="creditsRequired" name="creditsRequired" type="number" step="0.01" bind:value={program.creditsRequired} class="col-span-3" />
+        </div>
+
+        <div class="grid grid-cols-4 items-center gap-4">
+          <Label for="duration" class="text-right">Program Duration (in years)</Label>
+          <Input id="duration" name="duration" type="number" step="0.01" bind:value={program.duration} class="col-span-3" />
         </div>
       </div>
 
       <Dialog.Footer>
-        <Button type="submit" disabled={formLoading}>Create class</Button>
+        <Button type="submit" disabled={formLoading}>Create Program</Button>
       </Dialog.Footer>
     </form>
   </Dialog.Content>

@@ -192,7 +192,7 @@ async function updateCourse(event: RequestEvent) {
     return fail(document.response.status, {
       form: courseUpdateForm,
       message: document.response.message,
-      errors: document.response.errors,
+      error: document.response.errors,
     });
   }
 

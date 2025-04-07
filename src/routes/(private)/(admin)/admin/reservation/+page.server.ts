@@ -120,7 +120,7 @@ async function approveReservation(event: RequestEvent) {
     return fail(document.response.status, {
       form: reservationApproveForm,
       message: document.response.message,
-      errors: document.response.errors,
+      error: document.response.errors,
     });
   }
 
@@ -151,7 +151,7 @@ async function updateReservation(event: RequestEvent) {
     return fail(document.response.status, {
       form: reservationEditForm,
       message: document.response.message,
-      errors: document.response.errors,
+      error: document.response.errors,
     });
   }
 

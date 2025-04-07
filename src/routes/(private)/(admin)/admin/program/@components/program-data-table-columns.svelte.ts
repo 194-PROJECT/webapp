@@ -1,77 +1,59 @@
 import { renderComponent } from "$components/elements/data-table";
-import type { Class } from "$datastores/class/class.type";
 import type { ColumnDef } from "@tanstack/table-core";
-import ClassDataTableAction from "./program-data-table-action.svelte";
-import type { User } from "$datastores/user/user.type";
-import type { Semester } from "$datastores/semester/semester.type";
-import type { Course } from "$datastores/course/course.type";
+import ProgramDataTableAction from "./program-data-table-action.svelte";
+import type { Department } from "$datastores/department/department.type";
+import type { Program } from "$datastores/program/program.type";
 
 export const buildProgramDataTableColumns = (additionalData: {
-  semesters: Semester[];
-  instructors: User[];
-  courses: Course[];
+  departments: Department[];
 }) => {
-  const classDataTableColumns: ColumnDef<{
-    class: Class;
-    course: Course | undefined;
-    semester: Semester | undefined;
-    instructor: User | undefined;
+  const programDataTableColumns: ColumnDef<{
+    program: Program;
+    department: Department | undefined;
   }>[] = [
     {
       header: 'ID',
       cell: ({ row }) => {
-        return row.original.class.id;
+        return row.original.program.id;
       }
     },
     {
-      header: 'Name',
+      header: 'Title',
       cell: ({ row }) => {
-        return row.original.class.name;
+        return row.original.program.title;
       }
     },
     {
       header: 'Description',
       cell: ({ row }) => {
-        return row.original.class.description;
+        return row.original.program.description;
       }
     },
     {
-      header: 'Start Date',
+      header: 'Department',
       cell: ({ row }) => {
-        return row.original.semester?.startDate.toLocaleDateString();
+        return row.original.department?.name;
       }
     },
     {
-      header: 'End Date',
+      header: 'Credits Required',
       cell: ({ row }) => {
-        return row.original.semester?.endDate.toLocaleDateString();
+        return row.original.program.creditsRequired;
       }
     },
     {
-      header: 'Class',
+      header: 'Duration',
       cell: ({ row }) => {
-        return row.original.class?.name;
-      }
-    },
-    {
-      header: 'Instructor',
-      cell: ({ row }) => {
-        return `${row.original.instructor?.firstName} ${row.original.instructor?.lastName}`;
-      }
-    },
-    {
-      header: 'Semester',
-      cell: ({ row }) => {
-        return row.original.semester?.name;
+        return `${row.original.program.duration}`;
       }
     },
     {
       id: 'actions',
       cell: ({ row }) => {
-        return renderComponent(ClassDataTableAction, { data: row.original, additionalData: additionalData });
+        return renderComponent(ProgramDataTableAction, { data: row.original, additionalData: additionalData });
       },
     },
   ];
 
-  return classDataTableColumns;
-}
+  return programDataTableColumns;
+};
