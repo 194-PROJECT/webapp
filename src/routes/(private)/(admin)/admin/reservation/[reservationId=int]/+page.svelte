@@ -3,8 +3,11 @@
 	import Button from "$components/elements/button/button.svelte";
 	import * as Card from "$components/elements/card";
 	import Separator from "$components/elements/separator/separator.svelte";
+	import type { ActionResult } from "@sveltejs/kit";
 	import type { PageProps } from "./$types";
 	import EquipmentReservationTable from "./@components/reservation-equipment-table.svelte";
+	import { deserialize } from "$app/forms";
+	import { toast } from "svelte-sonner";
 
   let { data }: PageProps = $props();
   let {
@@ -14,11 +17,32 @@
     equipmentImages,
     reserver,
     admin
-  } = data;
+  } = $state(data);
 
-  const numberOfItems = reservationEquipments?.reduce((acc, reservationEquipment) => {
-    return acc + reservationEquipment.quantity;
-  }, 0);
+  const numberOfItems = $derived(reservationEquipments.length);
+
+  const approveReservation = async (accepted: boolean) => {
+    const response = await fetch(`?/approveReservation`, {
+      method: "POST",
+      body: JSON.stringify({
+        id: reservation.id,
+        accepted: accepted,
+      }),
+    });
+
+    const result: ActionResult = deserialize(await response.text());
+
+    switch (result.type) {
+      case "success": {
+        reservation.accepted = accepted;
+        toast.success(result.data?.message ?? "Accept state updated.");
+        break;
+      }
+      case "failure":
+        toast.error(result.data?.error ?? "An error occurred.");
+        break;
+    }
+  }
 </script>
 
 <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">
@@ -73,12 +97,38 @@
 	</Card.Root>
   <Card.Root>
 		<Card.Content>
-      <p class="font-extrabold text-4xl text-red-500">TODO</p>
-			<Card.Title class="text-1xl font-bold mb-4">Status:</Card.Title>
-			<p class="text-1xl">Accepted: {reservation.accepted}</p>
-			<p class="text-1xl">Returned: {reservation.returned}</p>
-      <Button>Approve</Button>
-      <Button>Reject</Button>
+      <Card.Title class="text-1xl mb-4">Accept Status: <span class="">{ reservation.accepted === true ? "ACCEPTED" : reservation.accepted === false ? "REJECTED" : "PENDING" }</span></Card.Title>
+      <Separator class="my-4" />
+      <div>
+        <div class="flex items-center">
+          <p class="text-1xl flex-grow">Accepted by:</p>
+          <p class="text-1xl">{admin ? admin.firstName + ' ' + admin.lastName : 'User not found'}</p>
+        </div>
+        <div class="flex items-center">
+          <p class="text-1xl flex-grow">Account type:</p>
+          <p class="text-1xl">{reserver ? reserver.type : 'User not found'}</p>
+        </div>
+      </div>
+      <Separator class="my-4" />
+      <div>
+        <div class="flex items-center">
+          <p class="text-1xl flex-grow">Return date:</p>
+          <p class="text-1xl">{reservation.returnDate?.toDateString()}</p>
+        </div>
+      </div>
+      <Separator class="my-4" />
+      <div class="flex gap-4 width-full flex-row-reverse">
+        <Button onclick={()=>{approveReservation(true)}}>Approve</Button>
+        <Button onclick={()=>{approveReservation(false)}}>Reject</Button>
+      </div>
+		</Card.Content>
+	</Card.Root>
+  <Card.Root>
+		<Card.Content>
+      <Card.Title class="text-1xl mb-4">Reservation Notes</Card.Title>
+      <Separator class="my-4" />
+      <p class="text-1xl mb-2"><span class="font-bold">Admin Note:</span> {reservation.adminNote}</p>
+      <p class="text-1xl"><span class="font-bold">Return Note:</span> {reservation.returnNote}</p>
 		</Card.Content>
 	</Card.Root>
 </div>

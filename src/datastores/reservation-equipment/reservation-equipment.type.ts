@@ -2,10 +2,12 @@ export interface ReservationEquipment {
   id?: number;
   reservationId: number;
   equipmentId?: number;
-  quantity: number;
+  equipmentItemId?: number;
   returned?: boolean;
-  returnedQuantity?: number;
   mishandled?: boolean;
+  rating?: number;
+  comment?: string;
+  adminNote?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

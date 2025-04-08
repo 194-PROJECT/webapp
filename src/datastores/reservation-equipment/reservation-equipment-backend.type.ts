@@ -2,10 +2,12 @@ export interface ReservationEquipmentGetResponse {
   id?: number;
   reservation_id: number;
   equipment_id?: number;
-  quantity: number;
+  equipment_item_id?: number;
   returned?: boolean;
-  returned_quantity?: number;
   mishandled?: boolean;
+  rating?: number;
+  comment?: string;
+  admin_note?: string;
   created_at?: Date;
   updated_at?: Date;
 }

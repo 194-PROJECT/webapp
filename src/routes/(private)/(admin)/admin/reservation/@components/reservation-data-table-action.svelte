@@ -5,10 +5,12 @@
   import type { ReservationUser } from "$datastores/reservation/reservation.type";
   import ReservationDialogEdit from "./reservation-dialog-edit.svelte";
 	import { goto } from "$app/navigation";
+	import type { ActionResult } from "@sveltejs/kit";
+	import { deserialize } from "$app/forms";
+	import { toast } from "svelte-sonner";
 
   let { reservationUser = $bindable() }: { reservationUser: ReservationUser } = $props();
   let isEditDialogOpen = $state(false);
-  let approveDialogOpen = $state(false);
 
   const viewReservation = () => {
     goto(`/admin/reservation/${reservationUser.id}`);
@@ -18,9 +20,58 @@
     isEditDialogOpen = true;
   }
 
-  const toggleApproveDialog = () => {
-    approveDialogOpen = true;
+  const approveReservation = async (accepted: boolean) => {
+    const response = await fetch(`?/approveReservation`, {
+      method: "POST",
+      body: JSON.stringify({
+        id: reservationUser.id,
+        accepted: accepted,
+      }),
+    });
+
+    const result: ActionResult = deserialize(await response.text());
+
+    switch (result.type) {
+      case "success": {
+        toast.success(result.data?.message ?? "Accept state updated.");
+        goto(location.href, {
+          replaceState: true,
+          noScroll: true,
+          keepFocus: true,
+          invalidateAll: true,
+        });
+        break;
+      }
+      case "failure":
+        toast.error(result.data?.error ?? "An error occurred.");
+        break;
+    }
   }
+
+  const deleteReservation = async () => {
+    const response = await fetch(`?/deleteReservation`, {
+      method: "POST",
+      body: JSON.stringify({ id: reservationUser.id }),
+    });
+
+    const result: ActionResult = deserialize(await response.text());
+
+    switch (result.type) {
+      case "success": {
+        toast.success(result.data?.message ?? "Reservation deleted successfully.");
+        goto(location.href, {
+          replaceState: true,
+          noScroll: true,
+          keepFocus: true,
+          invalidateAll: true,
+        });
+        break;
+      }
+      case "failure":
+        toast.error(result.data?.error ?? "An error occurred.");
+        break;
+    }
+  };
 </script>
 
 <DropdownMenu.Root>
@@ -44,7 +95,10 @@
     <DropdownMenu.Separator />
     <DropdownMenu.Item onclick={viewReservation}>View reservation</DropdownMenu.Item>
     <DropdownMenu.Item onclick={toggleEditDialog}>Edit reservation</DropdownMenu.Item>
-    <DropdownMenu.Item onclick={toggleApproveDialog}>Approve reservation</DropdownMenu.Item>
+    <DropdownMenu.Item onclick={deleteReservation}>Delete reservation</DropdownMenu.Item>
+    <DropdownMenu.Separator />
+    <DropdownMenu.Item onclick={() => {approveReservation(true)}}>Approve</DropdownMenu.Item>
+    <DropdownMenu.Item onclick={() => {approveReservation(false)}}>Reject</DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>
 

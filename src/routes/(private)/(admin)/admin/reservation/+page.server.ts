@@ -3,7 +3,7 @@ import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { ReservationDatastore } from '$datastores/reservation/reservation.svelte';
 import type { RequestEvent } from './$types';
-import { getModelSchema } from '$core/helpers/request';
+import { deleteModelSchema, getModelSchema } from '$core/helpers/request';
 import { fail } from '@sveltejs/kit';
 import { UserDatastore } from '$datastores/user/user.svelte';
 import { Operator } from '$core/backend/request.type';
@@ -13,7 +13,6 @@ import { z as validation } from 'zod';
 const acceptReservationSchema = validation.object({
   id: validation.number().int().positive(),
   accepted: validation.boolean().default(false),
-  adminNote: validation.string().optional(),
 });
 
 const editReservationSchema = validation.object({
@@ -70,6 +69,7 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
  */
 export const actions: Actions = {
   getPageData,
+  deleteReservation,
   approveReservation,
   updateReservation,
 };
@@ -144,6 +144,18 @@ async function updateReservation(event: RequestEvent) {
     });
   }
 
+  const adminId = event.locals.user?.id;
+
+  if (!adminId) {
+    return fail(401, {
+      form: reservationEditForm,
+      message: 'Unauthorized',
+      error: 'Unauthorized',
+    });
+  }
+
+  reservationEditForm.data.adminId = adminId;
+
   const document = await ReservationDatastore.update(reservationEditForm.data.id, reservationEditForm.data);
 
   if (document.response?.status && document.response.status >= 400) {
@@ -159,5 +171,34 @@ async function updateReservation(event: RequestEvent) {
     success: true,
     form: reservationEditForm,
     ...message(reservationEditForm, 'Reservation update successful')
+  };
+}
+
+async function deleteReservation(event: RequestEvent) {
+  const request = await event.request.json();
+  const reservationDeleteForm = await superValidate(request, zod(deleteModelSchema));
+
+  if (!reservationDeleteForm.valid) {
+    return fail(401, {
+      form: reservationDeleteForm,
+      message: 'Invalid form data',
+      error: 'Invalid form data',
+    });
+  }
+
+  const document = await ReservationDatastore.remove(reservationDeleteForm.data.id);
+
+  if (document.response?.status && document.response.status >= 400) {
+    return fail(document.response.status, {
+      form: reservationDeleteForm,
+      message: 'Reservation delete failed',
+      error: document.response.message
+    });
+  }
+
+  return {
+    success: true,
+    form: reservationDeleteForm,
+    ...message(reservationDeleteForm, 'Reservation delete successful')
   };
 }

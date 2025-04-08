@@ -50,9 +50,10 @@
       <Table.Head class="text-left"></Table.Head>
       <Table.Head>Category</Table.Head>
       <Table.Head>Name</Table.Head>
-      <Table.Head>Description</Table.Head>
-      <Table.Head>Price</Table.Head>
-      <Table.Head>Quantity</Table.Head>
+      <Table.Head>Item Code</Table.Head>
+      <Table.Head>Rating</Table.Head>
+      <Table.Head>Comment</Table.Head>
+      <Table.Head>Admin Note</Table.Head>
       <Table.Head>Returned</Table.Head>
       <Table.Head>Mishandled</Table.Head>
       <Table.Head></Table.Head>
@@ -70,9 +71,10 @@
         </Table.Cell>
         <Table.Cell>{equipment.category}</Table.Cell>
         <Table.Cell>{equipment.name}</Table.Cell>
-        <Table.Cell>{equipment.description}</Table.Cell>
-        <Table.Cell>{equipment.price} PHP</Table.Cell>
-        <Table.Cell>{reservationEquipmentDetails[equipment.id].quantity}</Table.Cell>
+        <Table.Cell>{reservationEquipmentDetails[equipment.id].equipmentItemId}</Table.Cell>
+        <Table.Cell>{reservationEquipmentDetails[equipment.id].rating}</Table.Cell>
+        <Table.Cell>{reservationEquipmentDetails[equipment.id].comment}</Table.Cell>
+        <Table.Cell>{reservationEquipmentDetails[equipment.id].adminNote}</Table.Cell>
         <Table.Cell>{reservationEquipmentDetails[equipment.id].returned}</Table.Cell>
         <Table.Cell>{reservationEquipmentDetails[equipment.id].mishandled}</Table.Cell>
 				<Table.Cell>
