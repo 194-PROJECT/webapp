@@ -6,6 +6,7 @@ export interface ReservationGetResponse {
   start_date: string;
   end_date: string;
   accepted: boolean;
+  claimed: boolean;
   returned: boolean;
   reason: string;
   admin_note?: string;
