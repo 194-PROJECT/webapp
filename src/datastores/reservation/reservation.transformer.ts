@@ -13,6 +13,7 @@ export class ReservationTransformer {
       startDate: new Date(data.start_date),
       endDate: new Date(data.end_date),
       accepted: data.accepted,
+      claimed: data.claimed,
       returned: data.returned,
       reason: data.reason,
       adminNote: data.admin_note,

@@ -4,10 +4,17 @@ import * as Card from '$components/elements/card';
 	import * as Carousel from '$components/elements/carousel';
 	import type { CarouselAPI } from '$components/elements/carousel/context.js';
 	import Separator from '$components/elements/separator/separator.svelte';
+	import EquipmentItemTable from './@components/equipment-item-table.svelte';
 	import EquipmentReservationTable from './@components/equipment-reservation-table.svelte';
 
 	let { data } = $props();
-	let { equipment, reservations, images, users } = data;
+	let {
+    equipment,
+    equipmentItems,
+    reservations,
+    images,
+    users
+  } = $derived(data);
 
 	let api = $state<CarouselAPI>();
 
@@ -17,7 +24,7 @@ import * as Card from '$components/elements/card';
   let latestReservationId = $derived.by(() => {
     return reservations
       .slice()
-      .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())[0].id;
+      .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())[0]?.id ?? 0;
   });
 
 	$effect(() => {
@@ -56,7 +63,7 @@ import * as Card from '$components/elements/card';
 			</div>
 			<div class="grid grid-cols-2">
 				<p class="text-1xl">Quantity:</p>
-				<p class="text-1xl">{equipment.quantity}</p>
+				<p class="text-1xl">{equipmentItems.length}</p>
 			</div>
       <Separator class="my-4" />
       <Button variant="link" class="text-sm p-0 h-auto" href={`/admin/reservation/${latestReservationId}`}>View Latest Reservation</Button>
@@ -96,4 +103,6 @@ import * as Card from '$components/elements/card';
 		</Card.Content>
 	</Card.Root>
 </div>
+
+<EquipmentItemTable equipmentItems={equipmentItems} equipment={equipment} />
 <EquipmentReservationTable reservations={reservations} users={users}/>

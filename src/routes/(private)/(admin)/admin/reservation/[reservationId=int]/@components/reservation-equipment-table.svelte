@@ -2,46 +2,57 @@
 	import { goto } from '$app/navigation';
 	import { Header } from '$components/elements/alert-dialog';
 	import * as Avatar from '$components/elements/avatar';
-  import Button from '$components/elements/button/button.svelte';
 	import * as Table from '$components/elements/table';
 	import type { EquipmentImage } from '$datastores/equipment-image/equipment-image.type';
+	import type { EquipmentItem } from '$datastores/equipment-item/equipment-item.type';
+	import { EquipmentDatastore } from '$datastores/equipment/equipment.svelte';
 	import type { Equipment } from '$datastores/equipment/equipment.type';
 	import type { ReservationEquipment } from '$datastores/reservation-equipment/reservation-equipment.type';
+	import { onMount } from 'svelte';
+	import ReservationEquipmentTableAction from './reservation-equipment-table-action.svelte';
+	import type { Reservation } from '$datastores/reservation/reservation.type';
+	import ReservationEquipmentDialogCreate from './reservation-equipment-dialog-create.svelte';
+	import Button from '$components/elements/button/button.svelte';
 
-	const {
-    reservationEquipments,
-		equipments,
-		equipmentImages,
+	let {
+    reservation = $bindable(),
+    reservationEquipments = $bindable(),
 	}: {
-    reservationEquipments: ReservationEquipment[];
-		equipments: Equipment[];
-		equipmentImages: Record<number, EquipmentImage>;
+    reservation: Reservation;
+    reservationEquipments: {
+      reservationEquipment: ReservationEquipment;
+      equipmentItem: EquipmentItem | undefined;
+      equipment: Equipment | undefined;
+      equipmentImage: EquipmentImage | undefined;
+    }[];
 	} = $props();
 
-  const reservationEquipmentDetails = $derived.by(() => {
-    const details: Record<number, ReservationEquipment> = {};
-      equipments.forEach((equipment) => {
-        const detail = reservationEquipments.find((reservationEquipment) => reservationEquipment.equipmentId === equipment.id);
-        if (detail) {
-          details[equipment.id] = detail;
-        }
-    });
-
-    return details;
+  let additionalData: {
+    equipments: Equipment[];
+  } = $state({
+    equipments: [],
   });
 
-  const viewEquipment = (equipmentId?: number) => {
-    if (equipmentId) {
-      goto(`/admin/equipment/${equipmentId}`);
-    } else {
-      console.error('No equipment ID provided');
-    }
-  };
+  let isCreateDialogOpen = $state(false);
+
+  const toggleCreateDialog = () => {
+    isCreateDialogOpen = true;
+  }
+
+  onMount(async () => {
+    const equipmentCollection = await EquipmentDatastore.get({});
+    additionalData.equipments = equipmentCollection.value ?? [];
+  });
 </script>
 
-<Header class="mb-4">
-  <h2 class="text-2xl font-bold">Equipments</h2>
-</Header>
+<div class="flex items-center justify-between mb-4">
+  <Header class="mb-4">
+    <h2 class="text-2xl font-bold">Equipments</h2>
+  </Header>
+  <Button variant="outline" onclick={toggleCreateDialog}>
+    Add Equipment
+  </Button>
+</div>
 <Table.Root>
   <Table.Caption>List of reservation equipments</Table.Caption>
 	<Table.Header>
@@ -60,29 +71,33 @@
 		</Table.Row>
 	</Table.Header>
 	<Table.Body>
-		{#each equipments as equipment (equipment)}
+		{#each reservationEquipments as reservationEquipment (reservationEquipment)}
 			<Table.Row>
-				<Table.Cell class="font-medium">{equipment.id}</Table.Cell>
+				<Table.Cell class="font-medium">{reservationEquipment.reservationEquipment.id}</Table.Cell>
         <Table.Cell>
           <Avatar.Root class="h-8 w-8 rounded-lg">
-            <Avatar.Image src={equipmentImages[equipment.id].imageUrl} alt={equipment.name} />
-            <Avatar.Fallback class="rounded-lg">{equipment.name.slice(0,1)}</Avatar.Fallback>
+            <Avatar.Image src={reservationEquipment.equipmentImage?.imageUrl} alt={reservationEquipment.equipment?.name} />
+            <Avatar.Fallback class="rounded-lg">{reservationEquipment.equipment?.name.slice(0,1)}</Avatar.Fallback>
           </Avatar.Root>
         </Table.Cell>
-        <Table.Cell>{equipment.category}</Table.Cell>
-        <Table.Cell>{equipment.name}</Table.Cell>
-        <Table.Cell>{reservationEquipmentDetails[equipment.id].equipmentItemId}</Table.Cell>
-        <Table.Cell>{reservationEquipmentDetails[equipment.id].rating}</Table.Cell>
-        <Table.Cell>{reservationEquipmentDetails[equipment.id].comment}</Table.Cell>
-        <Table.Cell>{reservationEquipmentDetails[equipment.id].adminNote}</Table.Cell>
-        <Table.Cell>{reservationEquipmentDetails[equipment.id].returned}</Table.Cell>
-        <Table.Cell>{reservationEquipmentDetails[equipment.id].mishandled}</Table.Cell>
+        <Table.Cell>{reservationEquipment.equipment?.category}</Table.Cell>
+        <Table.Cell>{reservationEquipment.equipment?.name}</Table.Cell>
+        <Table.Cell>{reservationEquipment.equipmentItem?.itemCode}</Table.Cell>
+        <Table.Cell>{reservationEquipment.reservationEquipment.rating}</Table.Cell>
+        <Table.Cell>{reservationEquipment.reservationEquipment.comment}</Table.Cell>
+        <Table.Cell>{reservationEquipment.reservationEquipment.adminNote}</Table.Cell>
+        <Table.Cell>{reservationEquipment.reservationEquipment.returned}</Table.Cell>
+        <Table.Cell>{reservationEquipment.reservationEquipment.mishandled}</Table.Cell>
 				<Table.Cell>
-          <Button onclick={() => viewEquipment(equipment.id)}>
-            <span>View Equipment</span>
-          </Button>
+          <ReservationEquipmentTableAction
+            reservation={reservation}
+            reservationEquipment={reservationEquipment}
+            additionalData={additionalData}
+          />
         </Table.Cell>
 			</Table.Row>
 		{/each}
 	</Table.Body>
 </Table.Root>
+
+<ReservationEquipmentDialogCreate bind:isOpen={isCreateDialogOpen} bind:reservation={reservation} bind:additionalData={additionalData} />

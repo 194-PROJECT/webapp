@@ -6,8 +6,8 @@ export class EquipmentItemTransformer {
   static transform(data: EquipmentItemGetResponse): EquipmentItem {
     return {
       id: data.id,
-      item_code: data.item_code,
-      equipment_id: data.equipment_id,
+      itemCode: data.item_code,
+      equipmentId: data.equipment_id,
       available: data.available,
       createdAt: data.created_at ? new Date(data.created_at) : undefined,
       updatedAt: data.updated_at ? new Date(data.updated_at) : undefined,

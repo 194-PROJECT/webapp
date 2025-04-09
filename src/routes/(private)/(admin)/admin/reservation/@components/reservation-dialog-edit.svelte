@@ -7,7 +7,7 @@
 	import { Label } from '$components/elements/label/index.js';
 	import type { ReservationUser } from '$datastores/reservation/reservation.type';
 	import { getDateInput } from '$lib/utils';
-	import { parseDateTime } from '@internationalized/date';
+	import { parseAbsoluteToLocal, parseDateTime } from '@internationalized/date';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { toast } from 'svelte-sonner';
 	import * as Select from '$components/elements/select';
@@ -25,14 +25,15 @@
   let formLoading = $state(false);
 
   let accepted = $state(String(reservationUser.accepted));
+  let claimed = $state(String(reservationUser.claimed));
   let returned = $state(String(reservationUser.returned));
 
   // Date inputs
-  let startDate = $state(parseDateTime(getDateInput(reservationUser.startDate)));
+  let startDate = $state(parseAbsoluteToLocal(reservationUser.startDate.toISOString()));
   let startDateString = $derived(startDate.toString());
-  let endDate = $state(parseDateTime(getDateInput(reservationUser.endDate)));
+  let endDate = $state(parseAbsoluteToLocal(reservationUser.endDate.toISOString()));
   let endDateString = $derived(endDate.toString());
-  let returnDate = $state(reservationUser.returnDate ? parseDateTime(getDateInput(reservationUser.returnDate)) : undefined);
+  let returnDate = $state(reservationUser.returnDate ? parseAbsoluteToLocal(reservationUser.returnDate.toISOString()) : undefined);
   let returnDateString = $derived(returnDate && returned ? returnDate.toString() : undefined);
 
   const submitUpdateReservation: SubmitFunction = () => {
@@ -100,6 +101,26 @@
           >
             <Select.Trigger class="col-span-3"> 
               {accepted}
+            </Select.Trigger>
+            <Select.Content>
+              <Select.Group>
+                <Select.Item value={'true'} label={'true'} />
+                <Select.Item value={'false'} label={'false'} />
+              </Select.Group>
+            </Select.Content>
+          </Select.Root>
+        </div>
+
+        <div class="grid grid-cols-4 items-center gap-4">
+          <Label for="claimed" class="text-right">Claimed</Label>
+          <Input id="claimed" name="claimed" value={claimed} class="hidden" />
+          <Select.Root
+            type="single"
+            name="pageSize"
+            bind:value={claimed}
+          >
+            <Select.Trigger class="col-span-3"> 
+              {claimed}
             </Select.Trigger>
             <Select.Content>
               <Select.Group>

@@ -1,5 +1,5 @@
 export interface EquipmentItemGetResponse {
-  id?: number;
+  id: number;
   item_code: string;
   equipment_id: number;
   available: boolean;

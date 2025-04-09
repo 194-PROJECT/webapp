@@ -1,7 +1,7 @@
 export interface EquipmentItem {
-  id?: number;
-  item_code: string;
-  equipment_id: number;
+  id: number;
+  itemCode: string;
+  equipmentId: number;
   available: boolean;
   createdAt?: Date;
   updatedAt?: Date;

@@ -11,16 +11,17 @@ import { HttpClient } from "$core/protocols/http-client";
 import type { EquipmentItem } from "./equipment-item.type";
 import type { Response } from "$core/backend/response.type";
 import { EquipmentItemTransformer } from "./equipment-item.transformer";
+import type { EquipmentItemGetResponse } from "./equipment-item-backend.type";
 
 export class EquipmentItemBackend implements Backend<EquipmentItem> {
   public async fetch(id: number): Promise<Response<EquipmentItem>> {
     const request: Requests<GetQuery>[RequestType.FETCH] = {
-      route: `/equipment-item/${id}`,
+      route: `/equipment/item/${id}`,
       headers: new Headers(),
       parameters: { id },
     };
 
-    let response = await HttpClient.request<GetQuery, EquipmentItem>(
+    let response = await HttpClient.request<GetQuery, EquipmentItemGetResponse>(
       request,
       RequestType.FETCH
     );
@@ -29,12 +30,16 @@ export class EquipmentItemBackend implements Backend<EquipmentItem> {
 
   public async fetch_many(query: GetManyQuery): Promise<Response<EquipmentItem[]>> {
     const request: Requests<GetManyQuery>[RequestType.FETCH] = {
-      route: `/equipment-item`,
+      route: `/equipment/item`,
       headers: new Headers(),
       parameters: query,
     };
 
-    let response = await HttpClient.request<GetManyQuery, EquipmentItem[]>(
+    if (query.ids && query.ids.length > 0) {
+      request.route = `/equipment/${query.ids[0]}/item`;
+    }
+
+    let response = await HttpClient.request<GetManyQuery, EquipmentItemGetResponse[]>(
       request,
       RequestType.FETCH
     );
@@ -43,12 +48,12 @@ export class EquipmentItemBackend implements Backend<EquipmentItem> {
 
   public async push(item: EquipmentItem): Promise<Response<EquipmentItem>> {
     const request: Requests<EquipmentItem>[RequestType.PUSH] = {
-      route: '/equipment-item',
+      route: '/equipment/item',
       headers: new Headers(),
       body: item,
     };
 
-    let response = await HttpClient.request<EquipmentItem, EquipmentItem>(
+    let response = await HttpClient.request<EquipmentItem, EquipmentItemGetResponse>(
       request,
       RequestType.PUSH
     );
@@ -57,12 +62,12 @@ export class EquipmentItemBackend implements Backend<EquipmentItem> {
 
   public async update(id: number, item: Partial<EquipmentItem>): Promise<Response<EquipmentItem>> {
     const request: Requests<Partial<EquipmentItem>>[RequestType.UPDATE] = {
-      route: `/equipment-item/${id}`,
+      route: `/equipment/item/${id}`,
       headers: new Headers(),
       body: item,
     };
 
-    let response = await HttpClient.request<Partial<EquipmentItem>, EquipmentItem>(
+    let response = await HttpClient.request<Partial<EquipmentItem>, EquipmentItemGetResponse>(
       request,
       RequestType.UPDATE
     );
@@ -71,7 +76,7 @@ export class EquipmentItemBackend implements Backend<EquipmentItem> {
 
   public async remove(id: number): Promise<Response<any>> {
     const request: Requests<DeleteQuery>[RequestType.REMOVE] = {
-      route: `/equipment-item/${id}`,
+      route: `/equipment/item/${id}`,
       headers: new Headers(),
       parameters: { id },
     };
@@ -81,7 +86,7 @@ export class EquipmentItemBackend implements Backend<EquipmentItem> {
 
   public async remove_many(ids: number[]): Promise<Response<undefined>> {
     const request: Requests<DeleteManyQuery>[RequestType.REMOVE] = {
-      route: `/equipment-item`,
+      route: `/equipment/item`,
       headers: new Headers(),
       parameters: { ids: ids },
     };

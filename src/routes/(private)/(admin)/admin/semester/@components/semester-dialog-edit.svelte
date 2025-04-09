@@ -11,7 +11,7 @@
   import type { Semester } from '$datastores/semester/semester.type';
 	import DateTimePicker from '$components/elements/time-picker/date-time-picker.svelte';
 	import { getDateInput } from '$lib/utils';
-	import { parseDateTime } from '@internationalized/date';
+	import { parseAbsoluteToLocal, parseDateTime } from '@internationalized/date';
 
   let {
     isOpen = $bindable(false),
@@ -26,9 +26,9 @@
   let updatedSemester = $derived(structuredClone(semester));
   let formLoading = $state(false);
 
-  let startDate = $state(parseDateTime(getDateInput(semester.startDate)));
+  let startDate = $state(parseAbsoluteToLocal(semester.startDate.toISOString()));
   let startDateString = $derived(startDate.toString());
-  let endDate = $state(parseDateTime(getDateInput(semester.endDate)));
+  let endDate = $state(parseAbsoluteToLocal(semester.endDate.toISOString()));
   let endDateString = $derived(endDate.toString());
 
   const submitUpdateSemester: SubmitFunction = () => {

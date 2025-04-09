@@ -10,13 +10,13 @@
 	import { Toaster } from '$components/elements/sonner';
 
 	let { children, data }: LayoutProps = $props();
-	const { user, url, breadcrumbs } = $derived(data);
+	const { authUser, url, breadcrumbs } = $derived(data);
 </script>
 
 <Toaster />
 
 <Sidebar.Provider>
-	<AppSidebar {user} />
+	<AppSidebar user={authUser} />
 	<Sidebar.Inset>
 		<header class="flex h-14 shrink-0 items-center gap-2 bg-muted text-primary">
 			<div class="flex flex-1 items-center gap-2 px-3">

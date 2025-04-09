@@ -1,11 +1,29 @@
 import { EquipmentDatastore } from "$datastores/equipment/equipment.svelte";
-import { error } from "@sveltejs/kit";
+import { error, fail, type Action, type Actions } from "@sveltejs/kit";
 import type { PageServerLoadEvent } from "./$types";
 import type { PageServerLoad } from "./$types";
 import { EquipmentReservationDatastore } from "$datastores/equipment-reservation/equipment-reservation.svelte";
 import { EquipmentImageDatastore } from "$datastores/equipment-image/equipment-image.svelte";
 import { UserDatastore } from "$datastores/user/user.svelte";
 import { Operator } from "$core/backend/request.type";
+import { EquipmentItemDatastore } from "$datastores/equipment-item/equipment-item.svelte";
+import { z as validation } from "zod";
+import { superValidate } from "sveltekit-superforms";
+import { zod } from "sveltekit-superforms/adapters";
+import { deleteModelSchema } from "$core/helpers/request";
+
+const equipmentItemCreateSchema = validation.object({
+  itemCode: validation.string(),
+  equipmentId: validation.number(),
+  available: validation.boolean(),
+});
+
+const equipmentItemUpdateSchema = validation.object({
+  id: validation.number(),
+  itemCode: validation.string(),
+  equipmentId: validation.number(),
+  available: validation.boolean(),
+});
 
 export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
   const equipmentId = Number(event.params.equipmentId);
@@ -32,6 +50,10 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
     ids: [equipmentId],
   });
 
+  const equipmentItemCollection = await EquipmentItemDatastore.get({
+    ids: [equipmentId],
+  });
+
   const userCollection = await UserDatastore.get({
     field: 'id',
     operator: Operator.IN,
@@ -40,8 +62,108 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
 
   return {
     equipment: equipmentDocument.value,
+    equipmentItems: equipmentItemCollection.value ?? [],
     images: equipmentImageCollection.value ?? [],
     reservations: reservationCollection.value ?? [],
     users: userCollection.value ?? [],
   };
+};
+
+const deleteEquipmentItem: Action = async (event) => {
+  const request = await event.request.json();
+  const equipmentItemDeleteForm = await superValidate(request, zod(deleteModelSchema));
+
+  if (!equipmentItemDeleteForm.valid) {
+    return fail(401, {
+      form: equipmentItemDeleteForm,
+      message: 'Invalid form data',
+      error: Object.entries(equipmentItemDeleteForm.errors).flatMap(([key, value]) => {
+        return value.map((error) => `${key}: ${error}`);
+      }),
+    });
+  }
+
+  const document = await EquipmentItemDatastore.remove(equipmentItemDeleteForm.data.id);
+  
+  if (document.response?.status && document.response.status >= 400) {
+    console.error(document.response);
+    return fail(document.response.status, {
+      message: 'Error deleting equipment item',
+      error: document.response.errors,
+    });
+  }
+
+  return {
+    success: true,
+    form: equipmentItemDeleteForm,
+    message: 'Equipment item deleted successfully',
+  };
+};
+
+const updateEquipmentItem: Action = async (event) => {
+  const equipmentItemUpdateForm = await superValidate(event, zod(equipmentItemUpdateSchema));
+
+  if (!equipmentItemUpdateForm.valid) {
+    return fail(401, {
+      form: equipmentItemUpdateForm,
+      message: 'Invalid form data',
+      error: Object.entries(equipmentItemUpdateForm.errors).flatMap(([key, value]) => {
+        return value.map((error) => `${key}: ${error}`);
+      }),
+    });
+  }
+
+  const document = await EquipmentItemDatastore.update(equipmentItemUpdateForm.data.id, equipmentItemUpdateForm.data);
+  
+  if (document.response?.status && document.response.status >= 400) {
+    console.error(document.response);
+    return fail(document.response.status, {
+      form: equipmentItemUpdateForm,
+      message: document.response.message,
+      error: document.response.errors,
+    });
+  }
+
+  return {
+    success: true,
+    form: equipmentItemUpdateForm,
+    message: 'Equipment item updated successfully',
+  };
+};
+
+const createEquipmentItem: Action = async (event) => {
+  const equipmentItemCreateForm = await superValidate(event, zod(equipmentItemCreateSchema));
+
+  if (!equipmentItemCreateForm.valid) {
+    return fail(401, {
+      form: equipmentItemCreateForm,
+      message: 'Invalid form data',
+      error: Object.entries(equipmentItemCreateForm.errors).flatMap(([key, value]) => {
+        return value.map((error) => `${key}: ${error}`);
+      }),
+    });
+  }
+
+  const document = await EquipmentItemDatastore.push(equipmentItemCreateForm.data);
+  
+  if (document.response?.status && document.response.status >= 400) {
+    console.error(document.response);
+    return fail(document.response.status, {
+      form: equipmentItemCreateForm,
+      message: document.response.message,
+      error: document.response.errors,
+    });
+  }
+
+  return {
+    success: true,
+    form: equipmentItemCreateForm,
+    message: 'Equipment item created successfully',
+  };
+};
+
+export const actions: Actions = {
+  createEquipmentItem,
+  updateEquipmentItem,
+  deleteEquipmentItem,
 };

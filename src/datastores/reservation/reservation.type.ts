@@ -8,6 +8,7 @@ export interface Reservation {
   startDate: Date;
   endDate: Date;
   accepted?: boolean;
+  claimed?: boolean;
   returned?: boolean;
   reason: string;
   adminNote?: string;

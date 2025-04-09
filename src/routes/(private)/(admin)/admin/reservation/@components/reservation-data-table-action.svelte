@@ -12,6 +12,18 @@
   let { reservationUser = $bindable() }: { reservationUser: ReservationUser } = $props();
   let isEditDialogOpen = $state(false);
 
+  let reservationFinished = $derived.by(() => {
+    return reservationUser.accepted === true
+    && reservationUser.returned === true
+    && reservationUser.claimed === true;
+  });
+
+  let reservationOnGoing = $derived.by(() => {
+    return reservationUser.accepted === true
+    && reservationUser.returned === false
+    && reservationUser.claimed === true;
+  });
+
   const viewReservation = () => {
     goto(`/admin/reservation/${reservationUser.id}`);
   }
@@ -33,7 +45,7 @@
 
     switch (result.type) {
       case "success": {
-        toast.success(result.data?.message ?? "Accept state updated.");
+        toast.success(result.data?.message ?? "Claimed state updated.");
         goto(location.href, {
           replaceState: true,
           noScroll: true,
@@ -72,6 +84,62 @@
         break;
     }
   };
+
+  const toggleClaimedReservation = async () => {
+    const response = await fetch(`?/toggleClaimedReservation`, {
+      method: "POST",
+      body: JSON.stringify({
+        id: reservationUser.id,
+        claimed: !reservationUser.claimed,
+      }),
+    });
+
+    const result: ActionResult = deserialize(await response.text());
+
+    switch (result.type) {
+      case "success": {
+        toast.success(result.data?.message ?? "Claimed state updated.");
+        goto(location.href, {
+          replaceState: true,
+          noScroll: true,
+          keepFocus: true,
+          invalidateAll: true,
+        });
+        break;
+      }
+      case "failure":
+        toast.error(result.data?.error ?? "An error occurred.");
+        break;
+    }
+  }
+
+  const toggleReturnedReservation = async () => {
+    const response = await fetch(`?/toggleReturnedReservation`, {
+      method: "POST",
+      body: JSON.stringify({
+        id: reservationUser.id,
+        returned: !reservationUser.returned,
+      }),
+    });
+
+    const result: ActionResult = deserialize(await response.text());
+
+    switch (result.type) {
+      case "success": {
+        toast.success(result.data?.message ?? "Return state updated.");
+        goto(location.href, {
+          replaceState: true,
+          noScroll: true,
+          keepFocus: true,
+          invalidateAll: true,
+        });
+        break;
+      }
+      case "failure":
+        toast.error(result.data?.error ?? "An error occurred.");
+        break;
+    }
+  }
 </script>
 
 <DropdownMenu.Root>
@@ -97,8 +165,11 @@
     <DropdownMenu.Item onclick={toggleEditDialog}>Edit reservation</DropdownMenu.Item>
     <DropdownMenu.Item onclick={deleteReservation}>Delete reservation</DropdownMenu.Item>
     <DropdownMenu.Separator />
-    <DropdownMenu.Item onclick={() => {approveReservation(true)}}>Approve</DropdownMenu.Item>
-    <DropdownMenu.Item onclick={() => {approveReservation(false)}}>Reject</DropdownMenu.Item>
+    <DropdownMenu.Item onclick={() => {approveReservation(true)}} disabled={reservationFinished || reservationOnGoing}>Approve</DropdownMenu.Item>
+    <DropdownMenu.Item onclick={() => {approveReservation(false)}} disabled={reservationFinished || reservationOnGoing}>Reject</DropdownMenu.Item>
+    <DropdownMenu.Separator />
+    <DropdownMenu.Item onclick={() => {toggleClaimedReservation()}} disabled={!reservationUser.accepted || reservationFinished}>Toggle Claimed</DropdownMenu.Item>
+    <DropdownMenu.Item onclick={() => {toggleReturnedReservation()}} disabled={!reservationUser.claimed}>Toggle Returned</DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>
 

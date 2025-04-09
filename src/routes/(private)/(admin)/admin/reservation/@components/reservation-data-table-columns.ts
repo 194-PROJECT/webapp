@@ -42,12 +42,17 @@ export const reservationDataTableColumns: ColumnDef<ReservationUser>[] = [
   {
     accessorKey: 'accepted',
     header: 'Accepted',
-    cell: ({ row }) => (row.getValue('accepted') ? 'Yes' : 'No')
+    cell: ({ row }) => (row.original.accepted ? 'Yes' : 'No')
+  },
+  {
+    accessorKey: 'claimed',
+    header: 'Claimed',
+    cell: ({ row }) => (row.original.claimed ? 'Yes' : 'No')
   },
   {
     accessorKey: 'returned',
     header: 'Returned',
-    cell: ({ row }) => (row.getValue('returned') ? 'Yes' : 'No')
+    cell: ({ row }) => (row.original.returned ? 'Yes' : 'No')
   },
   {
     accessorKey: 'returnDate',

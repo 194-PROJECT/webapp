@@ -90,11 +90,6 @@
 				</div>
 
         <div class="grid grid-cols-4 items-center gap-4">
-					<Label for="quantity" class="text-right">Quantity</Label>
-					<Input id="quantity" name="quantity" type="number" value={updatedEquipment.quantity} class="col-span-3" />
-				</div>
-
-        <div class="grid grid-cols-4 items-center gap-4">
 					<Label for="purchasedBy" class="text-right">Purchased By</Label>
 					<Input id="purchasedBy" name="purchasedBy" value={updatedEquipment.purchasedBy} class="col-span-3" />
 				</div>

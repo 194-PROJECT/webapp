@@ -22,10 +22,6 @@ export const equipmentDataTableColumns: ColumnDef<Equipment>[] = [
     header: 'Category'
   },
   {
-    accessorKey: 'quantity',
-    header: 'Quantity',
-  },
-  {
     accessorKey: 'purchaseDate',
     header: 'Purchase Date',
     cell: ({ row }) => {

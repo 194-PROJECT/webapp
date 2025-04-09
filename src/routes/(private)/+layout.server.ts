@@ -26,7 +26,7 @@ export const load: LayoutServerLoad = ({ locals, url, route }) => {
   return {
     breadcrumbs: breadcrumbs,
     url: url.pathname,
-    user: user
+    authUser: user
   };
 };
 

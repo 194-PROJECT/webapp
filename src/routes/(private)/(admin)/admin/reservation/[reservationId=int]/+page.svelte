@@ -5,21 +5,68 @@
 	import Separator from "$components/elements/separator/separator.svelte";
 	import type { ActionResult } from "@sveltejs/kit";
 	import type { PageProps } from "./$types";
-	import EquipmentReservationTable from "./@components/reservation-equipment-table.svelte";
+	import ReservationEquipmentTable from "./@components/reservation-equipment-table.svelte";
 	import { deserialize } from "$app/forms";
 	import { toast } from "svelte-sonner";
+	import { goto } from "$app/navigation";
 
   let { data }: PageProps = $props();
   let {
     reservation,
     reservationEquipments,
-    equipments,
-    equipmentImages,
     reserver,
     admin
-  } = $state(data);
+  } = $derived(data);
 
   const numberOfItems = $derived(reservationEquipments.length);
+  let acceptStatus = $derived(
+    reservation.accepted === true ? "ACCEPTED" :
+    reservation.accepted === false ? "REJECTED" : "PENDING"
+  );
+
+  // not accepted: NEEDS APPROVAL
+  // accepted but not claimed before end date: TO RETRIEVE
+  // accepted and claimed before end date: ON GOING
+  // accepted and claimed but not returned after end date: TO RETURN
+  // accepted and claimed and returned: FINISHED
+  let reservationStatus = $derived.by(() => {
+    if (reservation.accepted === true) {
+      if (reservation.returned === true) {
+        return "FINISHED";
+      } else if (reservation.claimed === true) {
+        if (reservation.returnDate && reservation.returnDate < new Date()) {
+          return "TO RETURN";
+        } else {
+          return "ON GOING";
+        }
+      } else {
+        return "TO RETRIEVE";
+      }
+    } else if (!reservation.accepted && reservation.endDate > new Date()) {
+      return "NEEDS APPROVAL";
+    } else {
+      return "LAPSED";
+    };
+  });
+
+  let reservationFinished = $derived.by(() => {
+    return reservation.accepted === true
+    && reservation.returned === true
+    && reservation.claimed === true;
+  });
+
+  let reservationOnGoing = $derived.by(() => {
+    return reservation.accepted === true
+    && !!reservation.returned
+    && reservation.claimed === true;
+  });
+
+  let canApprove = $derived.by(() => {
+    return !!reservation.accepted
+      && !reservationFinished
+      && !reservationOnGoing
+      && reservation.endDate > new Date();
+  });
 
   const approveReservation = async (accepted: boolean) => {
     const response = await fetch(`?/approveReservation`, {
@@ -34,8 +81,69 @@
 
     switch (result.type) {
       case "success": {
-        reservation.accepted = accepted;
         toast.success(result.data?.message ?? "Accept state updated.");
+        goto(location.href, {
+          replaceState: true,
+          noScroll: true,
+          keepFocus: true,
+          invalidateAll: true,
+        });
+        break;
+      }
+      case "failure":
+        toast.error(result.data?.error ?? "An error occurred.");
+        break;
+    }
+  }
+
+  const toggleClaimedReservation = async () => {
+    const response = await fetch(`?/toggleClaimedReservation`, {
+      method: "POST",
+      body: JSON.stringify({
+        id: reservation.id,
+        claimed: !reservation.claimed,
+      }),
+    });
+
+    const result: ActionResult = deserialize(await response.text());
+
+    switch (result.type) {
+      case "success": {
+        toast.success(result.data?.message ?? "Claimed state updated.");
+        goto(location.href, {
+          replaceState: true,
+          noScroll: true,
+          keepFocus: true,
+          invalidateAll: true,
+        });
+        break;
+      }
+      case "failure":
+        toast.error(result.data?.error ?? "An error occurred.");
+        break;
+    }
+  }
+
+  const toggleReturnedReservation = async () => {
+    const response = await fetch(`?/toggleReturnedReservation`, {
+      method: "POST",
+      body: JSON.stringify({
+        id: reservation.id,
+        returned: !reservation.returned,
+      }),
+    });
+
+    const result: ActionResult = deserialize(await response.text());
+
+    switch (result.type) {
+      case "success": {
+        toast.success(result.data?.message ?? "Return state updated.");
+        goto(location.href, {
+          replaceState: true,
+          noScroll: true,
+          keepFocus: true,
+          invalidateAll: true,
+        });
         break;
       }
       case "failure":
@@ -95,13 +203,41 @@
       </div>
 		</Card.Content>
 	</Card.Root>
+  
   <Card.Root>
 		<Card.Content>
-      <Card.Title class="text-1xl mb-4">Accept Status: <span class="">{ reservation.accepted === true ? "ACCEPTED" : reservation.accepted === false ? "REJECTED" : "PENDING" }</span></Card.Title>
+      <Card.Title class="text-1xl mb-4">Accept Status: <span class="">{ acceptStatus }</span></Card.Title>
       <Separator class="my-4" />
       <div>
         <div class="flex items-center">
-          <p class="text-1xl flex-grow">Accepted by:</p>
+          <p class="text-1xl flex-grow">Last updated by:</p>
+          <p class="text-1xl">{admin ? admin.firstName + ' ' + admin.lastName : 'User not found'}</p>
+        </div>
+        <div class="flex items-center">
+          <p class="text-1xl flex-grow">Account type:</p>
+          <p class="text-1xl">{reserver ? reserver.type : 'User not found'}</p>
+        </div>
+      </div>
+      <Separator class="my-4" />
+      <div class="flex items-center">
+        <p class="text-1xl flex-grow">Updated on:</p>
+        <p class="text-1xl">{reservation.updatedAt?.toLocaleString()}</p>
+      </div>
+      <Separator class="my-4" />
+      <div class="flex gap-2 flex-wrap width-full flex-row-reverse">
+        <Button onclick={()=>{approveReservation(true)}} disabled={reservationFinished || reservationOnGoing || !canApprove}>Approve</Button>
+        <Button onclick={()=>{approveReservation(false)}} disabled={reservationFinished || reservationOnGoing  || !canApprove}>Reject</Button>
+      </div>
+		</Card.Content>
+	</Card.Root>
+
+  <Card.Root>
+		<Card.Content>
+      <Card.Title class="text-1xl mb-4">Reservation Status: <span class="">{ reservationStatus }</span></Card.Title>
+      <Separator class="my-4" />
+      <div>
+        <div class="flex items-center">
+          <p class="text-1xl flex-grow">Last updated by:</p>
           <p class="text-1xl">{admin ? admin.firstName + ' ' + admin.lastName : 'User not found'}</p>
         </div>
         <div class="flex items-center">
@@ -117,23 +253,15 @@
         </div>
       </div>
       <Separator class="my-4" />
-      <div class="flex gap-4 width-full flex-row-reverse">
-        <Button onclick={()=>{approveReservation(true)}}>Approve</Button>
-        <Button onclick={()=>{approveReservation(false)}}>Reject</Button>
+      <div class="flex gap-2 flex-wrap width-full flex-row-reverse">
+        <Button onclick={toggleClaimedReservation} disabled={!reservation.accepted || reservationFinished}>Claimed</Button>
+        <Button onclick={toggleReturnedReservation} disabled={!reservation.claimed || reservationFinished}>Returned</Button>
       </div>
 		</Card.Content>
 	</Card.Root>
-  <Card.Root>
-		<Card.Content>
-      <Card.Title class="text-1xl mb-4">Reservation Notes</Card.Title>
-      <Separator class="my-4" />
-      <p class="text-1xl mb-2"><span class="font-bold">Admin Note:</span> {reservation.adminNote}</p>
-      <p class="text-1xl"><span class="font-bold">Return Note:</span> {reservation.returnNote}</p>
-		</Card.Content>
-	</Card.Root>
 </div>
-<EquipmentReservationTable
+
+<ReservationEquipmentTable
+  reservation={reservation}
   reservationEquipments={reservationEquipments}
-  equipments={equipments}
-  equipmentImages={equipmentImages}
 />

@@ -12,15 +12,27 @@ import { z as validation } from 'zod';
 
 const acceptReservationSchema = validation.object({
   id: validation.number().int().positive(),
+  adminId: validation.number().int().optional(),
   accepted: validation.boolean().default(false),
+});
+
+const claimedReservationSchema = validation.object({
+  id: validation.number().int().positive(),
+  claimed: validation.boolean().default(false),
+});
+
+const returnReservationSchema = validation.object({
+  id: validation.number().int().positive(),
+  returned: validation.boolean().default(false),
 });
 
 const editReservationSchema = validation.object({
   id: validation.number().int().positive(),
   adminId: validation.number().int().optional(),
-  startDate: validation.date(),
-  endDate: validation.date(),
+  startDate: validation.date().optional(),
+  endDate: validation.date().optional(),
   accepted: validation.boolean().optional(),
+  claimed: validation.boolean().optional(),
   returned: validation.boolean().optional(),
   reason: validation.string().optional(),
   adminNote: validation.string().optional(),
@@ -72,6 +84,8 @@ export const actions: Actions = {
   deleteReservation,
   approveReservation,
   updateReservation,
+  toggleClaimedReservation,
+  toggleReturnedReservation,
 };
 
 /**
@@ -112,6 +126,18 @@ async function approveReservation(event: RequestEvent) {
       }),
     });
   }
+
+  const adminId = event.locals.user?.id;
+
+  if (!adminId) {
+    return fail(401, {
+      form: reservationApproveForm,
+      message: 'Unauthorized',
+      error: 'Unauthorized',
+    });
+  }
+
+  reservationApproveForm.data.adminId = adminId;
 
   const document = await ReservationDatastore.update(reservationApproveForm.data.id, reservationApproveForm.data);
   
@@ -202,3 +228,67 @@ async function deleteReservation(event: RequestEvent) {
     ...message(reservationDeleteForm, 'Reservation delete successful')
   };
 }
+
+async function toggleClaimedReservation(event: RequestEvent) {
+  const request = await event.request.json();
+  const reservationClaimedForm = await superValidate(request, zod(claimedReservationSchema));
+
+  if (!reservationClaimedForm.valid) {
+    return fail(401, {
+      form: reservationClaimedForm,
+      message: 'Invalid form data',
+      error: Object.entries(reservationClaimedForm.errors).flatMap(([key, value]) => {
+        return value.map((error) => `${key}: ${error}`);
+      }),
+    });
+  }
+
+  const document = await ReservationDatastore.update(reservationClaimedForm.data.id, reservationClaimedForm.data);
+
+  if (document.response?.status && document.response.status >= 400) {
+    console.error(document.response);
+    return fail(document.response.status, {
+      form: reservationClaimedForm,
+      message: document.response.message,
+      error: document.response.errors,
+    });
+  }
+
+  return {
+    success: true,
+    form: reservationClaimedForm,
+    ...message(reservationClaimedForm, 'Reservation approved')
+  };
+};
+
+async function toggleReturnedReservation(event: RequestEvent) {
+  const request = await event.request.json();
+  const reservationReturnedForm = await superValidate(request, zod(returnReservationSchema));
+
+  if (!reservationReturnedForm.valid) {
+    return fail(401, {
+      form: reservationReturnedForm,
+      message: 'Invalid form data',
+      error: Object.entries(reservationReturnedForm.errors).flatMap(([key, value]) => {
+        return value.map((error) => `${key}: ${error}`);
+      }),
+    });
+  }
+
+  const document = await ReservationDatastore.update(reservationReturnedForm.data.id, reservationReturnedForm.data);
+
+  if (document.response?.status && document.response.status >= 400) {
+    console.error(document.response);
+    return fail(document.response.status, {
+      form: reservationReturnedForm,
+      message: document.response.message,
+      error: document.response.errors,
+    });
+  }
+
+  return {
+    success: true,
+    form: reservationReturnedForm,
+    ...message(reservationReturnedForm, 'Reservation approved')
+  };
+};
