@@ -12,10 +12,18 @@
 	import Settings2 from "lucide-svelte/icons/settings-2";
 	import Trash from "lucide-svelte/icons/trash";
 	import Trash2 from "lucide-svelte/icons/trash-2";
+  import LogOut from "lucide-svelte/icons/log-out";
   import Sun from "lucide-svelte/icons/sun";
 
 	const data = [
 		[
+			{
+				label: "Go to Dashboard",
+				icon: ChartLine,
+        action: () => {
+          goto("/dashboard");
+        },
+			},
 			{
 				label: "Toggle Theme",
 				icon: Sun,
@@ -32,6 +40,17 @@
         },
 			},
 		],
+    [
+      {
+        label: "Logout",
+        icon: LogOut,
+        action: () => {
+          goto("/logout", {
+            invalidateAll: true,
+          });
+        },
+      }
+    ]
 	];
 </script>
 
@@ -41,6 +60,7 @@
 	import * as Sidebar from "$components/elements/sidebar/index.js";
 	import Ellipsis from "lucide-svelte/icons/ellipsis";
 	import { untrack } from "svelte";
+	import { goto } from "$app/navigation";
 
 	let open = $state(false);
 
@@ -70,7 +90,7 @@
 		</Popover.Trigger>
 		<Popover.Content class="w-56 overflow-hidden rounded-lg p-0" align="end">
 			<Sidebar.Root collapsible="none" class="bg-transparent">
-				<Sidebar.Content>
+				<Sidebar.Content class="gap-0">
 					{#each data as group, index (index)}
 						<Sidebar.Group class="border-b last:border-none">
 							<Sidebar.GroupContent class="gap-0">

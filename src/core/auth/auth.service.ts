@@ -1,4 +1,4 @@
-import { type UserAuth, UserRole, type Session, type UserContext, type UserContextGetResponse } from '$core/auth/auth.type';
+import { type UserAuth, UserRole, type Session, type UserContext, type UserContextGetResponse, routeRoleAccess } from '$core/auth/auth.type';
 import { ENCRYPTION_KEY, ALGORITHM } from '$env/static/private';
 
 import * as crypto from 'crypto';
@@ -9,6 +9,7 @@ import type { Requests } from '$core/backend/request.type';
 import { RequestType } from '$core/backend/request.type';
 import { HttpClient } from '$core/protocols/http-client';
 import type { Response } from '$core/backend/response.type';
+import type { User } from '$datastores/user/user.type';
 
 type LoginRequest = {
   email?: string;
@@ -191,4 +192,25 @@ export default class AuthService {
 
 		return decrypted;
 	}
+
+  /**
+   * Gets the user role access for a specific route. 
+   *
+   * @param currentRoute - The current route object.
+   * @returns 
+   */
+  static getRouteRoleAccess(currentRoute: {id: string}): UserRole[] {
+    for (const route of Object.keys(routeRoleAccess) as Array<keyof typeof routeRoleAccess>) {
+      if (currentRoute.id.startsWith(route)) {
+        return routeRoleAccess[route];
+      }
+    }
+
+    return [];
+  }
+
+  static hasAccess(currentRoute: {id: string}, user: User): boolean {
+    const routeAccess = AuthService.getRouteRoleAccess(currentRoute);
+    return routeAccess.includes(user.role);
+  }
 }

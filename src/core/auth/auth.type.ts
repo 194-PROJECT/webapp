@@ -71,8 +71,8 @@ export type UserContextGetResponse = {
 
 export const defaultRedirect: Record<UserRole, string> = {
   [UserRole.ADMIN]: '/admin',
-  [UserRole.USER]: '/',
-  [UserRole.GUEST]: '/',
+  [UserRole.USER]: '/dashboard',
+  [UserRole.GUEST]: '/dashboard',
 };
 
 export const userTypeToRoleMap: Record<UserType, UserRole> = {
@@ -82,4 +82,11 @@ export const userTypeToRoleMap: Record<UserType, UserRole> = {
   [UserType.GUEST]: UserRole.GUEST,
   [UserType.STUDENT]: UserRole.USER,
   [UserType.ALUMNI]: UserRole.USER,
+};
+
+export const privateRoute = '(private)';
+
+export const routeRoleAccess = {
+  [`/${privateRoute}/(admin)`]: [UserRole.ADMIN],
+  [`/${privateRoute}/(app)`]: [UserRole.ADMIN, UserRole.USER, UserRole.GUEST]
 };
