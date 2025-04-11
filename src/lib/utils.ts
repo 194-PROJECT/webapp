@@ -12,7 +12,10 @@ export function camelToSnakeCase(str: string): string {
 export function transformCamelKeysToSnakeCase<T extends Record<string, any>>(obj: T): T {
   return Object.keys(obj).reduce((acc, key) => {
     const snakeKey = camelToSnakeCase(key);
-    acc[snakeKey] = obj[key]; 
+    const value = obj[key];
+    acc[snakeKey] = value && typeof value === "object" && !Array.isArray(value) && !(value instanceof Date)
+      ? transformCamelKeysToSnakeCase(value)
+      : value;
     return acc;
   }, {} as Record<string, any>) as T;
 }

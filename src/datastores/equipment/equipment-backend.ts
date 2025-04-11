@@ -26,8 +26,9 @@ export class EquipmentBackend implements Backend<Equipment> {
 	}
 
 	public async fetch_many(query: GetManyQuery): Promise<Response<Equipment[]>> {
+    const route = query.projection === 'available' ? '/equipment/available' : '/equipment';
 		const request: Requests<GetManyQuery>[RequestType.FETCH] = {
-			route: `/equipment`,
+			route: route,
 			headers: new Headers(),
 			parameters: query
 		};

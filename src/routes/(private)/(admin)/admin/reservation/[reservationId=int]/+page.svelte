@@ -9,6 +9,12 @@
 	import { deserialize } from "$app/forms";
 	import { toast } from "svelte-sonner";
 	import { goto } from "$app/navigation";
+	import {
+    canApproveReservation,
+    getReservationStatus,
+    isReservationFinished,
+    isReservationOngoing
+  } from "$datastores/reservation/reservation.helper.svelte";
 
   let { data }: PageProps = $props();
   let {
@@ -24,49 +30,10 @@
     reservation.accepted === false ? "REJECTED" : "PENDING"
   );
 
-  // not accepted: NEEDS APPROVAL
-  // accepted but not claimed before end date: TO RETRIEVE
-  // accepted and claimed before end date: ON GOING
-  // accepted and claimed but not returned after end date: TO RETURN
-  // accepted and claimed and returned: FINISHED
-  let reservationStatus = $derived.by(() => {
-    if (reservation.accepted === true) {
-      if (reservation.returned === true) {
-        return "FINISHED";
-      } else if (reservation.claimed === true) {
-        if (reservation.returnDate && reservation.returnDate < new Date()) {
-          return "TO RETURN";
-        } else {
-          return "ON GOING";
-        }
-      } else {
-        return "TO RETRIEVE";
-      }
-    } else if (!reservation.accepted && reservation.endDate > new Date()) {
-      return "NEEDS APPROVAL";
-    } else {
-      return "LAPSED";
-    };
-  });
-
-  let reservationFinished = $derived.by(() => {
-    return reservation.accepted === true
-    && reservation.returned === true
-    && reservation.claimed === true;
-  });
-
-  let reservationOnGoing = $derived.by(() => {
-    return reservation.accepted === true
-    && !!reservation.returned
-    && reservation.claimed === true;
-  });
-
-  let canApprove = $derived.by(() => {
-    return !!reservation.accepted
-      && !reservationFinished
-      && !reservationOnGoing
-      && reservation.endDate > new Date();
-  });
+  let reservationStatus = $derived(getReservationStatus(reservation));
+  let reservationFinished = $derived(isReservationFinished(reservation));
+  let reservationOnGoing = $derived(isReservationOngoing(reservation));
+  let canApprove = $derived(canApproveReservation(reservation));
 
   const approveReservation = async (accepted: boolean) => {
     const response = await fetch(`?/approveReservation`, {
@@ -214,14 +181,9 @@
           <p class="text-1xl">{admin ? admin.firstName + ' ' + admin.lastName : 'User not found'}</p>
         </div>
         <div class="flex items-center">
-          <p class="text-1xl flex-grow">Account type:</p>
-          <p class="text-1xl">{reserver ? reserver.type : 'User not found'}</p>
+          <p class="text-1xl flex-grow">Updated on:</p>
+          <p class="text-1xl">{reservation.updatedAt?.toLocaleString()}</p>
         </div>
-      </div>
-      <Separator class="my-4" />
-      <div class="flex items-center">
-        <p class="text-1xl flex-grow">Updated on:</p>
-        <p class="text-1xl">{reservation.updatedAt?.toLocaleString()}</p>
       </div>
       <Separator class="my-4" />
       <div class="flex gap-2 flex-wrap width-full flex-row-reverse">
@@ -233,18 +195,7 @@
 
   <Card.Root>
 		<Card.Content>
-      <Card.Title class="text-1xl mb-4">Reservation Status: <span class="">{ reservationStatus }</span></Card.Title>
-      <Separator class="my-4" />
-      <div>
-        <div class="flex items-center">
-          <p class="text-1xl flex-grow">Last updated by:</p>
-          <p class="text-1xl">{admin ? admin.firstName + ' ' + admin.lastName : 'User not found'}</p>
-        </div>
-        <div class="flex items-center">
-          <p class="text-1xl flex-grow">Account type:</p>
-          <p class="text-1xl">{reserver ? reserver.type : 'User not found'}</p>
-        </div>
-      </div>
+      <Card.Title class="text-1xl mb-4">Reservation Status: <span class="">{ reservationStatus.toUpperCase() }</span></Card.Title>
       <Separator class="my-4" />
       <div>
         <div class="flex items-center">

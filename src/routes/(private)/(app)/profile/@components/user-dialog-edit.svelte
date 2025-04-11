@@ -84,6 +84,11 @@
           <Label for="username" class="text-right">Username</Label>
           <Input id="username" name="username" value={updatedUser.username} class="col-span-3" />
         </div>
+
+        <div class="grid grid-cols-4 items-center gap-4">
+          <Label for="profilePictureUrl" class="text-right">Profile Picture URL</Label>
+          <Input id="profilePictureUrl" name="profilePictureUrl" value={updatedUser.profilePictureUrl} class="col-span-3" />
+        </div>
       </div>
 
       <Dialog.Footer>

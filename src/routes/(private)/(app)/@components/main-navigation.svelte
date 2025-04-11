@@ -8,14 +8,14 @@
     class?: string | null;
   } = $props();
 
-  let currentPath = $derived(page.url.pathname);
+  let currentPath = $derived(page.url.pathname.split("/")[1]);
 </script>
 
 {#key currentPath}
   <nav class={cn("flex items-center space-x-4 lg:space-x-6", className)}>
     <a href="/dashboard" class={cn(
         "hover:text-primary text-sm font-medium transition-colors",
-        currentPath !== "/dashboard" && "text-muted-foreground"
+        currentPath !== "dashboard" && "text-muted-foreground"
       )}
     >
       Dashboard
@@ -23,7 +23,7 @@
     <a
       href="/reservation" class={cn(
         "hover:text-primary text-sm font-medium transition-colors",
-        currentPath !== "/reservation" && "text-muted-foreground"
+        currentPath !== "reservation" && "text-muted-foreground"
       )}
     >
       Reservations

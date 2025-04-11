@@ -42,8 +42,8 @@ export class HttpClient {
      * If the request has parameters, we need to add them to the URL as query parameters
      */
 		if ('parameters' in request) {
-      const params = request.parameters as Query;
-      route = `${route}?${HttpClient._getSearchParams(params)}`;
+      request.parameters = transformCamelKeysToSnakeCase<RQ>(request.parameters);
+      route = `${route}?${HttpClient._getSearchParams(request.parameters)}`;
 		}
 
 		switch (type) {
@@ -111,6 +111,8 @@ export class HttpClient {
     for (const key in params) {
       if (Array.isArray(params[key])) {
         params[key].forEach(val => searchParams.append(key, val));
+      } else if (typeof params[key] === 'object' && params[key] !== null) {
+        searchParams.append(key, JSON.stringify(params[key]));
       } else {
         searchParams.set(key, params[key]);
       }

@@ -1,6 +1,8 @@
 import type { EquipmentGetResponse } from "./equipment-backend.type";
 import type { Equipment } from "./equipment.type";
 import type { Response } from "$core/backend/response.type";
+import { EquipmentItemTransformer } from "$datastores/equipment-item/equipment-item.transformer";
+import { EquipmentImageTransformer } from "$datastores/equipment-image/equipment-image.transformer";
 
 export class EquipmentTransformer {
   static transform(data: EquipmentGetResponse): Equipment {
@@ -15,6 +17,12 @@ export class EquipmentTransformer {
       price: data.price,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
+      items: data.equipment_items ? data.equipment_items.map((item) => {
+        return EquipmentItemTransformer.transform(item);
+      }) : undefined,
+      images: data.equipment_images ? data.equipment_images.map((image) => {
+        return EquipmentImageTransformer.transform(image);
+      }) : undefined,
     };
   }
 

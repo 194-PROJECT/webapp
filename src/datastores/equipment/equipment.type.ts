@@ -1,3 +1,6 @@
+import type { EquipmentImage } from "$datastores/equipment-image/equipment-image.type";
+import type { EquipmentItem } from "$datastores/equipment-item/equipment-item.type";
+
 export interface Equipment {
   id: number;
   name: string;
@@ -9,6 +12,8 @@ export interface Equipment {
   price: number;
   createdAt?: Date;
   updatedAt?: Date;
+  items?: EquipmentItem[];
+  images?: EquipmentImage[];
 }
 
 export enum EquipmentCategory {
@@ -16,3 +21,5 @@ export enum EquipmentCategory {
   INSTRUMENT = "instrument",
   TOOL = "tool",
 }
+
+export type equipmentView = 'available';

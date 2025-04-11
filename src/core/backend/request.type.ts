@@ -12,17 +12,23 @@ export type GetManyQuery = {
   page?: number;
   page_size?: number;
   /**
-   * we'll support filtering by a single field for now. Support for multiple fields will be added later.
-   * we need to create field[], operator[], and value[] arrays to support multiple fields.
+   * We'll support filtering by a single field for now. Support for multiple fields will be added later.
+   * We need to create field[], operator[], and value[] arrays to support multiple fields.
    */
   field?: string;
   operator?: Operator;
   value?: string | number | string[] | number[];
   /**
-   * query parameter ids is used to fetch multiple records by their ids.
-   * this is a special case and should be handled separately in the backend.
+   * Query parameter ids is used to fetch multiple records by their ids.
+   * This is a special case and should be handled separately in the backend.
    */
   ids?: number[];
+  /**
+   * The projection parameter is used to specify which fields to include in the response.
+   * This is useful for optimizing the response size and performance.
+   */
+  projection?: string;
+  extra?: Record<string, any>;
 };
 
 export type DeleteQuery = {
