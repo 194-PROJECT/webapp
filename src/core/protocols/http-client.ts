@@ -8,7 +8,7 @@ import type { Cookies } from '@sveltejs/kit';
 import { PUBLIC_HTTP_PROTOCOL, PUBLIC_API_URL, PUBLIC_API_PORT } from '$env/static/public';
 import { transformCamelKeysToSnakeCase } from '$lib/utils';
 
-const API_BASE_URL = `${PUBLIC_HTTP_PROTOCOL}://${PUBLIC_API_URL}:${PUBLIC_API_PORT}`;
+export const API_BASE_URL = `${PUBLIC_HTTP_PROTOCOL}://${PUBLIC_API_URL}:${PUBLIC_API_PORT}`;
 
 export class HttpClient {
 	public static async request<RQ extends Query, RP>(

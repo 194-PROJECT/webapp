@@ -3,7 +3,9 @@
 	import { Header } from '$components/elements/alert-dialog';
 import Button from '$components/elements/button/button.svelte';
 	import * as Table from '$components/elements/table';
+	import { getReservationStatus } from '$datastores/reservation/reservation.helper.svelte';
 	import type { Reservation } from '$datastores/reservation/reservation.type';
+	import ReservationTableAction from './reservation-table-action.svelte';
 
 	const {
 		reservations,
@@ -36,6 +38,7 @@ import Button from '$components/elements/button/button.svelte';
 	<Table.Header>
 		<Table.Row>
 			<Table.Head class="text-left">ID</Table.Head>
+      <Table.Head>Status</Table.Head>
 			<Table.Head>Accepted</Table.Head>
 			<Table.Head>Claimed</Table.Head>
 			<Table.Head>Returned</Table.Head>
@@ -48,15 +51,16 @@ import Button from '$components/elements/button/button.svelte';
 		{#each reservations as reservation (reservation)}
 			<Table.Row>
 				<Table.Cell class="font-medium">{reservation.id}</Table.Cell>
+        <Table.Cell>{getReservationStatus(reservation).toUpperCase()}</Table.Cell>
 				<Table.Cell>{reservation.accepted}</Table.Cell>
 				<Table.Cell>{reservation.claimed}</Table.Cell>
 				<Table.Cell>{reservation.returned}</Table.Cell>
 				<Table.Cell>{reservation.endDate.toLocaleString()}</Table.Cell>
 				<Table.Cell>{reservation.startDate.toLocaleString()}</Table.Cell>
 				<Table.Cell>
-          <Button onclick={() => viewReservation(reservation.id)}>
-            <span>View Reservation</span>
-          </Button>
+          <ReservationTableAction
+            reservation={reservation}
+          />
         </Table.Cell>
 			</Table.Row>
 		{/each}

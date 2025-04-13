@@ -124,7 +124,7 @@
 	<Card.Root>
 		<Card.Content>
 			<Card.Title class="text-2xl font-bold mb-4">Reservation {reservation.id}</Card.Title>
-			<p class="text-1xl"><span class="font-bold">Reason:</span> {reservation.reason}</p>
+      <p class="text-1xl break-words"><span class="font-bold">Reason:</span> {reservation.reason}</p>
       <Separator class="my-4" />
       <div class="flex items-center">
         <p class="text-1xl flex-grow font-bold">Start date:</p>
@@ -178,11 +178,11 @@
       <div>
         <div class="flex items-center">
           <p class="text-1xl flex-grow">Last updated by:</p>
-          <p class="text-1xl">{admin ? admin.firstName + ' ' + admin.lastName : 'User not found'}</p>
+          <p class="text-1xl">{admin ? admin.firstName + ' ' + admin.lastName : 'Not yet updated'}</p>
         </div>
         <div class="flex items-center">
           <p class="text-1xl flex-grow">Updated on:</p>
-          <p class="text-1xl">{reservation.updatedAt?.toLocaleString()}</p>
+          <p class="text-1xl">{reservation.updatedAt?.toLocaleString() ?? 'Not yet updated'}</p>
         </div>
       </div>
       <Separator class="my-4" />

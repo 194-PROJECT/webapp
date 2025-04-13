@@ -8,6 +8,7 @@ import { UserTransformer } from '$datastores/user/user.transformer';
 import { SessionTransformer } from '$core/auth/auth.transformer';
 import { defaultRedirect } from '$core/auth/auth.type';
 import { fail } from '@sveltejs/kit';
+import { ProgramDatastore } from '$datastores/program/program.svelte';
 
 const signupSchema = validation.object({
   email: validation.string().email(),
@@ -15,15 +16,17 @@ const signupSchema = validation.object({
   firstName: validation.string().min(2).max(30),
   lastName: validation.string().min(2).max(30),
   password: validation.string().min(8).max(20),
-  programId: validation.number().positive(),
-  studentId: validation.string().length(10),
+  programId: validation.string().regex(/^\d+$/, 'Must be an integer'),
+  studentId: validation.string().regex(/^\d{4}-\d{5}$/, 'Must follow the format YYYY-NNNNN'),
 });
 
 export const load = async (event: PageServerLoadEvent) => {
   const signupForm = await superValidate(event, zod(signupSchema));
+  const programCollection = await ProgramDatastore.get({});
 
   return {
     signupForm,
+    programs: programCollection.value ?? [],
   };
 }
 
@@ -59,7 +62,7 @@ async function signup(event: RequestEvent) {
     firstName: firstName,
     lastName: lastName,
     password: password,
-    programId: programId,
+    programId: Number(programId),
     studentId: studentId,
     cookies: event.cookies,
     locals: event.locals,

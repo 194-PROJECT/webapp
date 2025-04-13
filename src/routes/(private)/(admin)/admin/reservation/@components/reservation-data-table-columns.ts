@@ -2,6 +2,7 @@ import { renderComponent } from "$components/elements/data-table";
 import type { ReservationUser } from "$datastores/reservation/reservation.type";
 import type { ColumnDef } from "@tanstack/table-core";
 import ReservationDataTableAction from "./reservation-data-table-action.svelte";
+import { getReservationStatus } from "$datastores/reservation/reservation.helper.svelte";
 
 export const reservationDataTableColumns: ColumnDef<ReservationUser>[] = [
   {
@@ -40,6 +41,11 @@ export const reservationDataTableColumns: ColumnDef<ReservationUser>[] = [
     }
   },
   {
+    accessorKey: 'status',
+    header: 'Status',
+    cell: ({ row }) => (getReservationStatus(row.original).toUpperCase())
+  },
+  {
     accessorKey: 'accepted',
     header: 'Accepted',
     cell: ({ row }) => (row.original.accepted ? 'Yes' : 'No')
@@ -59,7 +65,7 @@ export const reservationDataTableColumns: ColumnDef<ReservationUser>[] = [
     header: 'Return Date',
     cell: ({ row }) => {
       const formatter = (date: string) => new Date(date).toLocaleString();
-      return formatter(row.getValue('returnDate'));
+      return row.getValue('returnDate') ?formatter(row.getValue('returnDate')) : undefined;
     },
   },
   {

@@ -28,5 +28,13 @@
     >
       Reservations
     </a>
+    <a
+      href="/mishandle" class={cn(
+        "hover:text-primary text-sm font-medium transition-colors",
+        currentPath !== "reservation" && "text-muted-foreground"
+      )}
+    >
+      Mishandles
+    </a>
   </nav>
 {/key}

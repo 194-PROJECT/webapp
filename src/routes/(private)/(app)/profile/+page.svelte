@@ -13,6 +13,7 @@ import * as Avatar from "$components/elements/avatar";
     user,
     reservations,
     handledReservations,
+    authUser,
   } = $derived(data);
 
   let isEditDialogOpen = $state(false);
@@ -90,6 +91,7 @@ import * as Avatar from "$components/elements/avatar";
   <div class="col-span-6">
     <UserReservationTable
       reservations={reservations}
+      authUser={authUser}
     />
   </div>
 </div>

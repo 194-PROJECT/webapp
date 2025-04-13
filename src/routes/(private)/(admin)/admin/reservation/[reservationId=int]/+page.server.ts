@@ -99,13 +99,14 @@ export const load: PageServerLoad = async (event) => {
 
   const reservationEquipmentData = await Promise.all(reservationEquipmentDataPromise ?? []);
   const reserverDocument = await UserDatastore.get(reservationDocument.value.userId);
-  const adminDocument = await UserDatastore.get(reservationDocument.value.adminId);
+  const adminDocument = reservationDocument.value.adminId ?
+  await UserDatastore.get(reservationDocument.value.adminId) : undefined;
 
   return {
     reservation: reservationDocument.value,
     reservationEquipments: reservationEquipmentData,
     reserver: reserverDocument.value,
-    admin: adminDocument.value,
+    admin: adminDocument?.value,
   };
 };
 

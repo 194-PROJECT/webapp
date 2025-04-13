@@ -1,1 +1,1 @@
-Password Reset
+Password Reset - Contact DGE through email to have your password reset.

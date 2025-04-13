@@ -10,9 +10,22 @@
 	import { superForm } from "sveltekit-superforms";
 	import { setContext } from "svelte";
 	import { enhance } from "$app/forms";
+	import * as Select from "$components/elements/select";
 
   let { data, form: loginResponse }: PageProps = $props();
 	const { form } = superForm(data.signupForm);
+  const { programs } = $derived(data);
+
+  const searchOptions = $derived(programs.map((program) => ({
+    value: program.id.toString(),
+    label: program.title,
+  })));
+
+  const programTriggerContent = $derived.by(() => {
+    const selectedOption = searchOptions.find((option) => option.value === $form.programId);
+    return selectedOption ? selectedOption.label : "Select a program";
+  });
+  
   let success = $state(loginResponse?.success);
 
   $effect(() => {
@@ -75,7 +88,7 @@
           name="username"
           placeholder="johndoe"
           autocapitalize="none"
-          autocomplete="email"
+          autocomplete="username"
           autocorrect="off"
           bind:value={$form.username}
           disabled={formLoading}
@@ -89,7 +102,7 @@
             name="firstName"
             placeholder="John"
             autocapitalize="none"
-            autocomplete="email"
+            autocomplete="given-name"
             autocorrect="off"
             bind:value={$form.firstName}
             disabled={formLoading}
@@ -102,7 +115,7 @@
             name="lastName"
             placeholder="Doe"
             autocapitalize="none"
-            autocomplete="email"
+            autocomplete="family-name"
             autocorrect="off"
             bind:value={$form.lastName}
             disabled={formLoading}
@@ -116,25 +129,29 @@
             id="studentId"
             name="studentId"
             placeholder="2019-06357"
-            autocapitalize="none"
-            autocomplete="email"
-            autocorrect="off"
             bind:value={$form.studentId}
             disabled={formLoading}
           />
         </div>
         <div class="flex flex-col items-center gap-2 flex-grow">
           <Label class="self-start" for="programId">Program</Label>
-          <Input
-            id="programId"
+          <Select.Root
+            type="single"
             name="programId"
-            placeholder="Computer Science"
-            autocapitalize="none"
-            autocomplete="email"
-            autocorrect="off"
             bind:value={$form.programId}
-            disabled={formLoading}
-          />
+          >
+            <Select.Trigger class="w-[180px]">
+              {programTriggerContent}
+            </Select.Trigger>
+            <Select.Content>
+              <Select.Group>
+                <Select.GroupHeading>Search by</Select.GroupHeading>
+                {#each searchOptions as searchOption (searchOption.value)}
+                  <Select.Item value={searchOption.value} label={searchOption.label} />
+                {/each}
+              </Select.Group>
+            </Select.Content>
+          </Select.Root>
         </div>
       </div>
       <div class="flex flex-col items-center gap-2">
@@ -142,9 +159,9 @@
         <Input
           id="password"
           name="password"
-          placeholder="Computer Science"
+          placeholder="password"
           autocapitalize="none"
-          autocomplete="email"
+          autocomplete="new-password"
           autocorrect="off"
           bind:value={$form.password}
           disabled={formLoading}

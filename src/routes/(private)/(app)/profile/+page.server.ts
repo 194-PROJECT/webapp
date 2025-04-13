@@ -62,6 +62,7 @@ export const load: PageServerLoad = async (event) => {
   });
 
   return {
+    authUser: event.locals.user,
     user: userDocument.value,
     reservations: madeReservationCollection.value ?? [],
     handledReservations: handledReservations ?? [],

@@ -17,22 +17,22 @@
 		icon: any;
 		badge?: string;
 	}[] = [
-		{
-			title: 'Calendar',
-			url: '#',
-			icon: Calendar,
-      badge: '10'
-		},
-		{
-			title: 'Settings',
-			url: '#',
-			icon: Settings_2
-		},
-		{
-			title: 'Help',
-			url: '#',
-			icon: MessageCircleQuestion
-		}
+		// {
+		// 	title: 'Calendar',
+		// 	url: '#',
+		// 	icon: Calendar,
+    //   badge: '10'
+		// },
+		// {
+		// 	title: 'Settings',
+		// 	url: '#',
+		// 	icon: Settings_2
+		// },
+		// {
+		// 	title: 'Help',
+		// 	url: '#',
+		// 	icon: MessageCircleQuestion
+		// }
 	];
 </script>
 

@@ -60,18 +60,19 @@ export const load: PageServerLoad = async (event) => {
       reservationEquipment: reservationEquipment,
       equipmentItem: equipmentItem,
       equipment: equipment,
-      equipmentImage: equipmentImageCollection?.value ? equipmentImageCollection.value[0] : undefined,
+      equipmentImage: equipmentImageCollection?.value?.length ? equipmentImageCollection.value[0] : undefined,
     };
   });
 
   const reservationEquipmentData = await Promise.all(reservationEquipmentDataPromise ?? []);
   const reserverDocument = await UserDatastore.get(reservationDocument.value.userId);
-  const adminDocument = await UserDatastore.get(reservationDocument.value.adminId);
+  const adminDocument = reservationDocument.value.adminId ?
+    await UserDatastore.get(reservationDocument.value.adminId) : undefined;
 
   return {
     reservation: reservationDocument.value,
     reservationEquipments: reservationEquipmentData,
     reserver: reserverDocument.value,
-    admin: adminDocument.value,
+    admin: adminDocument?.value,
   };
 };

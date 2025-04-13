@@ -15,6 +15,12 @@ export function transformCamelKeysToSnakeCase<T extends Record<string, any>>(obj
     const value = obj[key];
     acc[snakeKey] = value && typeof value === "object" && !Array.isArray(value) && !(value instanceof Date)
       ? transformCamelKeysToSnakeCase(value)
+      : Array.isArray(value)
+      ? value.map((item) =>
+          item && typeof item === "object" && !(item instanceof Date)
+            ? transformCamelKeysToSnakeCase(item)
+            : item
+        )
       : value;
     return acc;
   }, {} as Record<string, any>) as T;

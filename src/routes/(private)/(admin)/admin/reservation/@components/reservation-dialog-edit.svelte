@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { Button } from '$components/elements/button/index.js';
-	import * as Dialog from '$components/elements/dialog/index.js';
-	import { Input } from '$components/elements/input/index.js';
-	import { Label } from '$components/elements/label/index.js';
+	import { Button } from '$components/elements/button';
+	import * as Dialog from '$components/elements/dialog';
+	import { Input } from '$components/elements/input';
+	import { Label } from '$components/elements/label';
 	import type { ReservationUser } from '$datastores/reservation/reservation.type';
 	import { getDateInput } from '$lib/utils';
 	import { parseAbsoluteToLocal, parseDateTime } from '@internationalized/date';

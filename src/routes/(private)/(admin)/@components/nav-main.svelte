@@ -18,12 +18,12 @@
 			icon: House,
 			isActive: true
 		},
-		{
-			title: 'Inbox',
-			url: '/inbox',
-			icon: Inbox,
-			badge: '10'
-		}
+		// {
+		// 	title: 'Inbox',
+		// 	url: '/inbox',
+		// 	icon: Inbox,
+		// 	badge: '10'
+		// }
 	];
 </script>
 

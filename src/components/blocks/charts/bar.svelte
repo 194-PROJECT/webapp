@@ -90,7 +90,7 @@
 						x="57"
 						y="-4"
 						fill="#888888"
-						text-anchor="end"><tspan x="36" dy="0.355em">${tick}</tspan></text
+						text-anchor="end"><tspan x="36" dy="0.355em">{tick}</tspan></text
 					>
 				</g>
 			{/each}

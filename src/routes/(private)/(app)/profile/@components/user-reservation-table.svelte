@@ -4,18 +4,21 @@
 import Button from '$components/elements/button/button.svelte';
 	import * as Table from '$components/elements/table';
 	import type { Reservation } from '$datastores/reservation/reservation.type';
+	import type { User } from '$datastores/user/user.type';
 
 	const {
 		reservations,
+    authUser,
 	}: {
 		reservations: Reservation[];
+    authUser: User;
 	} = $props();
 
-  const viewReservation = (reservationId?: number) => {
-    if (reservationId) {
+  const viewReservation = (reservationId: number) => {
+    if (authUser.role !== 'admin') {
       goto(`/admin/reservation/${reservationId}`);
     } else {
-      console.error('No reservation ID provided');
+      goto(`/reservation/${reservationId}`);
     }
   };
 </script>
