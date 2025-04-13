@@ -8,6 +8,7 @@
 	import type { EquipmentItem } from '$datastores/equipment-item/equipment-item.type';
   import type { SubmitFunction } from '@sveltejs/kit';
   import { toast } from 'svelte-sonner';
+  import { v4 as uuidv4 } from 'uuid';
 
   let {
     isOpen = $bindable(false),
@@ -18,7 +19,7 @@
   } = $props();
 
   let initialEquipmentItem: Partial<EquipmentItem> = {
-    itemCode: '',
+    itemCode: uuidv4(),
     equipmentId: equipmentId,
     available: true,
   };

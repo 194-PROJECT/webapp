@@ -129,11 +129,6 @@
           url: '/admin/equipment/usage',
           icon: GraduationCap
         },
-        {
-          title: 'Room Usage',
-          url: '/admin/room/usage',
-          icon: GraduationCap
-        },
       ]
     }
   ];

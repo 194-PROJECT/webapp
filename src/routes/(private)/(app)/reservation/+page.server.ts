@@ -17,12 +17,16 @@ export const load: PageServerLoad = async ({ locals }) => {
     field: 'user_id',
     operator: Operator.EQUALS,
     value: userId,
+    order_by: 'id',
+    order_direction: 'DESC',
   });
 
   const handledReservationCollection = await ReservationDatastore.get({
     field: 'admin_id',
     operator: Operator.EQUALS,
     value: userId,
+    order_by: 'id',
+    order_direction: 'DESC',
   });
 
   return {

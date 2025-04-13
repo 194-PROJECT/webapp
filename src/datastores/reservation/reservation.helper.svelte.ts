@@ -1,9 +1,11 @@
 import type { Reservation } from './reservation.type';
 
 export const getReservationStatus = (reservation: Reservation): string => {
-  if (reservation.accepted === true && reservation.claimed === true && reservation.returned === true && reservation.endDate < new Date()) {
+  if (reservation.accepted === true && reservation.claimed === true && reservation.returned === true && (reservation.returnDate ? reservation.returnDate > reservation.endDate : false)) {
+    return 'finished : late';
+  } else if (reservation.accepted === true && reservation.claimed === true && reservation.returned === true) {
     return 'finished';
-  } else if (reservation.accepted === true && reservation.claimed === true && !reservation.returned && reservation.endDate < new Date()) {
+  }  else if (reservation.accepted === true && reservation.claimed === true && !reservation.returned && reservation.endDate < new Date()) {
     return 'ongoing';
   } else if (reservation.accepted === true && reservation.claimed === true && !reservation.returned && reservation.endDate > new Date()) {
     return 'to return';
@@ -13,9 +15,9 @@ export const getReservationStatus = (reservation: Reservation): string => {
     return 'to claim';
   } else if (reservation.accepted === true && !reservation.claimed && !reservation.returned && reservation.startDate > new Date()) {
     return 'accepted';
-  } else if (reservation.accepted === false && !reservation.claimed && !reservation.returned && reservation.endDate > new Date()) {
+  } else if (reservation.accepted === false) {
     return 'rejected';
-  } else if (reservation.accepted === undefined) {
+  } else if (reservation.accepted === undefined && !reservation.claimed && !reservation.returned && reservation.endDate > new Date()) {
     return 'pending';
   } else if (reservation.endDate < new Date()) {
     return 'lapsed';

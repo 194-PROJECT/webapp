@@ -32,7 +32,7 @@
     {#if equipment.searchTerm.toLowerCase().includes(searchTerm)}
       <Card.Root class={cn(equipment.selected ? 'border-green-700' : '')}>
         <Card.Content class="h-full flex flex-col">
-          <img src={equipment.images ? equipment.images[0].imageUrl : ''} alt={equipment.name} class="w-full h-[10rem] object-cover rounded-lg mb-4" />
+          <img src={equipment.images?.length ? equipment.images[0].imageUrl : 'https://dummyimage.com/600x400/000/fff'} alt={equipment.name} class="w-full h-[10rem] object-cover rounded-lg mb-4" />
             <Card.Title class="text-2xl font-bold flex items-center">
               <p class="flex-grow">{equipment.name}</p>
               <p class="text-sm h-auto">available: {equipment.items?.length}</p>

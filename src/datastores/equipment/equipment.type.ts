@@ -20,6 +20,7 @@ export enum EquipmentCategory {
   ACCESSORY = "accessory",
   INSTRUMENT = "instrument",
   TOOL = "tool",
+  OTHER = "other",
 }
 
 export type equipmentView = 'available';

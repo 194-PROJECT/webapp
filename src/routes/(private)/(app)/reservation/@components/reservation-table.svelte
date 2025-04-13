@@ -42,8 +42,8 @@ import Button from '$components/elements/button/button.svelte';
 			<Table.Head>Accepted</Table.Head>
 			<Table.Head>Claimed</Table.Head>
 			<Table.Head>Returned</Table.Head>
-			<Table.Head>End Date</Table.Head>
 			<Table.Head>Start Date</Table.Head>
+			<Table.Head>End Date</Table.Head>
 			<Table.Head></Table.Head>
 		</Table.Row>
 	</Table.Header>
@@ -55,8 +55,8 @@ import Button from '$components/elements/button/button.svelte';
 				<Table.Cell>{reservation.accepted}</Table.Cell>
 				<Table.Cell>{reservation.claimed}</Table.Cell>
 				<Table.Cell>{reservation.returned}</Table.Cell>
-				<Table.Cell>{reservation.endDate.toLocaleString()}</Table.Cell>
 				<Table.Cell>{reservation.startDate.toLocaleString()}</Table.Cell>
+				<Table.Cell>{reservation.endDate.toLocaleString()}</Table.Cell>
 				<Table.Cell>
           <ReservationTableAction
             reservation={reservation}

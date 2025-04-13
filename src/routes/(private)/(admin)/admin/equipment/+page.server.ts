@@ -11,7 +11,7 @@ import { EquipmentCategory } from '$datastores/equipment/equipment.type';
 const equipmentCreateSchema = validation.object({
   name: validation.string().min(2).max(50),
   description: validation.string().max(255).optional(),
-  category: validation.string().max(50),
+  category: validation.nativeEnum(EquipmentCategory),
   purchasedBy: validation.string().max(50).optional(),
   purchaseDate: validation.date(),
   price: validation.number().positive(),

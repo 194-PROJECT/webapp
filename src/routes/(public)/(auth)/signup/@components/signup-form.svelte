@@ -160,6 +160,7 @@
           id="password"
           name="password"
           placeholder="password"
+          type="password"
           autocapitalize="none"
           autocomplete="new-password"
           autocorrect="off"
