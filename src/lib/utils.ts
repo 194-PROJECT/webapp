@@ -38,6 +38,10 @@ export function transformCamelKeysToParagraph<T extends Record<string, any>>(obj
   }, {} as Record<string, any>) as T;
 }
 
+export function snakeToParagraph(str: string): string {
+  return str.replace(/_/g, " ").toLowerCase();
+}
+
 export function getDateInput(date: Date): string {
   return date.toISOString().split("T")[0];
 }

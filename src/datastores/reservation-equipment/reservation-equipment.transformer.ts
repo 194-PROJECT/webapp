@@ -11,6 +11,8 @@ export class ReservationEquipmentTransformer {
       equipmentItemId: data.equipment_item_id,
       returned: data.returned,
       mishandled: data.mishandled,
+      mishandleType: data.mishandle_type,
+      mishandleDescription: data.mishandle_description,
       rating: data.rating,
       comment: data.comment,
       adminNote: data.admin_note,

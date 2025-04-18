@@ -13,6 +13,7 @@
 	import type { Reservation } from '$datastores/reservation/reservation.type';
 	import ReservationEquipmentDialogCreate from './reservation-equipment-dialog-create.svelte';
 	import Button from '$components/elements/button/button.svelte';
+	import { snakeToParagraph } from '$lib/utils';
 
 	let {
     reservation = $bindable(),
@@ -67,6 +68,8 @@
       <Table.Head>Admin Note</Table.Head>
       <Table.Head>Returned</Table.Head>
       <Table.Head>Mishandled</Table.Head>
+      <Table.Head>Mishandle Type</Table.Head>
+      <Table.Head>Mishandle Description</Table.Head>
       <Table.Head></Table.Head>
 		</Table.Row>
 	</Table.Header>
@@ -88,6 +91,11 @@
         <Table.Cell>{reservationEquipment.reservationEquipment.adminNote}</Table.Cell>
         <Table.Cell>{reservationEquipment.reservationEquipment.returned}</Table.Cell>
         <Table.Cell>{reservationEquipment.reservationEquipment.mishandled}</Table.Cell>
+        <Table.Cell>{
+          reservationEquipment.reservationEquipment.mishandleType ?
+            snakeToParagraph(reservationEquipment.reservationEquipment.mishandleType) : undefined
+        }</Table.Cell>
+        <Table.Cell>{reservationEquipment.reservationEquipment.mishandleDescription}</Table.Cell>
 				<Table.Cell>
           <ReservationEquipmentTableAction
             reservation={reservation}

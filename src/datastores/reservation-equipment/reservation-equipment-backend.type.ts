@@ -1,3 +1,5 @@
+import type { MishandleType } from "./reservation-equipment.type";
+
 export interface ReservationEquipmentGetResponse {
   id?: number;
   reservation_id: number;
@@ -5,6 +7,8 @@ export interface ReservationEquipmentGetResponse {
   equipment_item_id?: number;
   returned?: boolean;
   mishandled?: boolean;
+  mishandle_type: MishandleType;
+  mishandle_description: string;
   rating?: number;
   comment?: string;
   admin_note?: string;

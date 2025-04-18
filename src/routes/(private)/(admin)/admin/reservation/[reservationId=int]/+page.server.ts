@@ -14,6 +14,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import type { Collection } from '$core/datastore/collection.svelte';
 import { EquipmentItemDatastore } from '$datastores/equipment-item/equipment-item.svelte';
 import { deleteModelSchema } from '$core/helpers/request';
+import { MishandleType } from '$datastores/reservation-equipment/reservation-equipment.type';
 
 const acceptReservationSchema = validation.object({
   id: validation.number().int().positive(),
@@ -26,6 +27,11 @@ const claimedReservationSchema = validation.object({
   claimed: validation.boolean().default(false),
 });
 
+const returnReservationSchema = validation.object({
+  id: validation.number().int().positive(),
+  returned: validation.boolean().default(false),
+});
+
 const reservationEquipmentSchema = validation.object({
   id: validation.number().int().positive().default(1),
   reservationId: validation.number().int().positive().optional(),
@@ -33,6 +39,8 @@ const reservationEquipmentSchema = validation.object({
   equipmentItemId: validation.number().int().positive().optional(),
   returned: validation.boolean().optional(),
   mishandled: validation.boolean().optional(),
+  mishandleType: validation.nativeEnum(MishandleType).optional(),
+  mishandleDescription: validation.string().optional(),
   adminNote: validation.string().optional(),
 });
 
@@ -186,6 +194,38 @@ const toggleClaimedReservation: Action = async (event) => {
   };
 };
 
+const toggleReturnedReservation: Action = async (event) => {
+  const request = await event.request.json();
+  const reservationReturnedForm = await superValidate(request, zod(returnReservationSchema));
+
+  if (!reservationReturnedForm.valid) {
+    return fail(401, {
+      form: reservationReturnedForm,
+      message: 'Invalid form data',
+      error: Object.entries(reservationReturnedForm.errors).flatMap(([key, value]) => {
+        return value.map((error) => `${key}: ${error}`);
+      }),
+    });
+  }
+
+  const document = await ReservationDatastore.update(reservationReturnedForm.data.id, reservationReturnedForm.data);
+
+  if (document.response?.status && document.response.status >= 400) {
+    console.error(document.response);
+    return fail(document.response.status, {
+      form: reservationReturnedForm,
+      message: document.response.message,
+      error: document.response.errors,
+    });
+  }
+
+  return {
+    success: true,
+    form: reservationReturnedForm,
+    ...message(reservationReturnedForm, 'Reservation approved')
+  };
+};
+
 const deleteReservationEquipment: Action = async (event) => {
   const request = await event.request.json();
   const reservationEquipmentDeleteForm = await superValidate(request, zod(deleteModelSchema));
@@ -283,6 +323,7 @@ const createReservationEquipment: Action = async (event) => {
 export const actions: Actions = {
   approveReservation,
   toggleClaimedReservation,
+  toggleReturnedReservation,
   deleteReservationEquipment,
   updateReservationEquipment,
   createReservationEquipment,

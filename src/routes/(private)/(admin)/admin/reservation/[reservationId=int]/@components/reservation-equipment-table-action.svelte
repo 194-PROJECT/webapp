@@ -11,6 +11,8 @@
 	import type { EquipmentImage } from "$datastores/equipment-image/equipment-image.type";
 	import type { Equipment } from "$datastores/equipment/equipment.type";
 	import type { Reservation } from "$datastores/reservation/reservation.type";
+	import ReservationEquipmentDialogMishandleEdit from "./reservation-equipment-dialog-mishandle-edit.svelte";
+	import { isReservationFinished } from "$datastores/reservation/reservation.helper.svelte";
 
   let {
     reservation = $bindable(),
@@ -27,13 +29,11 @@
       equipments: Equipment[];
     };
   } = $props();
-  let isCreateDialogOpen = $state(false);
+  let isMishandleEditDialogOpen = $state(false);
 
   const viewEquipment = () => {
     goto(`/admin/equipment/${reservationEquipment.equipment?.id}`);
   }
-
-
 
   const deleteReservationEquipment = async () => {
     const response = await fetch(`?/deleteReservationEquipment`, {
@@ -88,6 +88,10 @@
         break;
     }
   };
+
+  const toggleMishandleEditDialog = () => {
+    isMishandleEditDialogOpen = !isMishandleEditDialogOpen;
+  };
 </script>
 
 <DropdownMenu.Root>
@@ -110,19 +114,20 @@
     </DropdownMenu.Group>
     <DropdownMenu.Separator />
     <DropdownMenu.Item onclick={viewEquipment}>View</DropdownMenu.Item>
-    <DropdownMenu.Item onclick={deleteReservationEquipment}>Remove</DropdownMenu.Item>
+    <DropdownMenu.Item onclick={deleteReservationEquipment} disabled={isReservationFinished(reservation)}>Remove</DropdownMenu.Item>
     <DropdownMenu.Separator />
     <DropdownMenu.Item onclick={()=>{
       updateReservationEquipment({
         id: reservationEquipment.reservationEquipment.id,
         returned: !reservationEquipment.reservationEquipment.returned,
       });
-    }}>Returned</DropdownMenu.Item>
-    <DropdownMenu.Item onclick={()=>{
-      updateReservationEquipment({
-        id: reservationEquipment.reservationEquipment.id,
-        mishandled: !reservationEquipment.reservationEquipment.mishandled,
-      });
-    }}>Mishandled</DropdownMenu.Item>
+    }} disabled={!isReservationFinished(reservation)}>Returned</DropdownMenu.Item>
+    <DropdownMenu.Item onclick={toggleMishandleEditDialog} disabled={!isReservationFinished(reservation)}>Mishandled</DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>
+
+<ReservationEquipmentDialogMishandleEdit
+  bind:isOpen={isMishandleEditDialogOpen}
+  bind:reservation={reservation}
+  bind:reservationEquipment={reservationEquipment}
+/>
