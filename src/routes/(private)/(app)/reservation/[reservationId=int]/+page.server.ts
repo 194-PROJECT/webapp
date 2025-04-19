@@ -1,5 +1,5 @@
 import { ReservationDatastore } from '$datastores/reservation/reservation.svelte';
-import { error } from '@sveltejs/kit';
+import { error, type Action, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { ReservationEquipmentDatastore } from '$datastores/reservation-equipment/reservation-equipment.svelte';
 import { Operator } from '$core/backend/request.type';
@@ -9,6 +9,17 @@ import { EquipmentImageDatastore } from '$datastores/equipment-image/equipment-i
 import type { EquipmentImage } from '$datastores/equipment-image/equipment-image.type';
 import type { Collection } from '$core/datastore/collection.svelte';
 import { EquipmentItemDatastore } from '$datastores/equipment-item/equipment-item.svelte';
+import { z as validation } from 'zod';
+import { message, superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import { fail } from '@sveltejs/kit';
+
+const dataRequestSchema = validation.object({
+  id: validation.number().int().positive().default(1),
+  dataRequested: validation.boolean(),
+  dataRequestDescription: validation.string(),
+  dataRequestDate: validation.coerce.date(),
+});
 
 export const load: PageServerLoad = async (event) => {
   const reservationId = Number(event.params.reservationId);
@@ -75,4 +86,42 @@ export const load: PageServerLoad = async (event) => {
     reserver: reserverDocument.value,
     admin: adminDocument?.value,
   };
+};
+
+const requestEquipmentData: Action = async (event) => {
+  const request = await event.request.json();
+  const requestEquipmentDataForm = await superValidate(request, zod(dataRequestSchema));
+  console.log(request);
+  console.log(requestEquipmentDataForm.data);
+  console.log(requestEquipmentDataForm.valid);
+  console.log(requestEquipmentDataForm.errors);
+  if (!requestEquipmentDataForm.valid) {
+    return fail(401, {
+      form: requestEquipmentDataForm,
+      message: 'Invalid form data',
+      error: Object.entries(requestEquipmentDataForm.errors).flatMap(([key, value]) => {
+        return value.map((error) => `${key}: ${error}`);
+      }),
+    });
+  }
+
+  const document = await ReservationEquipmentDatastore.update(requestEquipmentDataForm.data.id, requestEquipmentDataForm.data);
+
+  if (document.response?.status && document.response.status >= 400) {
+    return fail(document.response.status, {
+      form: requestEquipmentDataForm,
+      message: document.response.message,
+      error: document.response.errors,
+    });
+  }
+
+  return {
+    success: true,
+    form: requestEquipmentDataForm,
+    ...message(requestEquipmentDataForm, 'Data request sent successfully')
+  };
+};
+
+export const actions: Actions = {
+  requestEquipmentData,
 };

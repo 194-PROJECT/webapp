@@ -1,3 +1,4 @@
+import type { ReservationEquipment } from '$datastores/reservation-equipment/reservation-equipment.type';
 import type { Reservation } from './reservation.type';
 
 export const getReservationStatus = (reservation: Reservation): string => {
@@ -56,4 +57,8 @@ export const canApproveReservation = (reservation: Reservation): boolean => {
     && !isReservationFinished(reservation)
     && !isReservationOngoing(reservation) 
     && reservation.endDate > new Date(); 
+}
+
+export const canRequestEquipmentData = (reservation: Reservation, reservationEquipment: ReservationEquipment): boolean => {
+  return isReservationFinished(reservation) && !reservationEquipment.dataReceived;
 }

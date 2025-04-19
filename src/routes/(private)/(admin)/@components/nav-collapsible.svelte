@@ -79,6 +79,11 @@
 					url: '/admin/reservation',
 					icon: Circle
 				},
+				{
+					title: 'Data Request',
+					url: '/admin/data-request',
+					icon: Circle
+				},
 			]
 		},
 		{

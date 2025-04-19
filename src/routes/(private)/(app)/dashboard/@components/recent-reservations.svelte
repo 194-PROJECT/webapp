@@ -7,8 +7,6 @@
   let { recentReservations }: {
     recentReservations: (Reservation & { user?: User })[];
   } = $props();
-
-  $inspect(recentReservations, "recentReservations");
 </script>
 
 <div class="space-y-8">

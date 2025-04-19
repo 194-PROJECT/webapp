@@ -1,3 +1,7 @@
+import type { EquipmentItem } from "$datastores/equipment-item/equipment-item.type";
+import type { Equipment } from "$datastores/equipment/equipment.type";
+import type { Reservation } from "$datastores/reservation/reservation.type";
+
 export interface ReservationEquipment {
   id?: number;
   reservationId: number;
@@ -7,11 +11,18 @@ export interface ReservationEquipment {
   mishandled?: boolean;
   mishandleType?: MishandleType;
   mishandleDescription?: string;
+  dataRequested?: boolean;
+  dataReceived?: boolean;
+  dataRequestDescription?: string;
+  dataRequestDate?: Date;
   rating?: number;
   comment?: string;
   adminNote?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  reservation?: Reservation;
+  equipment?: Equipment;
+  equipmentItem?: EquipmentItem;
 }
 
 export enum MishandleType {

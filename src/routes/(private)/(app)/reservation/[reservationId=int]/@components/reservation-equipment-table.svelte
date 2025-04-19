@@ -60,6 +60,10 @@
       <Table.Head>Mishandled</Table.Head>
       <Table.Head>Mishandle Type</Table.Head>
       <Table.Head>Mishandle Description</Table.Head>
+      <Table.Head>Data Requested</Table.Head>
+      <Table.Head>Data Request Date</Table.Head>
+      <Table.Head>Data Request Description</Table.Head>
+      <Table.Head>Data Received</Table.Head>
       <Table.Head></Table.Head>
 		</Table.Row>
 	</Table.Header>
@@ -81,6 +85,12 @@
         <Table.Cell>{reservationEquipment.reservationEquipment.adminNote}</Table.Cell>
         <Table.Cell>{reservationEquipment.reservationEquipment.returned}</Table.Cell>
         <Table.Cell>{reservationEquipment.reservationEquipment.mishandled}</Table.Cell>
+        <Table.Cell>{reservationEquipment.reservationEquipment.mishandleType}</Table.Cell>
+        <Table.Cell>{reservationEquipment.reservationEquipment.mishandleDescription}</Table.Cell>
+        <Table.Cell>{reservationEquipment.reservationEquipment.dataRequested}</Table.Cell>
+        <Table.Cell>{reservationEquipment.reservationEquipment.dataRequestDate?.toLocaleString()}</Table.Cell>
+        <Table.Cell>{reservationEquipment.reservationEquipment.dataRequestDescription}</Table.Cell>
+        <Table.Cell>{reservationEquipment.reservationEquipment.dataReceived}</Table.Cell>
         <Table.Cell>{
           reservationEquipment.reservationEquipment.mishandleType ?
             snakeToParagraph(reservationEquipment.reservationEquipment.mishandleType) : undefined

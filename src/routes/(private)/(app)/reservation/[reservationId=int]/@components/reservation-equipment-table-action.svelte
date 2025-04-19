@@ -8,6 +8,8 @@
 	import type { EquipmentImage } from "$datastores/equipment-image/equipment-image.type";
 	import type { Equipment } from "$datastores/equipment/equipment.type";
 	import type { Reservation } from "$datastores/reservation/reservation.type";
+	import { canRequestEquipmentData } from "$datastores/reservation/reservation.helper.svelte";
+	import ReservationEquipmentDialogRequestDataEdit from "./reservation-equipment-dialog-request-data-edit.svelte";
 
   let {
     reservation = $bindable(),
@@ -25,9 +27,15 @@
     };
   } = $props();
 
+  let dataRequestDialogOpen = $state(false);
+
   const viewEquipment = () => {
     goto(`/equipment/${reservationEquipment.equipment?.id}`);
   }
+
+  const toggleDataRequestDialog = () => {
+    dataRequestDialogOpen = !dataRequestDialogOpen;
+  };
 </script>
 
 <DropdownMenu.Root>
@@ -50,5 +58,13 @@
     </DropdownMenu.Group>
     <DropdownMenu.Separator />
     <DropdownMenu.Item onclick={viewEquipment}>View</DropdownMenu.Item>
+    <DropdownMenu.Separator />
+    <DropdownMenu.Item onclick={toggleDataRequestDialog} disabled={!canRequestEquipmentData(reservation, reservationEquipment.reservationEquipment)}>Request Data</DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>
+
+<ReservationEquipmentDialogRequestDataEdit
+  bind:isOpen={dataRequestDialogOpen}
+  reservation={reservation}
+  reservationEquipment={reservationEquipment}
+/>

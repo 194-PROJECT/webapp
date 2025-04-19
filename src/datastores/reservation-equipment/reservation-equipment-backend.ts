@@ -29,15 +29,22 @@ export class ReservationBackend implements Backend<ReservationEquipment> {
   }
 
   public async fetch_many(query: GetManyQuery): Promise<Response<ReservationEquipment[]>> {
-    if(!query.ids) {
-      throw new Error('ids parameter is required for fetching multiple reservation equipment.');
-    }
+    let request: Requests<GetManyQuery>[RequestType.FETCH];
 
-    const request: Requests<GetManyQuery>[RequestType.FETCH] = {
-      route: `/reservation/${query.ids[0]}/equipment`,
-      headers: new Headers(),
-      parameters: query,
-    };
+    if(query.ids && query.ids.length > 0) {
+      request = {
+        route: `/reservation/${query.ids[0]}/equipment`,
+        headers: new Headers(),
+        parameters: query,
+      };
+    } else {
+      const route = query.projection === 'data-request' ? '/reservation/equipment/data-request' : '/reservation/equipment';
+      request = {
+        route: route,
+        headers: new Headers(),
+        parameters: query,
+      };
+    }
 
     let response = await HttpClient.request<GetManyQuery, ReservationEquipmentGetResponse[]>(
       request,

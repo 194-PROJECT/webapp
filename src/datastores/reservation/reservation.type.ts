@@ -16,6 +16,7 @@ export interface Reservation {
   returnDate?: Date;
   createdAt?: Date;
   updatedAt?: Date;
+  user?: User;
 }
 
 export type ReservationUser = Reservation & User;

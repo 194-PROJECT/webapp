@@ -70,6 +70,7 @@
       <Table.Head>Mishandled</Table.Head>
       <Table.Head>Mishandle Type</Table.Head>
       <Table.Head>Mishandle Description</Table.Head>
+      <Table.Head>Data Requested</Table.Head>
       <Table.Head></Table.Head>
 		</Table.Row>
 	</Table.Header>
@@ -96,6 +97,7 @@
             snakeToParagraph(reservationEquipment.reservationEquipment.mishandleType) : undefined
         }</Table.Cell>
         <Table.Cell>{reservationEquipment.reservationEquipment.mishandleDescription}</Table.Cell>
+        <Table.Cell>{reservationEquipment.reservationEquipment.dataRequested}</Table.Cell>
 				<Table.Cell>
           <ReservationEquipmentTableAction
             reservation={reservation}

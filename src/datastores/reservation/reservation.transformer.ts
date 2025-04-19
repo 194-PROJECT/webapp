@@ -1,4 +1,5 @@
 import type { Response } from '$core/backend/response.type';
+import { UserTransformer } from '$datastores/user/user.transformer';
 import type { User } from '$datastores/user/user.type';
 import type { ReservationGetResponse } from './reservation-backend.type';
 import type { Reservation, ReservationUser } from './reservation.type';
@@ -21,6 +22,7 @@ export class ReservationTransformer {
       returnDate: data.return_date ? new Date(data.return_date) : undefined,
       createdAt: data.created_at ? new Date(data.created_at) : undefined,
       updatedAt: data.updated_at ? new Date(data.updated_at) : undefined,
+      user: data.user ? UserTransformer.transform(data.user) : undefined,
     };
   }
 

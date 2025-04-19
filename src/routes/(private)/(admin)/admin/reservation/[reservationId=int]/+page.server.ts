@@ -41,6 +41,10 @@ const reservationEquipmentSchema = validation.object({
   mishandled: validation.boolean().optional(),
   mishandleType: validation.nativeEnum(MishandleType).optional(),
   mishandleDescription: validation.string().optional(),
+  dataRequested: validation.boolean().optional(),
+  dataReceived: validation.boolean().optional(),
+  dataRequestDescription: validation.string().optional(),
+  dataRequestDate: validation.date().optional(),
   adminNote: validation.string().optional(),
 });
 

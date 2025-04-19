@@ -1,3 +1,5 @@
+import type { UserGetResponse } from "$datastores/user/user-backend.type";
+
 export interface ReservationGetResponse {
   id: number;
   user_id: number;
@@ -14,4 +16,5 @@ export interface ReservationGetResponse {
   return_date?: string;
   created_at?: string;
   updated_at?: string;
+  user?: UserGetResponse;
 }

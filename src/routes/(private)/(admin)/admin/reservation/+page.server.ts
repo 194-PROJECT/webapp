@@ -142,7 +142,6 @@ async function approveReservation(event: RequestEvent) {
   const document = await ReservationDatastore.update(reservationApproveForm.data.id, reservationApproveForm.data);
   
   if (document.response?.status && document.response.status >= 400) {
-    console.error(document.response);
     return fail(document.response.status, {
       form: reservationApproveForm,
       message: document.response.message,
@@ -185,7 +184,6 @@ async function updateReservation(event: RequestEvent) {
   const document = await ReservationDatastore.update(reservationEditForm.data.id, reservationEditForm.data);
 
   if (document.response?.status && document.response.status >= 400) {
-    console.error(document.response);
     return fail(document.response.status, {
       form: reservationEditForm,
       message: document.response.message,
@@ -246,7 +244,6 @@ async function toggleClaimedReservation(event: RequestEvent) {
   const document = await ReservationDatastore.update(reservationClaimedForm.data.id, reservationClaimedForm.data);
 
   if (document.response?.status && document.response.status >= 400) {
-    console.error(document.response);
     return fail(document.response.status, {
       form: reservationClaimedForm,
       message: document.response.message,
@@ -278,7 +275,6 @@ async function toggleReturnedReservation(event: RequestEvent) {
   const document = await ReservationDatastore.update(reservationReturnedForm.data.id, reservationReturnedForm.data);
 
   if (document.response?.status && document.response.status >= 400) {
-    console.error(document.response);
     return fail(document.response.status, {
       form: reservationReturnedForm,
       message: document.response.message,
