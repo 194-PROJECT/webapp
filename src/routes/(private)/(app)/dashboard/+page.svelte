@@ -3,9 +3,9 @@
 	import CreditCard from "lucide-svelte/icons/credit-card";
 	import Users from "lucide-svelte/icons/users";
 
-	import * as Card from "$components/elements/card/index.js";
-	import * as Tabs from "$components/elements/tabs/index.js";
-	import Overview from "./@components/overview.svelte";
+	import { Bar } from "$components/blocks/charts";
+	import * as Card from "$components/elements/card";
+	import * as Tabs from "$components/elements/tabs";
 	import RecentReservations from "./@components/recent-reservations.svelte";
 	import { CalendarDate } from "@internationalized/date";
 	import Separator from "$components/elements/separator/separator.svelte";
@@ -19,6 +19,7 @@
     reservationCount,
     equipmentItemCount,
     recentReservations,
+    reservationMadePerMonth,
   } = $derived(data);
 
   let value = $state({
@@ -100,10 +101,10 @@
     <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
       <Card.Root class="col-span-4">
         <Card.Header>
-          <Card.Title>Overview</Card.Title>
+            <Card.Title>Reservations Made Per Month</Card.Title>
         </Card.Header>
         <Card.Content>
-          <Overview />
+          <Bar dataset={reservationMadePerMonth} />
         </Card.Content>
       </Card.Root>
       <Card.Root class="col-span-3">
@@ -120,7 +121,6 @@
     </div>
   </Tabs.Content>
 
-  
   <Tabs.Content value="analytics" class="space-y-4">
     Analytics content goes here.
   </Tabs.Content>

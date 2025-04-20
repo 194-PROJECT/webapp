@@ -1,5 +1,6 @@
 import { Operator } from "$core/backend/request.type";
 import { API_BASE_URL } from "$core/protocols/http-client";
+import type { BarGraphData } from "$datastores/analytics/analytics.type";
 import { ReservationDatastore } from "$datastores/reservation/reservation.svelte";
 import { UserDatastore } from "$datastores/user/user.svelte";
 import type { PageServerLoadEvent } from "./$types";
@@ -18,11 +19,15 @@ export const load = async (event: PageServerLoadEvent) => {
   const equipmentItemCountResponse = await fetch(`${API_BASE_URL}/equipment/item/count?field=available&operator=${Operator.EQUALS}&value=true`, {
     method: `GET`,
   });
+  const reservationMadePerMonthResponse = await fetch(`${API_BASE_URL}/analytics/reservation/count/month`, {
+    method: 'GET',
+  });
 
   const userCountData = await userCountResponse.json();
   const equipmentCountData = await equipmentCountResponse.json();
   const reservationCountData = await reservationCountResponse.json();
   const equipmentItemCountData = await equipmentItemCountResponse.json();
+  const reservationMadePerMonthData = await reservationMadePerMonthResponse.json();
 
   const recentReservationCollection = await ReservationDatastore.get({
     order_by: 'id',
@@ -49,6 +54,7 @@ export const load = async (event: PageServerLoadEvent) => {
     equipmentCount: Number(equipmentCountData.data),
     reservationCount: Number(reservationCountData.data),
     equipmentItemCount: Number(equipmentItemCountData.data),
+    reservationMadePerMonth: reservationMadePerMonthData.data as BarGraphData[],
     recentReservations: recentReservations ?? [],
     authUser: event.locals.user,
   }

@@ -102,13 +102,13 @@
         <div class="quick-links">
             <div class="quick-links-header">Quick Links</div>
             <div class="quick-links-menu">
-                <a href="/admin/assets" class="quick-link-item">
+                <a href="/admin/asset" class="quick-link-item">
                     <div>Assets</div>
                 </a>
                 <a href="/admin/user" class="quick-link-item">
                     <div>User Management</div>
                 </a>
-                <a href="/admin/reservations" class="quick-link-item">
+                <a href="/admin/reservation" class="quick-link-item">
                     <div>Reservations</div>
                 </a>
             </div>
