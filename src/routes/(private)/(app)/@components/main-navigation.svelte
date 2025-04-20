@@ -36,5 +36,13 @@
     >
       Mishandles
     </a>
+    <a
+    href="/data-request" class={cn(
+      "hover:text-primary text-sm font-medium transition-colors",
+      currentPath !== "data-request" && "text-muted-foreground"
+    )}
+  >
+    Data Requests
+  </a>
   </nav>
 {/key}

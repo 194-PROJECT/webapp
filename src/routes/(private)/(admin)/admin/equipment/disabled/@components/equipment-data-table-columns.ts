@@ -27,7 +27,6 @@ export const equipmentDataTableColumns: ColumnDef<Equipment>[] = [
     header: 'Items',
     cell: ({ row }) => {
       const items = row.getValue('items') as EquipmentItem[];
-      console.log('items', items);
       return items.length;
     }
   },

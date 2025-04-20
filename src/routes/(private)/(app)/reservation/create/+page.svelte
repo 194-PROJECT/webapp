@@ -105,7 +105,6 @@
 
     if (result.type === 'failure') {
       const error = result.data?.error;
-      console.log(result.data?.error);
       if (typeof error === 'string') {
         toast.error(error);
       } else if (Array.isArray(error) && error.length) {

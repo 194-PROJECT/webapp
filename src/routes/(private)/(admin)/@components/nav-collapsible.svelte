@@ -95,8 +95,8 @@
 					icon: BookOpenCheck
 				},
 				{
-					title: 'Maintenance',
-					url: '/admin/maintenance',
+					title: 'Disabled',
+					url: '/admin/equipment/disabled',
 					icon: BookOpenCheck
 				},
 				{

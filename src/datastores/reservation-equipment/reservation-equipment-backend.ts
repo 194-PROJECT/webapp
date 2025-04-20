@@ -32,13 +32,38 @@ export class ReservationBackend implements Backend<ReservationEquipment> {
     let request: Requests<GetManyQuery>[RequestType.FETCH];
 
     if(query.ids && query.ids.length > 0) {
+      let route: string;
+      switch (query.projection) {
+        // If containing a projection, treat the id as a user id
+        case 'data-request':
+          route = `/reservation/equipment/data-request/user/${query.ids[0]}`;
+          break;
+        case 'mishandle':
+          route = `/reservation/equipment/mishandle/user/${query.ids[0]}`;
+          break;
+        default:
+          route = `/reservation/${query.ids[0]}/equipment`;
+          break;
+      }
       request = {
-        route: `/reservation/${query.ids[0]}/equipment`,
+        route: route,
         headers: new Headers(),
         parameters: query,
       };
     } else {
-      const route = query.projection === 'data-request' ? '/reservation/equipment/data-request' : '/reservation/equipment';
+      let route: string;
+      switch (query.projection) {
+        // If containing a projection, treat the id as a user id
+        case 'data-request':
+          route = '/reservation/equipment/data-request';
+          break;
+        case 'mishandle':
+          route = '/reservation/equipment/mishandle';
+          break;
+        default:
+          route = '/reservation/equipment';
+          break;
+      };
       request = {
         route: route,
         headers: new Headers(),

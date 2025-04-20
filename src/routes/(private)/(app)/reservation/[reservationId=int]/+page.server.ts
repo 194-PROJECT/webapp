@@ -91,10 +91,7 @@ export const load: PageServerLoad = async (event) => {
 const requestEquipmentData: Action = async (event) => {
   const request = await event.request.json();
   const requestEquipmentDataForm = await superValidate(request, zod(dataRequestSchema));
-  console.log(request);
-  console.log(requestEquipmentDataForm.data);
-  console.log(requestEquipmentDataForm.valid);
-  console.log(requestEquipmentDataForm.errors);
+
   if (!requestEquipmentDataForm.valid) {
     return fail(401, {
       form: requestEquipmentDataForm,

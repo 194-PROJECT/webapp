@@ -26,7 +26,18 @@ export class EquipmentBackend implements Backend<Equipment> {
 	}
 
 	public async fetch_many(query: GetManyQuery): Promise<Response<Equipment[]>> {
-    const route = query.projection === 'available' ? '/equipment/available' : '/equipment';
+    let route: string;
+    switch (query.projection) {
+      case 'available':
+        route = '/equipment/available';
+        break;
+      case 'unavailable':
+        route = '/equipment/unavailable';
+        break;
+      default:
+        route = '/equipment';
+        break;
+    }
 		const request: Requests<GetManyQuery>[RequestType.FETCH] = {
 			route: route,
 			headers: new Headers(),
