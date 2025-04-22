@@ -1,13 +1,18 @@
 <script lang="ts">
 	import type { BarGraphData } from "$datastores/analytics/analytics.type";
 	import { scaleLinear } from "d3-scale";
+	import { BarAxisOrientation } from "./bar.type";
 
   let {
     dataset,
     title = 'Bar',
+    orientation = BarAxisOrientation.HORIZONTAL,
+    padding = { top: 20, right: 15, bottom: 30, left: 45 },
   }: {
     dataset: BarGraphData[];
     title?: string;
+    orientation?: BarAxisOrientation;
+    padding?: { top: number; right: number; bottom: number; left: number };
   } = $props();
 
 	let xTicks = $derived(dataset.map((d) => d.name));
@@ -17,7 +22,6 @@
     const step = Math.ceil((max - min) / 5);
     return Array.from({ length: 6 }, (_, i) => Math.round(min + i * step));
   });
-	let padding = $derived({ top: 20, right: 15, bottom: 20, left: 45 });
 
 	let width = $state(500);
 	let height = $state(200);
@@ -40,6 +44,10 @@
 
 	let innerWidth = $derived(width - (padding.left + padding.right));
 	let barWidth = $derived(innerWidth / xTicks.length);
+
+  const getLongestLabel = (ticks: string[]) => {
+    return Math.max(...ticks.map((tick) => tick.length));
+  };
 </script>
 
 <div class="chart" bind:clientWidth={width} bind:clientHeight={height}>
@@ -67,20 +75,21 @@
     <g class="axis x-axis">
       {#each dataset as point, i}
         <g class="text-xs" transform="translate({xScale(i)},{height})">
-          <text
+            <text
             stroke="none"
             font-size="12"
             orientation="bottom"
             width="531"
-            height="30"
+            height="50"
             x={barWidth / 2}
             y="-15"
             fill="#888888"
             text-anchor="middle"
-            ><tspan x={barWidth / 2} dy="0.71em"
-              >{width > 380 ? point.name : formatMobile(point.name)}</tspan
+            transform={ orientation === BarAxisOrientation.VERTICAL ? `rotate(-90, ${barWidth / 2}, 0) translate(${padding.bottom - 25}, 0)` : undefined }
+            ><tspan x={barWidth / 2} dy={orientation === BarAxisOrientation.VERTICAL ? "1.45em" : "0.71em"}>
+              {width > 380 ? point.name : formatMobile(point.name)}</tspan
             ></text
-          >
+            >
         </g>
       {/each}
     </g>

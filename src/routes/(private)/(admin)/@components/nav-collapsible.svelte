@@ -123,6 +123,11 @@
           url: '/admin/equipment/report',
           icon: GraduationCap
         },
+        {
+          title: 'Reservation Reports',
+          url: '/admin/reservation/report',
+          icon: GraduationCap
+        },
       ]
     },
     

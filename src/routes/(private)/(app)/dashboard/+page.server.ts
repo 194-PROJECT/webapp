@@ -4,7 +4,6 @@ import type { BarGraphData } from "$datastores/analytics/analytics.type";
 import { ReservationDatastore } from "$datastores/reservation/reservation.svelte";
 import { UserDatastore } from "$datastores/user/user.svelte";
 import type { PageServerLoadEvent } from "./$types";
-import RecentReservations from "./@components/recent-reservations.svelte";
 
 export const load = async (event: PageServerLoadEvent) => {
   const userCountResponse = await fetch(`${API_BASE_URL}/user/count`, {
@@ -56,6 +55,5 @@ export const load = async (event: PageServerLoadEvent) => {
     equipmentItemCount: Number(equipmentItemCountData.data),
     reservationMadePerMonth: reservationMadePerMonthData.data as BarGraphData[],
     recentReservations: recentReservations ?? [],
-    authUser: event.locals.user,
   }
 };

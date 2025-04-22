@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Activity from "lucide-svelte/icons/activity";
 	import CreditCard from "lucide-svelte/icons/credit-card";
 	import Users from "lucide-svelte/icons/users";
