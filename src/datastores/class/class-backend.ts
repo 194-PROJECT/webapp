@@ -29,8 +29,18 @@ export class ClassBackend implements Backend<Class> {
   }
 
   public async fetch_many(query: GetManyQuery): Promise<Response<Class[]>> {
+    let route: string;
+    switch (query.projection) {
+      case 'current-semester':
+        route = `/class/current-semester`;
+        break;
+      default:
+        route = '/class';
+        break;
+    };
+  
     const request: Requests<GetManyQuery>[RequestType.FETCH] = {
-      route: `/class`,
+      route: route,
       headers: new Headers(),
       parameters: query,
     };

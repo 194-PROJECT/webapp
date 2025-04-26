@@ -10,6 +10,7 @@ import { Operator } from '$core/backend/request.type';
 import { ClassDatastore } from '$datastores/class/class.svelte';
 import { GroupDatastore } from '$datastores/group/group.svelte';
 import { SemesterDatastore } from '$datastores/semester/semester.svelte';
+import { GroupUserDatastore } from '$datastores/group-user/group-user.svelte';
 
 const groupCreateSchema = validation.object({
   name: validation.string().min(1).max(50),
@@ -22,6 +23,11 @@ const groupUpdateSchema = validation.object({
   name: validation.string().min(1).max(50),
   description: validation.string().optional(),
   classId: validation.number(),
+});
+
+const groupAddUserSchema = validation.object({
+  groupId: validation.number(),
+  userId: validation.number(),
 });
 
 export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
@@ -93,6 +99,8 @@ export const actions: Actions = {
   deleteGroup,
   updateGroup,
   createGroup,
+  addUserToGroup,
+  deleteUserFromGroup,
 };
 
 /**
@@ -221,5 +229,62 @@ async function updateGroup(event: RequestEvent) {
     success: true,
     form: groupUpdateForm,
     ...message(groupUpdateForm, 'Group update successful'),
+  };
+}
+
+async function addUserToGroup(event: RequestEvent) {
+  const groupAddUserForm = await superValidate(event, zod(groupAddUserSchema));
+
+  if (!groupAddUserForm.valid) {
+    return fail(401, {
+      form: groupAddUserForm,
+      message: 'Invalid form data',
+      error: 'Invalid form data',
+    });
+  }
+
+  const document = await GroupUserDatastore.push(groupAddUserForm.data);
+
+  if (document.response?.status && document.response.status >= 400) {
+    return fail(document.response.status, {
+      form: groupAddUserForm,
+      message: 'Group add user failed',
+      error: document.response.message,
+    });
+  }
+
+  return {
+    success: true,
+    form: groupAddUserForm,
+    data: document.value,
+    ...message(groupAddUserForm, 'Group add user successful'),
+  };
+}
+
+async function deleteUserFromGroup(event: RequestEvent) {
+  const groupUserDeleteForm = await superValidate(event, zod(deleteModelSchema));
+
+  if (!groupUserDeleteForm.valid) {
+    return fail(401, {
+      form: groupUserDeleteForm,
+      message: 'Invalid form data',
+      error: 'Invalid form data',
+    });
+  }
+
+  const document = await GroupUserDatastore.remove(groupUserDeleteForm.data.id);
+
+  if (document.response?.status && document.response.status >= 400) {
+    return fail(document.response.status, {
+      form: groupUserDeleteForm,
+      message: 'Group add user failed',
+      error: document.response.message,
+    });
+  }
+
+  return {
+    success: true,
+    form: groupUserDeleteForm,
+    ...message(groupUserDeleteForm, 'Group delete user successful'),
   };
 }

@@ -79,6 +79,7 @@
 	const searchOptions: { value: keyof Reservation; label: string }[] = [
 		{ value: 'id', label: 'Reservation ID' },
 		{ value: 'userId', label: 'User ID' },
+		{ value: 'classId', label: 'Class ID' },
 		{ value: 'adminId', label: 'Admin ID' },
 		{ value: 'groupId', label: 'Group ID' },
 		{ value: 'accepted', label: 'Accepted' },
@@ -90,6 +91,7 @@
 	const searchOptionToOperator: { [key in keyof Partial<Reservation>]: Operator } = {
     id: Operator.EQUALS,
     userId: Operator.EQUALS,
+    classId: Operator.EQUALS,
     adminId: Operator.EQUALS,
     groupId: Operator.EQUALS,
     accepted: Operator.EQUALS,
@@ -180,7 +182,7 @@
 		{:else}
 			<Input
 				type="text"
-				placeholder={searchBy}
+				placeholder={searchByTriggerContent}
 				class="max-w-xs"
 				bind:value={searchValue}
 				onkeydown={(e) => e.key === 'Enter' && getPageData(pageIndex)}

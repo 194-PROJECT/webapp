@@ -9,6 +9,7 @@
 	import type { ActionResult } from "@sveltejs/kit";
 	import { deserialize } from "$app/forms";
 	import GroupDialogEdit from "./group-dialog-edit.svelte";
+	import GroupDialogMembers from "./group-dialog-members.svelte";
 	import type { Semester } from "$datastores/semester/semester.type";
 	import type { User } from "$datastores/user/user.type";
 	import type { Course } from "$datastores/course/course.type";
@@ -30,6 +31,7 @@
     };
   } = $props();
 	let isEditDialogOpen = $state(false);
+  let isMembersDialogOpen = $state(false);
 
 	async function deleteGroup() {
 		const response = await fetch(`?/deleteGroup`, {
@@ -59,6 +61,10 @@
 	function toggleEditDialog() {
 		isEditDialogOpen = true;
 	}
+
+  function toggleMembersDialog() {
+    isMembersDialogOpen = true;
+  }
 </script>
 
 <DropdownMenu.Root>
@@ -85,7 +91,10 @@
 		<DropdownMenu.Separator />
 		<DropdownMenu.Item onclick={toggleEditDialog}>Edit group</DropdownMenu.Item>
 		<DropdownMenu.Item onclick={deleteGroup}>Delete group</DropdownMenu.Item>
+		<DropdownMenu.Separator />
+    <DropdownMenu.Item onclick={toggleMembersDialog}>Edit members</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
 
 <GroupDialogEdit bind:isOpen={isEditDialogOpen} group={data.group} additionalData={additionalData} />
+<GroupDialogMembers bind:isOpen={isMembersDialogOpen} group={data.group} additionalData={additionalData} />

@@ -29,8 +29,22 @@ export class ReservationBackend implements Backend<Reservation> {
   }
 
   public async fetch_many(query: GetManyQuery): Promise<Response<Reservation[]>> {
+    let route: string;
+    switch (query.projection) {
+      // If containing a projection, treat the id as a user id
+      case 'user-reservation':
+        if (!query.ids || query.ids.length === 0) {
+          throw new Error('User ID is required for user-reservation projection');
+        }
+        route = `/reservation/user/${query.ids[0]}`;
+        break;
+      default:
+        route = '/reservation';
+        break;
+    };
+
     const request: Requests<GetManyQuery>[RequestType.FETCH] = {
-      route: `/reservation`,
+      route: route,
       headers: new Headers(),
       parameters: query,
     };

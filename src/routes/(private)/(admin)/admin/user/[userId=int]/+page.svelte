@@ -46,7 +46,7 @@ import * as Avatar from "$components/elements/avatar";
 		</Card.Content>
 	</Card.Root>
 
-  <Card.Root class="col-span-4">
+  <Card.Root class="col-span-4 h-fit">
 		<Card.Content>
       <div class="flex items-center">
         <div class="flex-grow">

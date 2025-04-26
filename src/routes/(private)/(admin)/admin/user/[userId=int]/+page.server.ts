@@ -37,9 +37,8 @@ export const load: PageServerLoad = async (event) => {
   }
 
   const madeReservationCollection = await ReservationDatastore.get({
-    field: 'user_id',
-    operator: Operator.EQUALS,
-    value: userId,
+    projection: 'user-reservation',
+    ids: [userId],
   });
 
   const handledReservationCollection = await ReservationDatastore.get({

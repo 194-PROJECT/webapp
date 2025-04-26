@@ -1,6 +1,7 @@
 import type { Class } from './class.type';
 import type { ClassGetResponse } from './class-backend.type';
 import type { Response } from '$core/backend/response.type';
+import { CourseTransformer } from '$datastores/course/course.transformer';
 
 export class ClassTransformer {
   static transform(data: ClassGetResponse): Class {
@@ -13,6 +14,7 @@ export class ClassTransformer {
       description: data.description,
       createdAt: data.created_at ? new Date(data.created_at) : undefined,
       updatedAt: data.updated_at ? new Date(data.updated_at) : undefined,
+      course: data.course ? CourseTransformer.transform(data.course) : undefined,
     };
   }
 

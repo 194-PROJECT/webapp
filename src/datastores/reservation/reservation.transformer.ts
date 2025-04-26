@@ -1,4 +1,6 @@
 import type { Response } from '$core/backend/response.type';
+import { ClassTransformer } from '$datastores/class/class.transformer';
+import { GroupTransformer } from '$datastores/group/group.transformer';
 import { UserTransformer } from '$datastores/user/user.transformer';
 import type { User } from '$datastores/user/user.type';
 import type { ReservationGetResponse } from './reservation-backend.type';
@@ -10,6 +12,7 @@ export class ReservationTransformer {
       id: data.id,
       userId: data.user_id,
       adminId: data.admin_id,
+      classId: data.class_id,
       groupId: data.group_id,
       startDate: new Date(data.start_date),
       endDate: new Date(data.end_date),
@@ -23,6 +26,9 @@ export class ReservationTransformer {
       createdAt: data.created_at ? new Date(data.created_at) : undefined,
       updatedAt: data.updated_at ? new Date(data.updated_at) : undefined,
       user: data.user ? UserTransformer.transform(data.user) : undefined,
+      admin: data.admin ? UserTransformer.transform(data.admin) : undefined,
+      class: data.class_ ? ClassTransformer.transform(data.class_) : undefined,
+      group: data.group ? GroupTransformer.transform(data.group) : undefined,
     };
   }
 

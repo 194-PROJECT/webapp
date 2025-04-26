@@ -1,8 +1,9 @@
-import { renderComponent } from "$components/elements/data-table";
+import { renderComponent, renderSnippet } from "$components/elements/data-table";
 import type { ReservationUser } from "$datastores/reservation/reservation.type";
 import type { ColumnDef } from "@tanstack/table-core";
 import ReservationDataTableAction from "./reservation-data-table-action.svelte";
 import { getReservationStatus } from "$datastores/reservation/reservation.helper.svelte";
+import { createRawSnippet } from "svelte";
 
 export const reservationDataTableColumns: ColumnDef<ReservationUser>[] = [
   {
@@ -17,12 +18,39 @@ export const reservationDataTableColumns: ColumnDef<ReservationUser>[] = [
     }
   },
   {
-    accessorKey: 'adminId',
-    header: 'Admin ID'
+    accessorKey: 'admin',
+    header: 'Admin',
+    cell: ({ row }) => {
+      if (row.original.admin) {
+        return `${row.original.admin?.firstName} ${row.original.admin?.lastName}`;
+      } else {
+        return '';
+      }
+    }
   },
   {
-    accessorKey: 'groupId',
-    header: 'Group ID'
+    accessorKey: 'class',
+    header: 'Class',
+    cell: ({ row }) => {
+      if (row.original.class) {
+        return `${row.original.class?.course?.name} ${row.original.class?.name}`;
+      } else {
+        return '';
+      }
+    }
+  },
+  {
+    accessorKey: 'group',
+    header: 'Group',
+    cell: ({ row }) => {
+      const groupCellSnippet = createRawSnippet<[string]>((getGroup) => {
+        const group = getGroup();
+        return {
+          render: () => row.original.group?.name ?? ''
+        };
+      });
+      return renderSnippet(groupCellSnippet, row.getValue('group'));
+    }
   },
   {
     accessorKey: 'startDate',

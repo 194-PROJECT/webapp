@@ -5,6 +5,7 @@
 	import type { PageProps } from "./$types";
 	import ReservationEquipmentTable from "./@components/reservation-equipment-table.svelte";
 	import { getReservationStatus } from "$datastores/reservation/reservation.helper.svelte";
+	import Badge from "$components/elements/badge/badge.svelte";
 
   let { data }: PageProps = $props();
   let {
@@ -104,6 +105,24 @@
 		</Card.Content>
 	</Card.Root>
 </div>
+
+<div class="flex gap-2 flex-wrap">
+  {#if reservation.class}
+    ({reservation.class?.course?.name} {reservation.class?.name})
+  {/if}
+  {#if reservation.group?.users}
+    Group Members:
+    {#each reservation.group.users as groupUser (groupUser.id)}
+    <Badge>
+      <a href="/admin/user/{groupUser.userId}" class="flex items-center gap-2">
+        { groupUser.user?.firstName } { groupUser.user?.lastName }
+      </a>
+    </Badge>
+    {/each}
+  {/if}
+</div>
+
+<Separator class="my-4" />
 
 <ReservationEquipmentTable
   reservation={reservation}

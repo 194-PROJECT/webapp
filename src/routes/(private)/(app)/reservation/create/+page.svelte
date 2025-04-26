@@ -13,9 +13,16 @@
 	import { goto } from '$app/navigation';
 	import type { ActionResult } from '@sveltejs/kit';
 	import { deserialize } from '$app/forms';
+	import * as Select from '$components/elements/select';
+	import { UserType } from '$core/auth/auth.type';
 
   let { data } = $props();
-  let { authUser, equipments } = $state(data);
+  let {
+    authUser,
+    equipments,
+    classes,
+    groups,
+  } = $state(data);
   // svelte-ignore state_referenced_locally
     let equipmentWithSearchTerm = $state(equipments.map(equipment => ({
     ...equipment,
@@ -39,6 +46,19 @@
   let endDateString = $derived(endDate.toString());
 
   let loading = $state(false);
+
+  let classId = $state(reservation.classId?.toString() ?? undefined);
+  let groupId = $state(reservation.groupId?.toString() ?? undefined);
+  
+  let classTriggerContent = $derived.by(() => {
+    const selectedClass = classes.find((classItem) => classItem.id === Number(classId));
+    return selectedClass ? `${selectedClass.course?.name} ${selectedClass.name}` : 'Select Class';
+  });
+
+  let groupTriggerContent = $derived.by(() => {
+    const selectedGroup = groups.find((groupItem) => groupItem.id === Number(groupId));
+    return selectedGroup ? selectedGroup.name : 'Select Group';
+  });
 
   /** 
    * @description This effect is used to validate the start and end dates of the reservation.
@@ -81,15 +101,17 @@
     loading = true;
 
     const payload = {
-        ...reservation,
-        startDate: startDate.toDate(),
-        endDate: endDate.toDate(),
-        // Randomize the order of the equipments and select the first 'amount' items from each selected equipment
-        equipments: equipmentWithSearchTerm.filter(equipment => equipment.selected).map(equipment => ({
-          id: equipment.id,
-          items: equipment.items?.sort(() => 0.5 - Math.random()).slice(0, equipment.amount).map(item => item.id),
-        })),
-      }
+      ...reservation,
+      startDate: startDate.toDate(),
+      endDate: endDate.toDate(),
+      // Randomize the order of the equipments and select the first 'amount' items from each selected equipment
+      equipments: equipmentWithSearchTerm.filter(equipment => equipment.selected).map(equipment => ({
+        id: equipment.id,
+        items: equipment.items?.sort(() => 0.5 - Math.random()).slice(0, equipment.amount).map(item => item.id),
+      })),
+      classId: classId ? Number(classId) : undefined,
+      groupId: groupId ? Number(groupId) : undefined,
+    }
 
     const response = await fetch('?/createReservation', {
       method: 'POST',
@@ -132,6 +154,52 @@
     <Input id="endDate" name="endDate" value={endDateString} class="hidden" />
     <DateTimePicker bind:date={endDate} class="col-span-3 justify-start text-left" />
   </div>
+
+  {#if authUser.type === UserType.STUDENT && classes.length > 0}
+    <div class="grid grid-cols-4 items-center gap-4">
+      <Label for="classId" class="text-right">Class ID</Label>
+      <Input id="classId" name="classId" value={classId} class="hidden" />
+      <Select.Root
+        type="single"
+        bind:value={classId}
+      >
+        <Select.Trigger class="col-span-3">
+          {classTriggerContent}
+        </Select.Trigger>
+        <Select.Content>
+          <Select.Group>
+            <Select.GroupHeading>Class</Select.GroupHeading>
+            {#each classes as class_ (class_.id)}
+              <Select.Item value={class_.id.toString()} label={`${class_.course?.name} ${class_.name}`} />
+            {/each}
+          </Select.Group>
+        </Select.Content>
+      </Select.Root>
+    </div>
+
+
+    
+    <div class="grid grid-cols-4 items-center gap-4">
+      <Label for="groupId" class="text-right">Group ID</Label>
+      <Input id="groupId" name="groupId" value={groupId} class="hidden" />
+      <Select.Root
+        type="single"
+        bind:value={groupId}
+      >
+        <Select.Trigger class="col-span-3">
+          {groupTriggerContent}
+        </Select.Trigger>
+        <Select.Content>
+          <Select.Group>
+            <Select.GroupHeading>Group</Select.GroupHeading>
+            {#each groups as group_ (group_.id)}
+              <Select.Item value={group_.id.toString()} label={group_.name} />
+            {/each}
+          </Select.Group>
+        </Select.Content>
+      </Select.Root>
+    </div>
+  {/if}
 
   <div class="grid grid-cols-4 items-center gap-4">
     <Label for="reason" class="text-right">Reason</Label>

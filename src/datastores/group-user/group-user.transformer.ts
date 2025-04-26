@@ -1,4 +1,5 @@
 import type { Response } from '$core/backend/response.type';
+import { UserTransformer } from '$datastores/user/user.transformer';
 import type { GroupUserGetResponse } from './group-user-backend.type';
 import type { GroupUser } from './group-user.type';
 
@@ -10,6 +11,7 @@ export class GroupUserTransformer {
       userId: data.user_id,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
+      user: data.user ? UserTransformer.transform(data.user) : undefined,
     };
   }
 

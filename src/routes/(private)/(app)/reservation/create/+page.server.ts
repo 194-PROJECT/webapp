@@ -5,6 +5,9 @@ import { z as validation } from "zod";
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { ReservationDatastore } from '$datastores/reservation/reservation.svelte';
+import { ClassDatastore } from '$datastores/class/class.svelte';
+import { GroupDatastore } from '$datastores/group/group.svelte';
+import { Operator } from '$core/backend/request.type';
 
 const EquipmentRequestSchema = validation.object({
   id: validation.number().int(),
@@ -17,6 +20,8 @@ const reservationCreateSchema = validation.object({
   endDate: validation.coerce.date(),
   reason: validation.string().min(30).max(255),
   equipments: validation.array(EquipmentRequestSchema), // Array of equipment items
+  classId: validation.number().optional(),
+  groupId: validation.number().optional(),
 });
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -33,9 +38,21 @@ export const load: PageServerLoad = async ({ locals }) => {
     }
   });
 
+  const classCollection = await ClassDatastore.get({
+    projection: 'current-semester',
+  });
+
+  const groupCollection = await GroupDatastore.get({
+    field: 'class_id',
+    operator: Operator.IN,
+    value: classCollection.value?.map((classItem) => classItem.id),
+  });
+
   return {
     authUser: locals.user,
     equipments: equipmentCollection.value ?? [],
+    classes: classCollection.value ?? [],
+    groups: groupCollection.value ?? [],
   }
 };
 

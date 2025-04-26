@@ -44,13 +44,13 @@ export class Datastore<T> {
 
   }
 
-  public async push(item: Partial<Omit<T, 'id'>>): Promise<Document<Partial<Omit<T, 'id'>>>> {
+  public async push(item: Partial<Omit<T, 'id'>>): Promise<Document<Partial<T>>> {
     if (!this.backend.push) {
       throw new Error("Push method not implemented");
     }
 
     const response = await this.backend.push(item);
-    return new Document<Partial<Omit<T, 'id'>>>({
+    return new Document<Partial<T>>({
       value: response.data,
       response: response,
     });

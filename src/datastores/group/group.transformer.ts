@@ -1,5 +1,5 @@
 import type { Response } from '$core/backend/response.type';
-import type { Class } from '$datastores/class/class.type';
+import { GroupUserTransformer } from '$datastores/group-user/group-user.transformer';
 import type { GroupGetResponse } from './group-backend.type';
 import type { Group } from './group.type';
 
@@ -12,6 +12,7 @@ export class GroupTransformer {
       description: data.description,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
+      users: data.users?.map((user) => GroupUserTransformer.transform(user)),
     };
   }
 

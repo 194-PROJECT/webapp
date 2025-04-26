@@ -14,11 +14,10 @@ export const load: PageServerLoad = async ({ locals }) => {
   const userId = locals.user.id;
 
   const madeReservationCollection = await ReservationDatastore.get({
-    field: 'user_id',
-    operator: Operator.EQUALS,
-    value: userId,
     order_by: 'id',
     order_direction: 'DESC',
+    projection: 'user-reservation',
+    ids: [userId],
   });
 
   const handledReservationCollection = await ReservationDatastore.get({

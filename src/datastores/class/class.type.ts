@@ -1,3 +1,5 @@
+import type { Course } from "$datastores/course/course.type";
+
 export interface Class {
   id: number;
   courseId: number;
@@ -7,4 +9,5 @@ export interface Class {
   description?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  course?: Course;
 }
