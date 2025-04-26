@@ -39,7 +39,7 @@ import * as Avatar from "$components/elements/avatar";
         <div class="flex-grow-1 h-full w-full">
           <Avatar.Root class="h-full w-full rounded-lg">
             <Avatar.Image src={user.profilePictureUrl} alt={user.firstName.charAt(0) + user.firstName.charAt(1)} />
-            <Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
+            <Avatar.Fallback class="rounded-lg">PROFILE</Avatar.Fallback>
           </Avatar.Root>
         </div>
       </div>
@@ -70,6 +70,11 @@ import * as Avatar from "$components/elements/avatar";
       </div>
       <Separator class="my-4" />
       <div class="flex items-center">
+        <p class="text-1xl flex-grow font-bold">Phone Number:</p>
+        <p class="text-1xl">{user.phoneNumber}</p>
+      </div>
+      <Separator class="my-4" />
+      <div class="flex items-center">
         <p class="text-1xl flex-grow font-bold">Account Type:</p>
         <p class="text-1xl">{user.type}</p>
       </div>
@@ -77,6 +82,7 @@ import * as Avatar from "$components/elements/avatar";
         <p class="text-1xl flex-grow font-bold">Role:</p>
         <p class="text-1xl">{user.role}</p>
       </div>
+      <Separator class="my-4" />
       <div class="flex items-center">
         <p class="text-1xl flex-grow font-bold">Create Date:</p>
         <p class="text-1xl">{user.createdAt?.toLocaleString()}</p>

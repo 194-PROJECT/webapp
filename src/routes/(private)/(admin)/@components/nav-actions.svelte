@@ -1,21 +1,21 @@
 <script lang="ts" module>
-	import ArrowDown from "lucide-svelte/icons/arrow-down";
-	import ArrowUp from "lucide-svelte/icons/arrow-up";
-	import Bell from "lucide-svelte/icons/bell";
+	import User from "lucide-svelte/icons/user";
 	import ChartLine from "lucide-svelte/icons/chart-line";
-	import Copy from "lucide-svelte/icons/copy";
-	import CornerUpLeft from "lucide-svelte/icons/corner-up-left";
-	import CornerUpRight from "lucide-svelte/icons/corner-up-right";
-	import FileText from "lucide-svelte/icons/file-text";
-	import GalleryVerticalEnd from "lucide-svelte/icons/gallery-vertical-end";
-	import Link from "lucide-svelte/icons/link";
-	import Settings2 from "lucide-svelte/icons/settings-2";
-	import Trash from "lucide-svelte/icons/trash";
-	import Trash2 from "lucide-svelte/icons/trash-2";
   import LogOut from "lucide-svelte/icons/log-out";
   import Sun from "lucide-svelte/icons/sun";
 
 	const data = [
+    [
+      {
+        label: "View Profile",
+        icon: User,
+        action: () => {
+          goto("/profile", {
+            invalidateAll: true,
+          });
+        },
+      }
+    ],
 		[
 			{
 				label: "Go to Dashboard",
@@ -50,7 +50,7 @@
           });
         },
       }
-    ]
+    ],
 	];
 </script>
 

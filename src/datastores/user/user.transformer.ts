@@ -13,6 +13,7 @@ export class UserTransformer {
       email: data.email,
       type: data.type as UserType,
       role: data.role as UserRole,
+      phoneNumber: data.phone_number,
       profilePictureUrl: data.profile_picture_url,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),

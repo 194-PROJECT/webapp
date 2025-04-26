@@ -13,6 +13,7 @@ const userUpdateSchema = validation.object({
   username: validation.string().min(3).max(20),
   firstName: validation.string().min(2).max(30),
   lastName: validation.string().min(2).max(30),
+  phoneNumber: validation.string().regex(/^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/).optional(),
   profilePictureUrl: validation.string().optional(),
 });
 

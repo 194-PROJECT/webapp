@@ -55,7 +55,9 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
     operator: reservationGetPageForm.data.operator,
     value: reservationGetPageForm.data.value,
 		page: Number(reservationGetPageForm.data.pageIndex),
-		page_size: Number(reservationGetPageForm.data.pageSize)
+		page_size: Number(reservationGetPageForm.data.pageSize),
+    order_by: 'id',
+    order_direction: 'DESC',
 	});
 
   const userCollection = await UserDatastore.get({

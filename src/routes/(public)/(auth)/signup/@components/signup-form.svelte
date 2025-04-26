@@ -81,18 +81,30 @@
           disabled={formLoading}
         />
       </div>
-			<div class="flex flex-col items-center gap-2">
-        <Label class="self-start" for="username">Username</Label>
-        <Input
-          id="username"
-          name="username"
-          placeholder="johndoe"
-          autocapitalize="none"
-          autocomplete="username"
-          autocorrect="off"
-          bind:value={$form.username}
-          disabled={formLoading}
-        />
+      <div class="flex items-center gap-4">
+        <div class="flex flex-col items-center gap-2 flex-grow">
+          <Label class="self-start" for="username">Username</Label>
+          <Input
+            id="username"
+            name="username"
+            placeholder="johndoe"
+            autocapitalize="none"
+            autocomplete="username"
+            autocorrect="off"
+            bind:value={$form.username}
+            disabled={formLoading}
+          />
+        </div>
+        <div class="flex flex-col items-center gap-2 flex-grow">
+          <Label class="self-start" for="phoneNumber">Phone Number</Label>
+          <Input
+            id="phoneNumber"
+            name="phoneNumber"
+            placeholder="phone number"
+            bind:value={$form.phoneNumber}
+            disabled={formLoading}
+          />
+        </div>
       </div>
       <div class="flex items-center gap-4">
         <div class="flex flex-col items-center gap-2 flex-grow">

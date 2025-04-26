@@ -9,6 +9,7 @@ export interface UserGetResponse {
   password?: string;
   type: UserType;
   role: UserRole;
+  phone_number?: string;
   profile_picture_url?: string;
   created_at: string;
   updated_at: string;

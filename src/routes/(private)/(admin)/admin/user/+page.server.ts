@@ -8,9 +8,11 @@ import { deleteModelSchema, getModelSchema } from '$core/helpers/request';
 import { fail } from '@sveltejs/kit';
 import { UserRole, UserType } from '$core/auth/auth.type';
 import AuthService from '$core/auth/auth.service';
+import validator from "validator";
 
 const userCreateSchema = validation.object({
   email: validation.string().email(),
+  phoneNumber: validation.string().regex(/^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/).optional(),
   username: validation.string().min(3).max(20),
   firstName: validation.string().min(2).max(30),
   lastName: validation.string().min(2).max(30),
@@ -22,6 +24,7 @@ const userCreateSchema = validation.object({
 const userUpdateSchema = validation.object({
   id: validation.number(),
   email: validation.string().email(),
+  phoneNumber: validation.string().regex(/^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/).optional(),
   username: validation.string().min(3).max(20),
   firstName: validation.string().min(2).max(30),
   lastName: validation.string().min(2).max(30),
@@ -45,7 +48,9 @@ export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
     operator: userGetPageForm.data.operator,
     value: userGetPageForm.data.value,
 		page: Number(userGetPageForm.data.pageIndex),
-		page_size: Number(userGetPageForm.data.pageSize)
+		page_size: Number(userGetPageForm.data.pageSize),
+    order_by: 'id',
+    order_direction: 'DESC',
 	});
 
 	return {

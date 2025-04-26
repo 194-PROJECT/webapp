@@ -17,6 +17,7 @@ const userUpdateSchema = validation.object({
   firstName: validation.string().min(2).max(30),
   lastName: validation.string().min(2).max(30),
   password: validation.string().min(8).max(20).optional(),
+  phoneNumber: validation.string().regex(/^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/).optional(),
   type: validation.nativeEnum(UserType),
   role: validation.nativeEnum(UserRole),
 });

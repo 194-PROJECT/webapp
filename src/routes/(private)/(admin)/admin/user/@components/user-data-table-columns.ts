@@ -35,6 +35,10 @@ export const userDataTableColumns: ColumnDef<User>[] = [
     header: 'email'
   },
   {
+    accessorKey: 'phoneNumber',
+    header: 'phone'
+  },
+  {
     accessorKey: 'type',
     header: 'type'
   },

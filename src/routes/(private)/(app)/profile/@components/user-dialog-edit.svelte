@@ -86,6 +86,11 @@
         </div>
 
         <div class="grid grid-cols-4 items-center gap-4">
+          <Label for="phoneNumber" class="text-right">Phone</Label>
+          <Input id="phoneNumber" name="phoneNumber" value={updatedUser.phoneNumber} class="col-span-3" />
+        </div>
+
+        <div class="grid grid-cols-4 items-center gap-4">
           <Label for="profilePictureUrl" class="text-right">Profile Picture URL</Label>
           <Input id="profilePictureUrl" name="profilePictureUrl" value={updatedUser.profilePictureUrl} class="col-span-3" />
         </div>

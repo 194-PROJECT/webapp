@@ -92,6 +92,11 @@
         </div>
 
         <div class="grid grid-cols-4 items-center gap-4">
+          <Label for="phoneNumber" class="text-right">Phone</Label>
+          <Input id="phoneNumber" name="phoneNumber" value={updatedUser.phoneNumber} class="col-span-3" />
+        </div>
+
+        <div class="grid grid-cols-4 items-center gap-4">
           <Label for="type" class="text-right">Type</Label>
           <Select.Root type="single" name="type" bind:value={userType}>
             <Select.Trigger class="col-span-1">{userType}</Select.Trigger>

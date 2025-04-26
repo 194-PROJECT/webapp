@@ -16,6 +16,7 @@ const signupSchema = validation.object({
   firstName: validation.string().min(2).max(30),
   lastName: validation.string().min(2).max(30),
   password: validation.string().min(8).max(20),
+  phoneNumber: validation.string().regex(/^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/),
   programId: validation.string().regex(/^\d+$/, 'Must be an integer'),
   studentId: validation.string().regex(/^\d{4}-\d{5}$/, 'Must follow the format YYYY-NNNNN'),
 });
