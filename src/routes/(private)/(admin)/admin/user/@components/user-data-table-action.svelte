@@ -8,9 +8,11 @@
 	import type { ActionResult } from "@sveltejs/kit";
 	import { deserialize } from "$app/forms";
 	import UserDialogEdit from "./user-dialog-edit.svelte";
+	import * as AlertDialog from "$components/elements/alert-dialog";
 
   let { user = $bindable() }: { user: User } = $props();
   let isEditDialogOpen = $state(false);
+  let isDeleteDialogOpen = $state(false);
 
   const deleteUser = async () => {
     const response = await fetch(`?/deleteUser`, {
@@ -35,6 +37,8 @@
         toast.error(result.data?.error ?? "An error occurred.");
         break;
     }
+
+    toggleDeleteDialog();
   };
 
   const viewUser = () => {
@@ -42,7 +46,11 @@
   }
 
   const toggleEditDialog = () => {
-    isEditDialogOpen = true;
+    isEditDialogOpen = !isEditDialogOpen;
+  }
+
+  const toggleDeleteDialog = () => {
+    isDeleteDialogOpen = !isDeleteDialogOpen;
   }
 </script>
 
@@ -70,8 +78,22 @@
     <DropdownMenu.Separator />
     <DropdownMenu.Item onclick={viewUser}>View user</DropdownMenu.Item>
     <DropdownMenu.Item onclick={toggleEditDialog}>Edit user</DropdownMenu.Item>
-    <DropdownMenu.Item onclick={deleteUser}>Delete user</DropdownMenu.Item>
+    <DropdownMenu.Item onclick={toggleDeleteDialog}>Delete user</DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>
 
 <UserDialogEdit bind:isOpen={isEditDialogOpen} user={user} />
+<AlertDialog.Root bind:open={isDeleteDialogOpen}>
+  <AlertDialog.Content>
+    <AlertDialog.Header>
+      <AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
+      <AlertDialog.Description>
+        This action cannot be undone. This will permanently delete the user and remove their data from our servers.
+      </AlertDialog.Description>
+    </AlertDialog.Header>
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+      <AlertDialog.Action onclick={deleteUser}>Continue</AlertDialog.Action>
+    </AlertDialog.Footer>
+  </AlertDialog.Content>
+</AlertDialog.Root>
