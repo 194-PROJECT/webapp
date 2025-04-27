@@ -13,6 +13,7 @@
 	import type { Semester } from "$datastores/semester/semester.type";
 	import type { User } from "$datastores/user/user.type";
 	import type { Course } from "$datastores/course/course.type";
+	import * as AlertDialog from "$components/elements/alert-dialog";
 
 	let {
     data = $bindable(), 
@@ -32,6 +33,7 @@
   } = $props();
 	let isEditDialogOpen = $state(false);
   let isMembersDialogOpen = $state(false);
+  let isDeleteDialogOpen = $state(false);
 
 	async function deleteGroup() {
 		const response = await fetch(`?/deleteGroup`, {
@@ -56,11 +58,17 @@
 				toast.error(result.data?.error ?? "An error occurred.");
 				break;
 		}
+		        
+		toggleDeleteDialog();
 	}
 
-	function toggleEditDialog() {
-		isEditDialogOpen = true;
-	}
+	const toggleEditDialog = () => {
+    isEditDialogOpen = !isEditDialogOpen;
+  }
+
+  const toggleDeleteDialog = () => {
+    isDeleteDialogOpen = !isDeleteDialogOpen;
+  }
 
   function toggleMembersDialog() {
     isMembersDialogOpen = true;
@@ -90,7 +98,7 @@
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Item onclick={toggleEditDialog}>Edit group</DropdownMenu.Item>
-		<DropdownMenu.Item onclick={deleteGroup}>Delete group</DropdownMenu.Item>
+		<DropdownMenu.Item onclick={toggleDeleteDialog}>Delete group</DropdownMenu.Item>
 		<DropdownMenu.Separator />
     <DropdownMenu.Item onclick={toggleMembersDialog}>Edit members</DropdownMenu.Item>
 	</DropdownMenu.Content>
@@ -98,3 +106,18 @@
 
 <GroupDialogEdit bind:isOpen={isEditDialogOpen} group={data.group} additionalData={additionalData} />
 <GroupDialogMembers bind:isOpen={isMembersDialogOpen} group={data.group} additionalData={additionalData} />
+<AlertDialog.Root bind:open={isDeleteDialogOpen}>
+	<AlertDialog.Content>
+	  <AlertDialog.Header>
+		<AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
+		<AlertDialog.Description>
+		  This action cannot be undone. This will permanently delete the group and remove its data from our servers.
+		</AlertDialog.Description>
+	  </AlertDialog.Header>
+	  <AlertDialog.Footer>
+		<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+		<AlertDialog.Action onclick={deleteGroup}>Continue</AlertDialog.Action>
+	  </AlertDialog.Footer>
+	</AlertDialog.Content>
+  </AlertDialog.Root>
+  

@@ -9,6 +9,7 @@
   import ProgramDialogEdit from "./program-dialog-edit.svelte";
   import type { Department } from "$datastores/department/department.type";
   import type { Program } from "$datastores/program/program.type";
+	import * as AlertDialog from "$components/elements/alert-dialog";
 
   let {
     data = $bindable(),
@@ -23,6 +24,7 @@
     };
   } = $props();
   let isEditDialogOpen = $state(false);
+  let isDeleteDialogOpen = $state(false);
 
   async function deleteProgram() {
     const response = await fetch(`?/deleteProgram`, {
@@ -47,10 +49,16 @@
         toast.error(result.data?.error ?? "An error occurred.");
         break;
     }
+
+    toggleDeleteDialog();
   }
 
-  function toggleEditDialog() {
-    isEditDialogOpen = true;
+  const toggleEditDialog = () => {
+    isEditDialogOpen = !isEditDialogOpen;
+  }
+ 
+  const toggleDeleteDialog = () => {
+     isDeleteDialogOpen = !isDeleteDialogOpen; 
   }
 </script>
 
@@ -77,8 +85,22 @@
     </DropdownMenu.Group>
     <DropdownMenu.Separator />
     <DropdownMenu.Item onclick={toggleEditDialog}>Edit program</DropdownMenu.Item>
-    <DropdownMenu.Item onclick={deleteProgram}>Delete program</DropdownMenu.Item>
+    <DropdownMenu.Item onclick={toggleDeleteDialog}>Delete program</DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>
 
 <ProgramDialogEdit bind:isOpen={isEditDialogOpen} program={data.program} additionalData={additionalData} />
+<AlertDialog.Root bind:open={isDeleteDialogOpen}>
+  <AlertDialog.Content>
+    <AlertDialog.Header>
+      <AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
+      <AlertDialog.Description>
+        This action cannot be undone. This will permanently delete the program and remove its data from our servers.
+      </AlertDialog.Description>
+    </AlertDialog.Header>
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+      <AlertDialog.Action onclick={deleteProgram}>Continue</AlertDialog.Action>
+    </AlertDialog.Footer>
+  </AlertDialog.Content>
+</AlertDialog.Root>

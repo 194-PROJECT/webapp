@@ -4,18 +4,18 @@
 
 <style>
     :root {
-        --background-color: #f5f5f5;
-        --text-color: #333;
-        --card-background-color: #fff;
-        --card-shadow-color: rgba(0, 0, 0, 0.1);
+        --background-color: var(--background-color);
+        --text-color: var(--text-color);
+        --card-background-color:var(--background-color);
+        --card-shadow-color: var(--background-color);
     }
 
     @media (prefers-color-scheme: dark) {
         :root {
-            --background-color: #1e1e1e;
-            --text-color: #ccc;
-            --card-background-color: #2c2c2c;
-            --card-shadow-color: rgba(0, 0, 0, 0.5);
+            --background-color: var(--background-color);
+            --text-color: var(--text-color);
+            --card-background-color: var(--background-color);
+            --card-shadow-color: rgb(74, 74, 74);
         }
     }
 
@@ -102,8 +102,8 @@
         <div class="quick-links">
             <div class="quick-links-header">Quick Links</div>
             <div class="quick-links-menu">
-                <a href="/admin/asset" class="quick-link-item">
-                    <div>Assets</div>
+                <a href="/admin/equipment" class="quick-link-item">
+                    <div>Equipment Management</div>
                 </a>
                 <a href="/admin/user" class="quick-link-item">
                     <div>User Management</div>

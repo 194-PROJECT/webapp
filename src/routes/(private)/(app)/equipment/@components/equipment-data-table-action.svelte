@@ -8,9 +8,12 @@
   import type { ActionResult } from "@sveltejs/kit";
   import { deserialize } from "$app/forms";
   import EquipmentDialogEdit from "./equipment-dialog-edit.svelte";
+  import * as AlertDialog from "$components/elements/alert-dialog";
 
   let { equipment = $bindable() }: { equipment: Equipment } = $props();
   let isEditDialogOpen = $state(false);
+  let isDeleteDialogOpen = $state(false);
+
 
   async function deleteEquipment() {
     const response = await fetch(`?/deleteEquipment`, {
@@ -35,11 +38,17 @@
         toast.error(result.data?.error ?? "An error occurred.");
         break;
     }
+    
+    toggleDeleteDialog();
   };
 
   const toggleEditDialog = () => {
-    isEditDialogOpen = true;
+    isEditDialogOpen = !isEditDialogOpen;
   }
+ 
+  const toggleDeleteDialog = () => {
+    isDeleteDialogOpen = !isDeleteDialogOpen;  
+}
 
   const viewEquipment = () => {
     goto(`/admin/equipment/${equipment.id}`);
@@ -67,8 +76,21 @@
     <DropdownMenu.Separator />
     <DropdownMenu.Item onclick={viewEquipment}>View Equipment</DropdownMenu.Item>
     <DropdownMenu.Item onclick={toggleEditDialog}>Edit equipment</DropdownMenu.Item>
-    <DropdownMenu.Item onclick={deleteEquipment}>Delete equipment</DropdownMenu.Item>
-  </DropdownMenu.Content>
+    <DropdownMenu.Item onclick={toggleDeleteDialog}>Delete equipment</DropdownMenu.Item>  </DropdownMenu.Content>
 </DropdownMenu.Root>
 
 <EquipmentDialogEdit bind:isOpen={isEditDialogOpen} bind:equipment={equipment} />
+<AlertDialog.Root bind:open={isDeleteDialogOpen}>
+  <AlertDialog.Content>
+    <AlertDialog.Header>
+      <AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
+      <AlertDialog.Description>
+        This action cannot be undone. This will permanently delete the degree program and remove its data from our servers.
+      </AlertDialog.Description>
+    </AlertDialog.Header>
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+      <AlertDialog.Action onclick={deleteEquipment}>Continue</AlertDialog.Action>
+    </AlertDialog.Footer>
+  </AlertDialog.Content>
+</AlertDialog.Root>

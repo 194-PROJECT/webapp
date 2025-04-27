@@ -8,9 +8,11 @@
   import type { ActionResult } from "@sveltejs/kit";
   import { deserialize } from "$app/forms";
   import EquipmentItemDialogEdit from "./equipment-item-dialog-edit.svelte";
+	import * as AlertDialog from "$components/elements/alert-dialog";
 
   let { equipmentItem = $bindable() }: { equipmentItem: EquipmentItem } = $props();
   let isEditDialogOpen = $state(false);
+  let isDeleteDialogOpen = $state(false);
 
   async function deleteEquipmentItem() {
     const response = await fetch(`?/deleteEquipmentItem`, {
@@ -35,10 +37,16 @@
         toast.error(result.data?.error ?? "An error occurred.");
         break;
     }
+        
+    toggleDeleteDialog();
   };
 
   const toggleEditDialog = () => {
-    isEditDialogOpen = true;
+    isEditDialogOpen = !isEditDialogOpen;
+  }
+
+  const toggleDeleteDialog = () => {
+    isDeleteDialogOpen = !isDeleteDialogOpen;
   }
 </script>
 
@@ -62,8 +70,22 @@
     </DropdownMenu.Group>
     <DropdownMenu.Separator />
     <DropdownMenu.Item onclick={toggleEditDialog}>Edit Item</DropdownMenu.Item>
-    <DropdownMenu.Item onclick={deleteEquipmentItem}>Delete Item</DropdownMenu.Item>
+    <DropdownMenu.Item onclick={toggleDeleteDialog}>Delete Item</DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>
 
 <EquipmentItemDialogEdit bind:isOpen={isEditDialogOpen} bind:equipmentItem={equipmentItem} />
+<AlertDialog.Root bind:open={isDeleteDialogOpen}>
+  <AlertDialog.Content>
+    <AlertDialog.Header>
+      <AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
+      <AlertDialog.Description>
+        This action cannot be undone. This will permanently delete the equipment item and remove its data from our servers.
+      </AlertDialog.Description>
+    </AlertDialog.Header>
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+      <AlertDialog.Action onclick={deleteEquipmentItem}>Continue</AlertDialog.Action>
+    </AlertDialog.Footer>
+  </AlertDialog.Content>
+</AlertDialog.Root>

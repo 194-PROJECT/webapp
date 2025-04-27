@@ -8,9 +8,11 @@
 	import type { ActionResult } from "@sveltejs/kit";
 	import { deserialize } from "$app/forms";
 	import { toast } from "svelte-sonner";
+  import * as AlertDialog from "$components/elements/alert-dialog";
 
   let { reservationUser = $bindable() }: { reservationUser: ReservationUser } = $props();
   let isEditDialogOpen = $state(false);
+  let isDeleteDialogOpen = $state(false);
 
   let reservationFinished = $derived.by(() => {
     return reservationUser.accepted === true
@@ -29,7 +31,11 @@
   }
 
   const toggleEditDialog = () => {
-    isEditDialogOpen = true;
+    isEditDialogOpen = !isEditDialogOpen;
+  }
+ 
+  const toggleDeleteDialog = () => {
+    isDeleteDialogOpen = !isDeleteDialogOpen;  
   }
 
   const approveReservation = async (accepted: boolean) => {
@@ -83,6 +89,8 @@
         toast.error(result.data?.error ?? "An error occurred.");
         break;
     }
+
+    toggleDeleteDialog();
   };
 
   const toggleClaimedReservation = async () => {
@@ -163,7 +171,7 @@
     <DropdownMenu.Separator />
     <DropdownMenu.Item onclick={viewReservation}>View reservation</DropdownMenu.Item>
     <DropdownMenu.Item onclick={toggleEditDialog}>Edit reservation</DropdownMenu.Item>
-    <DropdownMenu.Item onclick={deleteReservation}>Delete reservation</DropdownMenu.Item>
+    <DropdownMenu.Item onclick={toggleDeleteDialog}>Delete reservation</DropdownMenu.Item>
     <DropdownMenu.Separator />
     <DropdownMenu.Item onclick={() => {approveReservation(true)}} disabled={reservationFinished || reservationOnGoing}>Approve</DropdownMenu.Item>
     <DropdownMenu.Item onclick={() => {approveReservation(false)}} disabled={reservationFinished || reservationOnGoing}>Reject</DropdownMenu.Item>
@@ -174,3 +182,17 @@
 </DropdownMenu.Root>
 
 <ReservationDialogEdit bind:isOpen={isEditDialogOpen} reservationUser={reservationUser} />
+<AlertDialog.Root bind:open={isDeleteDialogOpen}>
+  <AlertDialog.Content>
+    <AlertDialog.Header>
+      <AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
+      <AlertDialog.Description>
+        This action cannot be undone. This will permanently delete the reservation and remove its data from our servers.
+      </AlertDialog.Description>
+    </AlertDialog.Header>
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+      <AlertDialog.Action onclick={deleteReservation}>Continue</AlertDialog.Action>
+    </AlertDialog.Footer>
+  </AlertDialog.Content>
+</AlertDialog.Root>

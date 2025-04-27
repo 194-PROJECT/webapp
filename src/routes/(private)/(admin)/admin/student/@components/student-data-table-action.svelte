@@ -8,9 +8,11 @@
 	import type { ActionResult } from "@sveltejs/kit";
 	import { deserialize } from "$app/forms";
 	import StudentDialogEdit from "./student-dialog-edit.svelte";
+  import * as AlertDialog from "$components/elements/alert-dialog";
 
   let { student = $bindable() }: { student: StudentUser } = $props();
   let isEditDialogOpen = $state(false);
+  let isDeleteDialogOpen = $state(false);
 
   async function deleteStudent() {
     const response = await fetch(`?/deleteStudent`, {
@@ -35,10 +37,16 @@
         toast.error(result.data?.error ?? "An error occurred.");
         break;
     }
+
+    toggleDeleteDialog();
   };
 
   function toggleEditDialog() {
-    isEditDialogOpen = true;
+    isEditDialogOpen = !isEditDialogOpen;
+  }
+ 
+  const toggleDeleteDialog = () => {
+    isDeleteDialogOpen = !isDeleteDialogOpen;
   }
 </script>
 
@@ -65,8 +73,21 @@
     </DropdownMenu.Group>
     <DropdownMenu.Separator />
     <DropdownMenu.Item onclick={toggleEditDialog}>Edit student</DropdownMenu.Item>
-    <DropdownMenu.Item onclick={deleteStudent}>Delete student</DropdownMenu.Item>
-  </DropdownMenu.Content>
+    <DropdownMenu.Item onclick={toggleDeleteDialog}>Delete student</DropdownMenu.Item>  </DropdownMenu.Content>
 </DropdownMenu.Root>
 
 <StudentDialogEdit bind:isOpen={isEditDialogOpen} student={student} />
+<AlertDialog.Root bind:open={isDeleteDialogOpen}>
+  <AlertDialog.Content>
+    <AlertDialog.Header>
+      <AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
+      <AlertDialog.Description>
+        This action cannot be undone. This will permanently delete the student and remove their data from our servers.
+      </AlertDialog.Description>
+    </AlertDialog.Header>
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+      <AlertDialog.Action onclick={deleteStudent}>Continue</AlertDialog.Action>
+    </AlertDialog.Footer>
+  </AlertDialog.Content>
+</AlertDialog.Root>

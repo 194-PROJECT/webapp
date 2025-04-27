@@ -188,8 +188,8 @@
       </div>
       <Separator class="my-4" />
       <div class="flex gap-2 flex-wrap width-full flex-row-reverse">
-        <Button onclick={()=>{approveReservation(true)}} disabled={reservationFinished || reservationOnGoing || !canApprove}>Approve</Button>
-        <Button onclick={()=>{approveReservation(false)}} disabled={reservationFinished || reservationOnGoing  || !canApprove}>Reject</Button>
+        <Button onclick={() => approveReservation(true)}>Approve</Button>
+        <Button onclick={() => approveReservation(false)}>Reject</Button>
       </div>
 		</Card.Content>
 	</Card.Root>

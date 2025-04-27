@@ -11,6 +11,7 @@
 	import type { Semester } from "$datastores/semester/semester.type";
 	import type { User } from "$datastores/user/user.type";
 	import type { Course } from "$datastores/course/course.type";
+	import * as AlertDialog from "$components/elements/alert-dialog";
 
 	let {
     data = $bindable(), 
@@ -28,6 +29,7 @@
     };
   } = $props();
 	let isEditDialogOpen = $state(false);
+	let isDeleteDialogOpen = $state(false);
 
 	async function deleteClass() {
 		const response = await fetch(`?/deleteClass`, {
@@ -52,11 +54,17 @@
 				toast.error(result.data?.error ?? "An error occurred.");
 				break;
 		}
+		        
+		toggleDeleteDialog();
 	}
 
-	function toggleEditDialog() {
-		isEditDialogOpen = true;
-	}
+	const toggleEditDialog = () => {
+    isEditDialogOpen = !isEditDialogOpen;
+  }
+
+  const toggleDeleteDialog = () => {
+    isDeleteDialogOpen = !isDeleteDialogOpen;
+  }
 </script>
 
 <DropdownMenu.Root>
@@ -82,8 +90,23 @@
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Item onclick={toggleEditDialog}>Edit class</DropdownMenu.Item>
-		<DropdownMenu.Item onclick={deleteClass}>Delete class</DropdownMenu.Item>
+		<DropdownMenu.Item onclick={toggleDeleteDialog}>Delete class</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
 
 <ClassDialogEdit bind:isOpen={isEditDialogOpen} classItem={data.class} additionalData={additionalData} />
+<AlertDialog.Root bind:open={isDeleteDialogOpen}>
+	<AlertDialog.Content>
+	  <AlertDialog.Header>
+		<AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
+		<AlertDialog.Description>
+		  This action cannot be undone. This will permanently delete the class and remove its data from our servers.
+		</AlertDialog.Description>
+	  </AlertDialog.Header>
+	  <AlertDialog.Footer>
+		<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+		<AlertDialog.Action onclick={deleteClass}>Continue</AlertDialog.Action>
+	  </AlertDialog.Footer>
+	</AlertDialog.Content>
+  </AlertDialog.Root>
+  

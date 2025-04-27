@@ -8,6 +8,7 @@
   import { deserialize } from "$app/forms";
   import DepartmentDialogEdit from "./department-dialog-edit.svelte";
   import type { Department } from "$datastores/department/department.type";
+  import * as AlertDialog from "$components/elements/alert-dialog";
 
   let {
     data = $bindable(),
@@ -19,6 +20,7 @@
     additionalData: {};
   } = $props();
   let isEditDialogOpen = $state(false);
+  let isDeleteDialogOpen = $state(false);
 
   async function deleteDepartment() {
     const response = await fetch(`?/deleteDepartment`, {
@@ -43,11 +45,17 @@
         toast.error(result.data?.error ?? "An error occurred.");
         break;
     }
+        
+    toggleDeleteDialog();
   }
 
-  function toggleEditDialog() {
-    isEditDialogOpen = true;
+  const toggleEditDialog = () => {
+    isEditDialogOpen = !isEditDialogOpen;
   }
+ 
+  const toggleDeleteDialog = () => {
+    isDeleteDialogOpen = !isDeleteDialogOpen;  
+}
 </script>
 
 <DropdownMenu.Root>
@@ -73,8 +81,21 @@
     </DropdownMenu.Group>
     <DropdownMenu.Separator />
     <DropdownMenu.Item onclick={toggleEditDialog}>Edit department</DropdownMenu.Item>
-    <DropdownMenu.Item onclick={deleteDepartment}>Delete department</DropdownMenu.Item>
-  </DropdownMenu.Content>
+    <DropdownMenu.Item onclick={toggleDeleteDialog}>Delete equipment</DropdownMenu.Item>  </DropdownMenu.Content>
 </DropdownMenu.Root>
 
 <DepartmentDialogEdit bind:isOpen={isEditDialogOpen} department={data.department} additionalData={additionalData} />
+<AlertDialog.Root bind:open={isDeleteDialogOpen}>
+  <AlertDialog.Content>
+    <AlertDialog.Header>
+      <AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
+      <AlertDialog.Description>
+        This action cannot be undone. This will permanently delete the department and remove its data from our servers.
+      </AlertDialog.Description>
+    </AlertDialog.Header>
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+      <AlertDialog.Action onclick={deleteDepartment}>Continue</AlertDialog.Action>
+    </AlertDialog.Footer>
+  </AlertDialog.Content>
+</AlertDialog.Root>
