@@ -25,6 +25,11 @@ const equipmentItemUpdateSchema = validation.object({
   available: validation.boolean(),
 });
 
+const equipmentImageAddSchema = validation.object({
+  equipmentId: validation.number(),
+  imageUrl: validation.string(),
+});
+
 export const load: PageServerLoad = async (event: PageServerLoadEvent) => {
   const equipmentId = Number(event.params.equipmentId);
   const equipmentDocument = await EquipmentDatastore.get(equipmentId);
@@ -162,8 +167,67 @@ const createEquipmentItem: Action = async (event) => {
   };
 };
 
+const addEquipmentImage: Action = async (event) => {
+  const equipmentImageAddForm = await superValidate(event, zod(equipmentImageAddSchema));
+
+  if (!equipmentImageAddForm.valid) {
+    return fail(401, {
+      form: equipmentImageAddForm,
+      message: 'Invalid form data',
+      error: 'Invalid form data',
+    });
+  }
+
+  const document = await EquipmentImageDatastore.push(equipmentImageAddForm.data);
+
+  if (document.response?.status && document.response.status >= 400) {
+    return fail(document.response.status, {
+      form: equipmentImageAddForm,
+      message: 'Failed to add equipment image',
+      error: document.response.message,
+    });
+  }
+
+  return {
+    success: true,
+    form: equipmentImageAddForm,
+    data: document.value,
+    message: 'Equipment image added successfully',
+  };
+};
+
+const deleteEquipmentImage: Action = async (event) => {
+  const equipmentImageDeleteForm = await superValidate(event, zod(deleteModelSchema));
+
+  if (!equipmentImageDeleteForm.valid) {
+    return fail(401, {
+      form: equipmentImageDeleteForm,
+      message: 'Invalid form data',
+      error: 'Invalid form data',
+    });
+  }
+
+  const document = await EquipmentImageDatastore.remove(equipmentImageDeleteForm.data.id);
+
+  if (document.response?.status && document.response.status >= 400) {
+    return fail(document.response.status, {
+      form: equipmentImageDeleteForm,
+      message: 'Failed to delete equipment image',
+      error: document.response.message,
+    });
+  }
+
+  return {
+    success: true,
+    form: equipmentImageDeleteForm,
+    message: 'Equipment image deleted successfully',
+  };
+};
+
 export const actions: Actions = {
   createEquipmentItem,
   updateEquipmentItem,
   deleteEquipmentItem,
+  addEquipmentImage,
+  deleteEquipmentImage,
 };

@@ -4,6 +4,7 @@ import * as Card from '$components/elements/card';
 	import * as Carousel from '$components/elements/carousel';
 	import type { CarouselAPI } from '$components/elements/carousel/context.js';
 	import Separator from '$components/elements/separator/separator.svelte';
+	import EquipmentImageDialog from './@components/equipment-image-dialog.svelte';
 	import EquipmentItemTable from './@components/equipment-item-table.svelte';
 	import EquipmentReservationTable from './@components/equipment-reservation-table.svelte';
 
@@ -12,13 +13,18 @@ import * as Card from '$components/elements/card';
     equipment,
     equipmentItems,
     reservations,
-    images,
     users
   } = $derived(data);
+  let {
+    images,
+  } = $state(data);
+
+  let equipmentImageDialogOpen = $state(false);
 
 	let api = $state<CarouselAPI>();
 
-	const imageCount = $derived(api ? api.scrollSnapList().length : 0);
+	const imageCount = $derived.by(() => images.length);
+
 	let currentImageIndex = $state(0);
 
   let latestReservationId = $derived.by(() => {
@@ -35,6 +41,10 @@ import * as Card from '$components/elements/card';
 			});
 		}
 	});
+
+  const toggleEquipmentImageDialog = () => {
+    equipmentImageDialogOpen = !equipmentImageDialogOpen;
+  };
 </script>
 
 <div class="grid gap-4 md:grid-cols-1 lg:grid-cols-4 mb-4">
@@ -71,7 +81,12 @@ import * as Card from '$components/elements/card';
 	</Card.Root>
 	<Card.Root class="md:col-span-1 lg:col-span-2">
 		<Card.Content>
-			<Card.Title class="pb-8 text-2xl font-medium">Images</Card.Title>
+      <div class="flex items-center justify-between pb-8">
+        <Card.Title class="text-2xl font-medium">Images</Card.Title>
+        <Button variant="link" class="text-sm p-0 h-auto" onclick={toggleEquipmentImageDialog}>
+          Manage Images
+        </Button>
+      </div>
 			<div class="px-12">
 				<Carousel.Root
 					opts={{
@@ -104,5 +119,10 @@ import * as Card from '$components/elements/card';
 	</Card.Root>
 </div>
 
+<EquipmentImageDialog
+  bind:isOpen={equipmentImageDialogOpen}
+  equipment={equipment}
+  bind:images={images}
+/>
 <EquipmentItemTable equipmentItems={equipmentItems} equipment={equipment} />
 <EquipmentReservationTable reservations={reservations} users={users}/>

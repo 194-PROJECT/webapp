@@ -5,7 +5,7 @@
 	import { Input } from '$components/elements/input/index.js';
 	import type { Group } from '$datastores/group/group.type';
 	import type { Class } from '$datastores/class/class.type';
-	import type { ActionResult, SubmitFunction } from '@sveltejs/kit';
+	import type { SubmitFunction } from '@sveltejs/kit';
 	import { toast } from 'svelte-sonner';
 	import type { Semester } from '$datastores/semester/semester.type';
 	import type { Course } from '$datastores/course/course.type';
@@ -17,7 +17,6 @@
 	let {
 		isOpen = $bindable(false),
 		group = $bindable(),
-    additionalData,
 	}: {
 		isOpen: boolean;
 		group: Group;
@@ -106,6 +105,7 @@
                   <Button type="submit" variant="link" class="text-red-500 hover:text-red-700 p-0 m-0">
                     <X />
                   </Button>
+                </form>
               </Badge>
           {/each}
         </div>
